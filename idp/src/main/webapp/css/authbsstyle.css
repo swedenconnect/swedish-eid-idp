@@ -1,0 +1,43 @@
+h2{
+    color:#46447c;
+}
+div.failframe {
+    border: #961717;
+    border-style: solid;
+    border-width: 4px;
+    padding: 20px;
+    color: #540b0b;
+    font-weight: bolder;
+}
+div.successframe {
+    border: #346622;
+    border-style: solid;
+    border-width: 4px;
+    padding: 20px;
+    color: #234019;    
+    font-weight: bolder;
+}
+
+@media (max-width: 699px) {
+
+	#mainContainer {
+    	width: 90vw; 
+	    padding-left: 30px;
+    	padding-right: 30px;
+    	border-radius: 20px;
+    	box-shadow: 0 0 30px black;
+    	background-color: #f3f3f3; 
+	}
+}
+
+@media (min-width: 700px) {
+	
+	#mainContainer {
+    	width: 750px; 
+	    padding-left: 30px;
+    	padding-right: 30px;
+    	border-radius: 20px;
+    	box-shadow: 0 0 30px black;
+    	background-color: #f3f3f3; 
+	}
+}

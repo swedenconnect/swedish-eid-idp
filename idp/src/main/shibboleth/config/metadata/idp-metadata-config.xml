@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+       
+  <!--
+    Configuration file for the IdP metadata. 
+   -->
+            
+  <!--
+    sweid.IdpMetadata - The SAML EntityDescriptor for this IdP's metadata. 
+   -->
+  <bean id="sweid.IdpMetadata" class="se.litsec.opensaml.saml2.metadata.build.spring.IdpEntityDescriptorFactoryBean" scope="singleton" depends-on="shibboleth.OpenSAMLConfig"
+    c:resource="%{idp.home}/metadata/idp-metadata.xml">
+    
+    <!-- entityID -->
+    <property name="entityID" value="%{idp.entityID}" />
+
+    <!-- 
+      The "urn:oasis:names:tc:SAML:attribute:assurance-certification" extension holding the authentication context URI:s 
+      that this IdP services.  
+     -->
+    <property name="assuranceCertificationUris">
+      <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.metadata.assuranceCertificationUris:}'.trim()}" />
+    </property>
+    
+    <!--
+      The "http://macedir.org/entity-category" extension values. According to the Swedish eID Framework. 
+     -->
+    <property name="entityCategories">
+      <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.metadata.entityCategories:}'.trim()}" />
+    </property>
+
+    <!--
+      Does this IdP require AuthnRequests to be signed?
+      See also the relying-party.xml. 
+     -->
+    <property name="wantAuthnRequestsSigned" value="%{idp.metadata.wantAuthnRequestsSigned}" />
+
+    <!-- Key descriptors (will be changed to a dynamically reloadable bean) -->    
+    <property name="keyDescriptors">
+      <util:list>
+        <bean class="se.litsec.opensaml.saml2.metadata.build.spring.KeyDescriptorFactoryBean" p:use="SIGNING" p:certificateResource="%{idp.signing.cert}" />
+        <bean class="se.litsec.opensaml.saml2.metadata.build.spring.KeyDescriptorFactoryBean" p:use="ENCRYPTION" p:certificateResource="%{idp.encryption.cert}" />
+        <!-- 
+          <bean class="se.litsec.opensaml.saml2.metadata.build.spring.KeyDescriptorFactoryBean" p:use="ENCRYPTION" p:certificate="%{idp.encryption.cert.2}" />
+         -->
+      </util:list>
+    </property>
+    
+    <!--
+      The NameIDFormat:s supported by this IdP. 
+     -->
+    <property name="nameIDFormats">
+      <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.metadata.nameIDFormats:}'.trim()}" />
+    </property>
+
+    <!--
+      Locations for Redirect and POST bindings of SingleSignOnService elements. 
+     -->
+    <property name="singleSignOnServices">
+      <util:list>
+        <bean class="se.litsec.opensaml.saml2.metadata.build.spring.SingleSignOnServiceFactoryBean">
+          <property name="binding">
+            <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML2_REDIRECT_BINDING_URI" />
+          </property>
+          <property name="location" value="%{idp.baseurl}/profile/SAML2/Redirect/SSO" />
+        </bean>
+        <bean class="se.litsec.opensaml.saml2.metadata.build.spring.SingleSignOnServiceFactoryBean">
+          <property name="binding">
+            <util:constant static-field="org.opensaml.saml.common.xml.SAMLConstants.SAML2_POST_BINDING_URI" />
+          </property>
+          <property name="location" value="%{idp.baseurl}/profile/SAML2/POST/SSO" />
+        </bean>        
+      </util:list>
+    </property>
+    
+    <!--
+      UIInfo element - Make sure to update metadata.properties with values suitable for your IdP. 
+     -->
+    <property name="uiInfoExtension">
+      <bean class="se.litsec.opensaml.saml2.metadata.build.spring.UIInfoFactoryBean">
+        <property name="displayNames">
+          <util:list>
+            <value>en-%{idp.metadata.uiInfo.displayName.en}</value>
+            <value>sv-%{idp.metadata.uiInfo.displayName.sv}</value>
+          </util:list>
+        </property>
+        <property name="descriptions">
+          <util:list>
+            <value>en-%{idp.metadata.uiInfo.description.en}</value>
+            <value>sv-%{idp.metadata.uiInfo.description.sv}</value>
+          </util:list>
+        </property>
+        <property name="logos">
+          <util:list>
+            <bean class="se.litsec.opensaml.saml2.metadata.build.spring.LogoFactoryBean" c:url="https://eid.svelegtest.se/logos/elegnamnden_114x100.png" c:width="114" c:height="100" />
+            <bean class="se.litsec.opensaml.saml2.metadata.build.spring.LogoFactoryBean" c:url="https://eid.svelegtest.se/logos/elegnamnden_logo_160x90.png" c:width="160" c:height="90" />
+            <bean class="se.litsec.opensaml.saml2.metadata.build.spring.LogoFactoryBean" c:url="https://eid.svelegtest.se/logos/elegnamnden_notext_16x16.png" c:width="16" c:height="16" />
+            <bean class="se.litsec.opensaml.saml2.metadata.build.spring.LogoFactoryBean" c:url="https://eid.svelegtest.se/logos/elegnamnden_notext_68x67.png" c:width="68" c:height="67" />            
+          </util:list>
+        </property>
+      </bean>
+    </property>
+    
+  </bean>
+  
+  <!--
+    The credential used to sign the metadata. 
+   -->
+  <bean id="sweid.MetadataSigningCredential" class="net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean"
+    p:privateKeyResource="%{idp.metadata.signing.key}"
+    p:certificateResource="%{idp.metadata.signing.cert}"
+    p:entityId="%{idp.entityID}" />
+    
+  <!--
+    The container wrapping the metadata and is used for publishing. 
+   -->
+  <bean id="sweid.IdpMetadataContainer" class="se.litsec.opensaml.saml2.metadata.EntityDescriptorContainer" scope="singleton"
+    c:descriptor-ref="sweid.IdpMetadata"
+    c:signatureCredentials-ref="sweid.MetadataSigningCredential" />
+    
+</beans>

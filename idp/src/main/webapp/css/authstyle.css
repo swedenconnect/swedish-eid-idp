@@ -1,0 +1,144 @@
+root { 
+    display: block;
+}
+
+body {
+    font-family: Verdana, Arial, sans-serif;
+    font-size: smaller;
+    padding: 20px;
+    color: #555;
+    width: 90%;
+}
+
+h1 {
+    letter-spacing: 4px;
+    font-size: 1.6em;
+    color:#46447c;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+h2 {
+    letter-spacing: 2px;
+    font-size: 1.4em;
+    color: #592414;
+    font-weight: normal;
+}
+h3 {
+    margin-bottom: 2px;
+    margin-top: 10px;
+}
+
+div {
+
+    background-color: #f3f5f8;
+    
+}
+
+div.mainIdpFrame {
+
+    margin: 20px;
+    border: olive;
+    padding: 20px;
+    width: 700px;
+}
+
+
+div.mainAuthFrame {
+    width: 350px;
+}
+
+div#spinfo {
+    margin-top: 20px;
+    padding: 10px;
+    border: #999999;
+    border-style: groove;
+    border-width: 2px;
+    background-color: #ffffff
+}
+
+div#currentSetting {
+    padding: 10px;
+    border: #999999;
+    border-style: groove;
+    border-width: 2px;
+    background-color: #ffffff
+}
+
+div.failframe {
+
+    border: #961717;
+    border-style: solid;
+    border-width: 4px;
+    padding: 20px;
+    color: #540b0b;
+    font-weight: bolder;
+}
+div.successframe {
+    border: #346622;
+    border-style: solid;
+    border-width: 4px;
+    padding: 20px;
+    color: #234019;    
+    font-weight: bolder;
+}
+
+img.logo {
+    margin-left: 30px;
+
+}
+table.demoUserTableClass {
+
+    border-collapse: collapse;
+    border: #4e1124;
+    margin-bottom: 20px;
+    border-style: solid;
+    border-width: 2px;
+    width: 80%;
+}
+
+table.sptable {
+    border-collapse: collapse;
+}
+
+tr.demouserrow {
+
+    cursor: pointer;
+    background-color: #ffffff;
+    color: #252420;
+}
+
+tr.demouserrow:hover {
+    background-color: #660000;
+    color: #ffffff;    
+}
+
+tr.sptablehead {    
+    color: #46447c;
+    font-weight: bold;
+}
+
+tr.sptabledispname {
+    border-top: #f5f5f5;
+    border-bottom: #f5f5f5;
+    border-top-style: solid;
+    border-bottom-style: solid;
+    border-width: 8px;
+    padding-top: 3px;
+        
+
+    font-weight: bolder;
+    font-size: larger;
+}
+
+tr.sptabledesc {
+    font-style: italic;
+    color: #666666
+}
+
+p.reasonpara {
+
+    color: #30302f;
+
+    font-weight: normal;
+}
