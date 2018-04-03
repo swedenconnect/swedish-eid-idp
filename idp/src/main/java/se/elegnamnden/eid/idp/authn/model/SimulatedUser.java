@@ -20,8 +20,7 @@ import lombok.Data;
 /**
  * Represents a simulated user.
  * 
- * @author Martin Lindström (martin.lindstrom@litsec.se)
- * @author Stefan Santesson (stefan@aaa-sec.com)
+ * @author Martin Lindström (martin.lindstrom@litsec.se) 
  */
 @Data
 public class SimulatedUser implements Comparable<SimulatedUser> {

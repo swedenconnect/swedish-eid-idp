@@ -15,6 +15,7 @@
        
   <import resource="test-users.xml" />
   
+  <!-- 
   <bean id="sweid.AuthnContextService" class="se.litsec.shibboleth.idp.authn.service.impl.AuthnContextServiceImpl" scope="singleton"
     p:flowName="authn/External"
     p:authnContextweightMap-ref="shibboleth.AuthenticationPrincipalWeightMap" />  
@@ -22,5 +23,6 @@
   <bean id="sweid.SignMessageService" class="se.litsec.shibboleth.idp.authn.service.impl.SignatureMessageServiceImpl" scope="singleton"
     p:authnContextService-ref="eidas.EidasAuthnContextService"
     p:signMessageDecrypter-ref="sweid.SignMessageDecryptionService" />
-        
+   -->    
+    
 </beans>
