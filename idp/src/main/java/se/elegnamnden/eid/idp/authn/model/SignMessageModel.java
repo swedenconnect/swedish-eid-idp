@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 E-legitimationsnämnden
+ * Copyright 2016-2018 Litsec AB
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,34 +15,22 @@
  */
 package se.elegnamnden.eid.idp.authn.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
- * Class representing the result passed back from the simulated authentication view to the controller.
+ * Model object for a SignMessage.
  * 
  * @author Martin Lindström (martin.lindstrom@litsec.se)
  */
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
-@Builder
-public class SimulatedAuthenticationResult {
-    
-  /** The selected user. */
-  private String selectedUser;
+public class SignMessageModel {
   
-  /** The selected LoA. */
-  private String selectedAuthnContextUri;
+  public enum DisplayType { MONOSPACE_TEXT, HTML }; 
   
-  /** Was the sign message displayed? */
-  private boolean signMessageDisplayed;
+  /** The type of sign message. */
+  private DisplayType displayType;
   
-  /** The current authentication key. */
-  private String authenticationKey;
-  
+  /** The HTML. */
+  private String html;
+
 }

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd"
+                           
+       default-init-method="initialize"
+       default-destroy-method="destroy">
+
+    <!-- Beans for external authentication -->
+    
+    <bean id="sweid.AuthnContextService" class="se.litsec.shibboleth.idp.authn.service.impl.AuthnContextServiceImpl" scope="singleton"
+      p:flowName="authn/External"
+      p:authnContextweightMap-ref="shibboleth.AuthenticationPrincipalWeightMap" />
+            
+    <bean id="sweid.SignSupportService" class="se.litsec.shibboleth.idp.authn.service.impl.SignSupportServiceImpl" scope="singleton"
+      p:authnContextService-ref="sweid.AuthnContextService"
+      p:signatureSupportKeyService-ref="sweid.SignatureServiceSupportService"
+      p:entityID="%{idp.entityID}"
+      p:scal2Supported="%{idp.scal2.support:false}"
+      p:sadFactory-ref="sweid.SADBuilder"
+      p:signMessagePreProcessor-ref="sweid.SignMessagePreProcessor" />
+      
+   <bean id="sweid.SignMessagePreProcessor" class="se.elegnamnden.eid.idp.authn.service.DefaultSignMessagePreProcessor" scope="singleton" />
+      
+    <bean id="sweid.SADBuilder" class="se.litsec.swedisheid.opensaml.saml2.signservice.SADFactory"
+      c:idpEntityID="%{idp.entityID}"
+      p:validityTime="%{idp.signature-support.sad.validity-time:300}" 
+      p:userIdAttributeName="%{idp.signature-support.sad.userid-attribute-name}"
+      p:jwtIdSize="%{idp.signature-support.sad.id-size:24}"
+      p:jwtSigningAlgorithm="%{idp.signature-support.sad.jwt-signing-algorithm:RS256}">
+      <constructor-arg name="signingCredential"><null /></constructor-arg>
+    </bean>      
+
+    <!--
+    This file provisions the IdP with information about the configured login mechanisms available for use.
+    The actual beans and subflows that make up those mechanisms are in their own files, but this pulls them
+    together with deployer-supplied metadata to describe them to the system.    
+    -->
+
+    <util:list id="shibboleth.AvailableAuthenticationFlows">
+    
+      <bean id="authn/External" parent="shibboleth.AuthenticationFlow"
+            p:nonBrowserSupported="false" 
+            p:passiveAuthenticationSupported="true"
+            p:forcedAuthenticationSupported="true">
+        <property name="supportedPrincipals">
+          <util:list>
+            <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/loa2"/>
+            <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/loa3"/>
+            <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/loa4"/>
+            <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/loa2-sigmessage"/>
+            <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/loa3-sigmessage"/>
+            <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/loa4-sigmessage"/>
+          </util:list>
+        </property>
+      </bean>
+      
+    </util:list>
+
+    <!--
+    This is a map used to "weight" particular methods above others if the IdP has to randomly select one
+    to insert into a SAML authentication statement. The typical use shown below is to bias the IdP in favor
+    of expressing the SAML 2 PasswordProtectedTransport class over the more vanilla Password class on the
+    assumption that the IdP doesn't accept passwords via an insecure channel. This map never causes the IdP
+    to violate its matching rules if an RP requests a particular value; it only matters when nothing specific
+    is chosen. Anything not in the map has a weight of zero.
+    -->
+    
+    <util:map id="shibboleth.AuthenticationPrincipalWeightMap">
+      <entry>
+        <key>
+          <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/loa3" />
+        </key>
+        <value>2</value>
+      </entry>
+      <entry>
+        <key>
+          <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/loa3-sigmessage" />
+        </key>
+        <value>1</value>
+      </entry>      
+    </util:map>
+
+</beans>

@@ -64,9 +64,9 @@
         <value>%{idp.home}/system/messages/messages</value>
     </util:list>
     
-    <util:list id="sweid.SignMessageDecryptionResources">
-        <value>%{idp.home}/conf/credentials.xml</value>
-        <value>%{idp.home}/system/conf/sign-message-decrypt.xml</value>
-    </util:list>    
-    
+    <util:list id="sweid.SignatureServiceSupportResources">
+      <value>%{idp.home}/conf/credentials.xml</value>
+      <value>%{idp.home}/system/conf/signature-service-support.xml</value>
+    </util:list>
+        
 </beans>

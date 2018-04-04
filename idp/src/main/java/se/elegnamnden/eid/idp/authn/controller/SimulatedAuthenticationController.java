@@ -16,16 +16,16 @@
 package se.elegnamnden.eid.idp.authn.controller;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
-import javax.security.auth.Subject;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.opensaml.profile.context.ProfileRequestContext;
+import org.opensaml.saml.saml2.core.Attribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -38,26 +38,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.ExternalAuthenticationException;
-import net.shibboleth.idp.authn.context.AuthenticationContext;
+import se.elegnamnden.eid.idp.authn.model.SignMessageModel;
+import se.elegnamnden.eid.idp.authn.model.SignMessageModel.DisplayType;
 import se.elegnamnden.eid.idp.authn.model.SimulatedAuthenticationResult;
 import se.elegnamnden.eid.idp.authn.model.SimulatedUser;
-import se.litsec.shibboleth.idp.authn.context.AuthnContextClassContext;
-import se.litsec.shibboleth.idp.authn.context.strategy.AuthenticationContextLookup;
-import se.litsec.shibboleth.idp.authn.context.strategy.AuthnContextClassContextLookup;
+import se.litsec.shibboleth.idp.authn.ExternalAutenticationErrorCodeException;
+import se.litsec.shibboleth.idp.authn.context.SignMessageContext;
+import se.litsec.shibboleth.idp.authn.context.SignatureActivationDataContext;
 import se.litsec.shibboleth.idp.authn.controller.AbstractExternalAuthenticationController;
-import se.litsec.swedisheid.opensaml.saml2.authentication.LevelofAssuranceAuthenticationContextURI.LoaEnum;
+import se.litsec.swedisheid.opensaml.saml2.attribute.AttributeConstants;
+import se.litsec.swedisheid.opensaml.saml2.signservice.dss.SignMessageMimeTypeEnum;
 
 /**
  * A Spring MVC-controller for the IdP's authentication process. This is a simulated authentication where the user
  * simply selects which individual to authenticate as.
  * 
  * @author Martin Lindström (martin.lindstrom@litsec.se)
- * @author Stefan Santesson (stefan@aaa-sec.com)
  */
 @Controller
 public class SimulatedAuthenticationController extends AbstractExternalAuthenticationController implements InitializingBean {
@@ -77,19 +75,6 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
   /** Fallback languages to be used in the currently selected language can not be used. */
   private List<String> fallbackLanguages;
 
-  /**
-   * Strategy that gives us the AuthenticationContext. Needed since the authnContextService property of
-   * AbstractExternalAuthenticationController is private (will be fixed).
-   */
-  @SuppressWarnings("rawtypes") protected static Function<ProfileRequestContext, AuthenticationContext> authenticationContextLookupStrategy = new AuthenticationContextLookup();
-
-  /**
-   * Strategy used to locate the AuthnContextClassContext. Needed since the authnContextService property of
-   * AbstractExternalAuthenticationController is private (will be fixed).
-   */
-  @SuppressWarnings("rawtypes") protected static Function<ProfileRequestContext, AuthnContextClassContext> authnContextClassLookupStrategy = Functions
-    .compose(new AuthnContextClassContextLookup(), authenticationContextLookupStrategy);
-
   /** {@inheritDoc} */
   @Override
   public String getAuthenticatorName() {
@@ -98,30 +83,71 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
 
   /** {@inheritDoc} */
   @Override
-  protected ModelAndView doExternalAuthentication(HttpServletRequest httpRequest, HttpServletResponse httpResponse, String key,
+  protected ModelAndView doExternalAuthentication(
+      HttpServletRequest httpRequest,
+      HttpServletResponse httpResponse,
+      String key,
       ProfileRequestContext<?, ?> profileRequestContext) throws ExternalAuthenticationException, IOException {
 
-    AutoAuthnCookie autoAuthnCookie = Arrays.asList(httpRequest.getCookies())
-      .stream()
-      .filter(c -> c.getName().equals(AutoAuthnCookie.AUTO_AUTHN_COOKIE_NAME))
-      .map(Cookie::getValue)
-      .map(v -> AutoAuthnCookie.parse(v))
-      .findFirst()
-      .orElse(null);
-    if (autoAuthnCookie != null) {
-      return this.processAuthentication(httpRequest, httpResponse, key, null, new SimulatedAuthenticationResult(autoAuthnCookie
-        .getPersonalIdentityNumber()));
+    try {
+
+      // Is there an "auto authentication" cookie there?
+      // This cookie enables automatic testing scenarios where no UI is displayed.
+      //
+      AutoAuthnCookie autoAuthnCookie = Arrays.asList(httpRequest.getCookies())
+        .stream()
+        .filter(c -> c.getName().equals(AutoAuthnCookie.AUTO_AUTHN_COOKIE_NAME))
+        .map(Cookie::getValue)
+        .map(v -> AutoAuthnCookie.parse(v))
+        .findFirst()
+        .orElse(null);
+      if (autoAuthnCookie != null) {
+        SimulatedAuthenticationResult simResult = SimulatedAuthenticationResult.builder()
+            .authenticationKey(key)
+            .selectedUser(autoAuthnCookie.getPersonalIdentityNumber())
+            .build();
+        return this.processAuthentication(httpRequest, httpResponse, null, simResult);
+      }
+
+      ModelAndView modelAndView = new ModelAndView("simauth");
+      modelAndView.addObject("authenticationKey", key);
+      modelAndView.addObject("authenticationResult", new SimulatedAuthenticationResult());
+
+      modelAndView.addObject("spInfo",
+        SpInfoHandler.buildSpInfo(this.getPeerMetadata(profileRequestContext), LocaleContextHolder.getLocale().getLanguage(),
+          this.fallbackLanguages));
+
+      boolean willDisplaySignMessage = false;
+
+      if (this.getSignSupportService().isSignatureServicePeer(profileRequestContext)) {
+
+        modelAndView.addObject("signature", Boolean.TRUE);
+        SignMessageContext signMessageContext = this.getSignSupportService().getSignMessageContext(profileRequestContext);
+        if (signMessageContext != null && signMessageContext.isDoDisplayMessage()) {
+          SignMessageModel signMessageModel = new SignMessageModel();
+          signMessageModel.setHtml(signMessageContext.getMessageToDisplay());
+          signMessageModel.setDisplayType(signMessageContext.getMimeType() == SignMessageMimeTypeEnum.TEXT ? DisplayType.MONOSPACE_TEXT
+              : DisplayType.HTML);
+          modelAndView.addObject("signMessage", signMessageModel);
+          willDisplaySignMessage = true;
+        }
+      }
+      else {
+        modelAndView.addObject("signature", Boolean.FALSE);
+      }
+
+      // Get hold of the possible authentication context URI:s that the user can authenticate under ...
+      //
+      List<String> authnContextUris = this.getAuthnContextService().getPossibleAuthnContextClassRefs(
+        profileRequestContext, willDisplaySignMessage);
+      modelAndView.addObject("authnContextUris", authnContextUris);
+
+      return modelAndView;
     }
-
-    ModelAndView modelAndView = new ModelAndView("simauth");
-    modelAndView.addObject("authenticationKey", key);
-    modelAndView.addObject("authenticationResult", new SimulatedAuthenticationResult());
-
-    Locale locale = LocaleContextHolder.getLocale();
-    modelAndView.addObject("spInfo",
-      SpInfoHandler.buildSpInfo(this.getPeerMetadata(profileRequestContext), locale.getLanguage(), this.fallbackLanguages));
-
-    return modelAndView;
+    catch (ExternalAutenticationErrorCodeException e) {
+      this.error(httpRequest, httpResponse, e);
+      return null;
+    }
   }
 
   /**
@@ -131,12 +157,8 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
    *          the HTTP request
    * @param httpResponse
    *          the HTTP response
-   * @param key
-   *          the Shibboleth external authentication key
    * @param result
    *          the "authentication result"
-   * @param bindingResult
-   *          the result from the binding operation
    * @return a {@code ModelAndView} if control is to return to the view or {@code null} to terminate the operation
    * @throws ExternalAuthenticationException
    *           for Shibboleth session errors
@@ -144,8 +166,8 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
    *           for IO errors
    */
   @RequestMapping(value = "/simulatedAuth", method = RequestMethod.POST)
-  public ModelAndView processAuthentication(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
-      @RequestParam("authenticationKey") String key,
+  public ModelAndView processAuthentication(HttpServletRequest httpRequest, 
+      HttpServletResponse httpResponse,
       @RequestParam("action") String action,
       @ModelAttribute("authenticationResult") SimulatedAuthenticationResult result) throws ExternalAuthenticationException, IOException {
 
@@ -156,59 +178,69 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
 
     if ("NONE".equals(result.getSelectedUser())) {
       logger.debug("Binding errors, returning control to the view");
-      ModelAndView modelAndView = new ModelAndView("simauth");
-      modelAndView.addObject("authenticationKey", key);
-      modelAndView.addObject("authenticationResult", result);
-      modelAndView.addObject("spInfo",
-        SpInfoHandler.buildSpInfo(this.getPeerMetadata(httpRequest), LocaleContextHolder.getLocale().getLanguage(),
-          this.fallbackLanguages));
-
-      return modelAndView;
+      return this.doExternalAuthentication(httpRequest, httpResponse, result.getAuthenticationKey(), this.getProfileRequestContext(httpRequest));
     }
 
-    if (result.getSelectedUser() != null) {
-      SimulatedUser user = this.staticUsers.stream()
-        .filter(u -> result.getSelectedUser().equals(u.getPersonalIdentityNumber()))
-        .findFirst()
-        .orElse(null);
+    if (result.getSelectedUser() == null) {
+      logger.error("No user selected");
+      this.error(httpRequest, httpResponse, AuthnEventIds.INVALID_AUTHN_CTX);
+      return null;
+    }
 
-      if (user != null) {
+    SimulatedUser user = this.staticUsers.stream()
+      .filter(u -> result.getSelectedUser().equals(u.getPersonalIdentityNumber()))
+      .findFirst()
+      .orElse(null);
 
-        logger.debug("Authenticated user: {}", user);
+    if (user == null) {
+      logger.error("No user selected");
+      this.error(httpRequest, httpResponse, AuthnEventIds.INVALID_AUTHN_CTX);
+      return null;
+    }
 
-        // Save the selected user in a cookie (for pre-selection the next time).
-        //
-        this.saveSelectedUser(user.getPersonalIdentityNumber(), httpResponse);
+    logger.debug("Authenticated user: {}", user);
 
-        // Get hold of the requested AuthnContextClass context. Here we calculate which AuthnContextClassRef to return.
-        //
-        AuthnContextClassContext authnContextClassContext = authnContextClassLookupStrategy.apply(this.getProfileRequestContext(
-          httpRequest));
-        String authnContextClassRef = null;
-        if (authnContextClassContext != null && !authnContextClassContext.getAuthnContextClassRefs().isEmpty()) {
-          authnContextClassRef = authnContextClassContext.getAuthnContextClassRefs().get(0);
-        }
-        if (authnContextClassRef == null) {
-          // TODO: Make configurable
-          authnContextClassRef = LoaEnum.LOA_3.getUri();
-        }
+    // Save the selected user in a cookie (for pre-selection the next time).
+    //
+    this.saveSelectedUser(user.getPersonalIdentityNumber(), httpResponse);
 
-        Subject subject = this.getSubjectBuilder(user.getPersonalIdentityNumber())
-          .shibbolethAttribute("personalIdentityNumber", user.getPersonalIdentityNumber())
-          .shibbolethAttribute("givenName", user.getGivenName())
-          .shibbolethAttribute("sn", user.getSurname())
-          .shibbolethAttribute("displayName", user.getDisplayName())
-          .authnContextClassRef(authnContextClassRef)
-          .build();
+    try {
+      ProfileRequestContext<?, ?> context = this.getProfileRequestContext(httpRequest);
 
-        this.success(httpRequest, httpResponse, subject, null, null);
-        return null;
+      // Which authentication context URI should be included in the assertion?
+      //
+      String authnContextClassRef = this.getAuthnContextService().getReturnAuthnContextClassRef(
+        context, result.getSelectedAuthnContextUri(), result.isSignMessageDisplayed());
+
+      // Issue attributes ...
+      //
+      List<Attribute> attributes = new ArrayList<>();
+
+      attributes.add(
+        AttributeConstants.ATTRIBUTE_TEMPLATE_PERSONAL_IDENTITY_NUMBER.createBuilder().value(user.getPersonalIdentityNumber()).build());
+      attributes.add(
+        AttributeConstants.ATTRIBUTE_TEMPLATE_GIVEN_NAME.createBuilder().value(user.getGivenName()).build());
+      attributes.add(
+        AttributeConstants.ATTRIBUTE_TEMPLATE_SN.createBuilder().value(user.getSurname()).build());
+      attributes.add(
+        AttributeConstants.ATTRIBUTE_TEMPLATE_DISPLAY_NAME.createBuilder().value(user.getDisplayName()).build());
+
+      // Check if we should issue a SAD attribute.
+      //
+      SignatureActivationDataContext sadContext = this.getSignSupportService().getSadContext(context);
+      if (sadContext != null && result.isSignMessageDisplayed() && this.getSignSupportService().isSignatureServicePeer(context)) {
+        String sad = this.getSignSupportService().issueSAD(
+          context, attributes, AttributeConstants.ATTRIBUTE_NAME_PERSONAL_IDENTITY_NUMBER, authnContextClassRef);
+        attributes.add(AttributeConstants.ATTRIBUTE_TEMPLATE_SAD.createBuilder().value(sad).build());
       }
-    }
 
-    logger.error("No user selected");
-    this.error(httpRequest, httpResponse, AuthnEventIds.INVALID_AUTHN_CTX);
-    return null;
+      this.success(httpRequest, httpResponse, user.getPersonalIdentityNumber(), attributes, authnContextClassRef, null, null);
+      return null;
+    }
+    catch (ExternalAutenticationErrorCodeException e) {
+      this.error(httpRequest, httpResponse, e);
+      return null;
+    }
   }
 
   /**

@@ -22,11 +22,11 @@
    -->
   <bean id="sweid.AbstractExternalAuthenticationController" class="se.litsec.shibboleth.idp.authn.controller.sweid.AbstractExternalAuthenticationController"
     abstract="true" 
-    p:attributeToIdMapping-ref="sweid.SAML2AttributeNameToIdMapperService"
     p:authnContextService-ref="sweid.AuthnContextService"
-    p:signMessageService-ref="sweid.SignMessageService" 
+    p:signSupportService-ref="sweid.SignSupportService"
+    p:attributeToIdMapping-ref="sweid.SAML2AttributeNameToIdMapperService"    
     p:flowName="authn/External" />
-    
+           
   <bean id="sweid.SimulatedAuthenticationController" class="se.elegnamnden.eid.idp.authn.controller.SimulatedAuthenticationController"
     parent="sweid.AbstractExternalAuthenticationController"
     p:authenticatorName="%{idp.authn.external-authn.name}" 

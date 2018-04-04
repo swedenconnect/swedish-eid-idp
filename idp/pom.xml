@@ -27,14 +27,7 @@
       <organization>Litsec AB</organization>
       <organizationUrl>http://www.litsec.se</organizationUrl>
     </developer>
-    
-    <developer>
-      <name>Stefan Santesson</name>
-      <email>stefan@aaa-sec.com</email>
-      <organization>3xA Security AB</organization>
-      <organizationUrl>http://aaa-sec.com</organizationUrl>
-    </developer>
-    
+        
   </developers>  
 
   <properties>
@@ -47,9 +40,11 @@
     <docker.image.prefix>docker.eidastest.se:5000</docker.image.prefix>
 
     <!-- Versions on dependencies -->
-    <shibboleth-base-package.version>1.1.3</shibboleth-base-package.version>
-
-    <tomcat.version>8.5.23</tomcat.version>    
+    <shibboleth-base-package.version>1.3</shibboleth-base-package.version>
+    <tomcat.version>8.5.23</tomcat.version>
+    
+    <flexmark.version>0.32.18</flexmark.version>
+    <jsoup.version>1.10.2</jsoup.version>    
   </properties>
 
   <repositories>
@@ -198,6 +193,32 @@
       <artifactId>lombok</artifactId>
       <version>1.16.8</version>
     </dependency>
+    
+    <!-- For Markdown parsing -->
+    <dependency>
+      <groupId>com.vladsch.flexmark</groupId>
+      <artifactId>flexmark</artifactId>
+      <version>${flexmark.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.vladsch.flexmark</groupId>
+      <artifactId>flexmark-util</artifactId>
+      <version>${flexmark.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.vladsch.flexmark</groupId>
+      <artifactId>flexmark-ext-tables</artifactId>
+      <version>${flexmark.version}</version>
+    </dependency>    
+    
+    <!-- For HTML parsing -->
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>${jsoup.version}</version>
+    </dependency>    
 
     <dependency>
       <groupId>org.slf4j</groupId>
