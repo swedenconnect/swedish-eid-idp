@@ -30,6 +30,12 @@
         <value>%{idp.home}/conf/metadata-providers.xml</value>
         <value>%{idp.home}/system/conf/metadata-providers-system.xml</value>
     </util:list>
+    
+    <util:list id="shibboleth.MetadataResolverResources2">
+        <value>%{idp.home}/conf/metadata-providers.xml</value>
+        <value>%{idp.home}/conf/secondary-metadata-provider.xml</value>
+        <value>%{idp.home}/system/conf/metadata-providers-system.xml</value>
+    </util:list>    
 
     <util:list id ="shibboleth.AttributeResolverResources">
         <value>%{idp.home}/conf/attribute-resolver.xml</value>
