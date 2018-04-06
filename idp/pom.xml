@@ -37,6 +37,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
     
+    <!-- Add your own private Docker repo here ... -->
     <docker.image.prefix>docker.eidastest.se:5000</docker.image.prefix>
 
     <!-- Versions on dependencies -->
@@ -320,7 +321,7 @@
             <phase>process-resources</phase>
             <configuration>
               <target>
-                <echo>Copy Shibboleth metadata and credentials</echo>
+                <echo>Copy Shibboleth metadata settings</echo>
                 <copy todir="${project.build.directory}/shibboleth/metadata" overwrite="true">
                   <fileset dir="${project.build.directory}/dependency/shibboleth-base/metadata"/>
                 </copy>
@@ -434,9 +435,10 @@
                 </delete>
                                 
                 <copy file="${project.build.directory}/shibboleth/war/idp.war" tofile="${project.build.directory}/dependency/apache-tomcat-${tomcat.version}/webapps/idp.war"/>
-                <!-- <copy file="${project.basedir}/src/main/scripts/dockerStart.sh" tofile="${project.build.directory}/dependency/apache-tomcat-${tomcat.version}/bin/dockerStart.sh" /> -->
-                <!-- <copy file="${project.basedir}/src/main/scripts/dockerDevStart.sh" tofile="${project.build.directory}/dependency/apache-tomcat-${tomcat.version}/bin/dockerDevStart.sh" /> -->
-                
+                <!--
+                  Copied by the Dockerfile instead ... 
+                  <copy file="${project.basedir}/scripts/dockerStart.sh" tofile="${project.build.directory}/dependency/apache-tomcat-${tomcat.version}/bin/dockerStart.sh" /> 
+                -->                
                 <chmod perm="755" dir="${project.build.directory}/dependency/apache-tomcat-${tomcat.version}/bin" includes="**/*.sh"/>
               </target>
             </configuration>
@@ -446,6 +448,65 @@
           </execution>
         </executions>
       </plugin>
+      
+      <!-- Build the distribution zip -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.0.0</version>
+        <configuration>
+          <descriptors>
+            <descriptor>${basedir}/src/dist/idp-dist.xml</descriptor>
+          </descriptors>
+          <finalName>${project.artifactId}-${project.version}</finalName>
+          <appendAssemblyId>false</appendAssemblyId>
+        </configuration>
+        <executions>
+          <execution>
+            <id>build-distribution</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <!-- Attach the zip file as an artifact of this build to get it installed and deployed -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>${project.build.directory}/${project.artifactId}-${project.version}.zip</file>
+                  <type>zip</type>
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>      
+      
+      <!-- Support for Docker -->
+      <plugin>
+        <groupId>com.spotify</groupId>
+        <artifactId>dockerfile-maven-plugin</artifactId>
+        <version>1.4.0</version>
+        <configuration>
+          <!-- <contextDirectory></contextDirectory> -->
+          <repository>${docker.image.prefix}/${project.artifactId}</repository>
+          <tag>latest</tag>
+        </configuration>
+      </plugin>      
 
     </plugins>
   </build>

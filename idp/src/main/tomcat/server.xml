@@ -16,25 +16,28 @@
   </GlobalNamingResources>
 
   <Service name="Catalina">
-    <Connector port="${tomcat.tls.port}" protocol="HTTP/1.1"
-               server=" "
+  
+    <Connector port="${tomcat.tls.port}" 
+               protocol="HTTP/1.1"
+               scheme="https"
+               SSLEnabled="true"
                connectionTimeout="20000"
                acceptCount="100"
                minSpareThreads="5"
                maxThreads="200"
-               scheme="https"
-               secure="true"
-               SSLEnabled="true"
-               sslProtocol="TLS"
-               keystoreFile="${tomcat.tls.keystore}"
-               keystorePass="${tomcat.tls.password}"
-               keyAlias="${tomcat.tls.alias}"
                allowTrace="false"
                maxHttpHeaderSize="65536"
                xpoweredBy="false"
                maxPostSize="100000"
-               compression="on"/>
-              <!--Added maxPostSize as recommended for Shibboleth  https://wiki.shibboleth.net/confluence/display/IDP30/ApacheTomcat8 -->
+               compression="on">
+      <SSLHostConfig>
+        <Certificate certificateKeystoreType="${tomcat.tls.keystore-type}"
+                     certificateKeyAlias="${tomcat.tls.alias}"
+                     certificateKeystoreFile="${tomcat.tls.keystore}"
+                     certificateKeystorePassword="${tomcat.tls.password}" />
+      </SSLHostConfig>
+    </Connector>
+    <!-- Added maxPostSize as recommended for Shibboleth  https://wiki.shibboleth.net/confluence/display/IDP30/ApacheTomcat8 -->
               
     <!-- Define an AJP 1.3 Connector -->
     <Connector port="${tomcat.ajp.port}" protocol="AJP/1.3" redirectPort="${tomcat.tls.port}" 
