@@ -28,7 +28,7 @@ docker run -d --name swedish-eid-idp --restart=always \
   -e IDP_FEDERATION_METADATA_URL=https://eid.svelegtest.se/metadata/feed \
   -e IDP_FEDERATION_METADATA_VALIDATION_CERT=/etc/swedish-eid-idp/credentials/trust/sveleg-metadata-validation-cert.crt \
   -e IDP_LOG_SETTINGS_FILE=/opt/swedish-eid-idp/shibboleth/conf/logback-devel.xml \
-  -e IDP_LOG_CONSOLE=true \
+  -e IDP_LOG_CONSOLE=false \
   -e IDP_SEALER_PASSWORD=JeiferDRIoOplYy89 \
   -e IDP_PERSISTENT_ID_SALT=jkio98gbnmklop0Pr5WTvCgh \
   -v $BASE_DIR/test-credentials:/etc/swedish-eid-idp/credentials \
