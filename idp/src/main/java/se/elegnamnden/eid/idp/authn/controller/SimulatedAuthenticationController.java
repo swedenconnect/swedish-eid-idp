@@ -105,6 +105,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
         SimulatedAuthenticationResult simResult = SimulatedAuthenticationResult.builder()
             .authenticationKey(key)
             .selectedUser(autoAuthnCookie.getPersonalIdentityNumber())
+            .signMessageDisplayed(true)
             .build();
         return this.processAuthentication(httpRequest, httpResponse, null, simResult);
       }
@@ -233,7 +234,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
           context, attributes, AttributeConstants.ATTRIBUTE_NAME_PERSONAL_IDENTITY_NUMBER, authnContextClassRef);
         attributes.add(AttributeConstants.ATTRIBUTE_TEMPLATE_SAD.createBuilder().value(sad).build());
       }
-
+      
       this.success(httpRequest, httpResponse, user.getPersonalIdentityNumber(), attributes, authnContextClassRef, null, null);
       return null;
     }
