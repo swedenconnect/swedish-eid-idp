@@ -6,7 +6,7 @@
     <variable name="idp.loglevel.opensaml" value="INFO" />
     <variable name="idp.loglevel.props" value="INFO" />
     
-    <variable name="idp.loglevel.eln" value="INFO" />
+    <variable name="idp.loglevel.eln" value="DEBUG" />
     
     <!-- 
       It is also possible to add loggers and even appenders in this override file.
