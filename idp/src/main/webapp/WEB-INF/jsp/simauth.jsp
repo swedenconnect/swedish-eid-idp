@@ -31,10 +31,12 @@
     <c:choose>
       <c:when test="${not empty signature and signature.booleanValue() == true}">
         <c:set var="headingMessageCode" value="sweid.ui.signRequest" />
+        <c:set var="okButtonMessageCode" value="sweid.ui.signBtn" />
         <c:set var="selectUserOptionMessageCode" value="sweid.ui.sign.select-user-option-text" />        
       </c:when>
       <c:otherwise>
         <c:set var="headingMessageCode" value="sweid.ui.loginRequest" />
+        <c:set var="okButtonMessageCode" value="sweid.ui.loginBtn" />
         <c:set var="selectUserOptionMessageCode" value="sweid.ui.auth.select-user-option-text" />
       </c:otherwise>
     </c:choose>
@@ -168,7 +170,7 @@
                  
                 <button type="submit" class="btn btn-danger" name="action" value="cancel"><spring:message code='sweid.ui.cancelBtn' /></button>
                 &nbsp;&nbsp;&nbsp;&nbsp;
-                <button type="submit" class="btn btn-primary" name="action" value="ok"><spring:message code='sweid.ui.loginBtn' /></button>
+                <button type="submit" class="btn btn-primary" name="action" value="ok"><spring:message code="${okButtonMessageCode}" /></button>
                 
               </form:form>
             </div>
