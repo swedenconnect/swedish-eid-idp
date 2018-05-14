@@ -1,17 +1,14 @@
-<%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@taglib prefix ="form" uri ="http://www.springframework.org/tags/form"%>
+<%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html>
 
 <html>
   <head>
-    <title><spring:message code="sweid.ui.title" /></title>
-    
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Swedish eID Reference IdP">
 
     <meta http-equiv='pragma' content='no-cache'/>
@@ -20,165 +17,210 @@
 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>    
     
-    <c:set var="contextPath" value="${pageContext.request.contextPath}" />
-    
-    <link rel="stylesheet" type="text/css" href="<c:url value='/bootstrap-3.3.4-dist/css/bootstrap.min.css' />" />
-    <link rel="stylesheet" type="text/css" href="<c:url value='/css/authbsstyle.css' />" />
+    <link rel="stylesheet" type="text/css" href="<c:url value='/css/bootstrap-4.1.0.min.css' />" >
+    <link rel="stylesheet" type="text/css" href="<c:url value='/css/open-sans-fonts.css' />" >
+    <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,400i,700" rel="stylesheet"> -->
+    <link rel="stylesheet" type="text/css" href="<c:url value='/css/refmain.css' />" >    
+        
+    <title><spring:message code="sweid.ui.title" /></title>
     
   </head>
   <body>
   
     <c:choose>
-      <c:when test="${not empty signature and signature.booleanValue() == true}">
-        <c:set var="headingMessageCode" value="sweid.ui.signRequest" />
-        <c:set var="okButtonMessageCode" value="sweid.ui.signBtn" />
-        <c:set var="selectUserOptionMessageCode" value="sweid.ui.sign.select-user-option-text" />        
+      <c:when test="${simulatedAuthentication.signature == true}">
+        <c:choose>
+          <c:when test="${not empty simulatedAuthentication.signMessage}">
+            <c:set var="infoTextCode" value="sweid.ui.sp-info-text.sign" />
+          </c:when>
+          <c:otherwise>
+            <c:set var="infoTextCode" value="sweid.ui.sp-info-text.sign-notext" />
+          </c:otherwise>
+        </c:choose>
+        <c:set var="okButtonMessageCode" value="sweid.ui.button.sign" />        
+        <c:set var="selectUserOptionMessageCode" value="sweid.ui.sign.select-user-option-text" />
+        <c:set var="loaInfoTextCode" value="sweid.ui.sign.authn-context-class.info" />
+        <c:set var="loaSelectTextCode" value="sweid.ui.sign.authn-context-class.label" />
       </c:when>
       <c:otherwise>
-        <c:set var="headingMessageCode" value="sweid.ui.loginRequest" />
-        <c:set var="okButtonMessageCode" value="sweid.ui.loginBtn" />
+        <c:set var="infoTextCode" value="sweid.ui.sp-info-text.auth" />
+        <c:set var="okButtonMessageCode" value="sweid.ui.button.login" />
         <c:set var="selectUserOptionMessageCode" value="sweid.ui.auth.select-user-option-text" />
+        <c:set var="loaInfoTextCode" value="sweid.ui.auth.authn-context-class.info" />
+        <c:set var="loaSelectTextCode" value="sweid.ui.auth.authn-context-class.label" />
       </c:otherwise>
-    </c:choose>
-  
-    <div style="padding: 20px">
-      <div id="mainContainer" class="container">
-      
-        <table style="height: auto; width: 100%;margin-top: 10px;">
-          <tbody>
-            <tr>
-              <td><img height="70" src="${contextPath}/images/idpLogo.png"/></td>
-              <td style="padding-left: 30px;vertical-align: bottom">
-                <h2><spring:message code="sweid.ui.title" /></h2>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-        
-        <br/>
-
-        <div class="panel-group">
-          <div class="panel panel-primary">
-            <div class="panel-heading" id="requesterHeading">
-              <spring:message code="${headingMessageCode}" />
-            </div>
-            <div class="panel-body" id="spinfo" style="min-height: 160px">
-              <table class="sptable">
-                <tbody>
-                  <c:if test="${not empty spInfo.defaultLogoUrl}">
-                    <tr>
-                      <td>
-                        <img src="<c:out value="${spInfo.defaultLogoUrl}" />" />
-                      </td>                    
-                    </tr>
-                  </c:if>
-                  <c:choose>
-                    <c:when test="${not empty spInfo.displayName}">
-                      <tr>
-                        <td style="padding-top: 10px;">
-                          <c:out value="${spInfo.displayName}" />
-                        </td>
-                      </tr>
-                      <c:if test="${not empty spInfo.description}">
-                        <tr>
-                          <td style="color: rgb(153, 153, 153); padding-top: 5px;">
-                            <c:out value="${spInfo.description}" />
-                          </td>
-                        </tr>
-                      </c:if>
-                    </c:when>
-                    <c:otherwise>
-                      <tr>
-                        <td style="padding-top: 10px;">
-                          <spring:message code="sweid.ui.sp.default-sp-name" />
-                        </td>
-                      </tr>
-                      <tr>
-                        <td style="color: rgb(153, 153, 153); padding-top: 5px;">
-                          <spring:message code="sweid.ui.sp.default-sp-desc" />
-                        </td>
-                      </tr>                                            
-                    </c:otherwise>
-                  </c:choose>
-                                                  
-                </tbody>
-              </table>
-            </div>
-          </div>
-          
-          <c:if test="${not empty signMessage}">
-            <div id="sigMessPanel" class="panel panel-info">
-              <div class="panel-heading"><spring:message code="sweid.ui.signMessageTitle" /></div>
-              <div id="SignMessageBody" class="panel-body" style="height: 160px;overflow: auto">
-                ${signMessage.html}
-              </div>            
-            </div>
-          </c:if>  
-          
-          <div class="panel-default">
-            <div class="panel-body">
-              <spring:message code='sweid.ui.auth.select-user-option-text' var="selectUserOptionText" />
-              
-              <form:form modelAttribute="authenticationResult" action="/idp/extauth/simulatedAuth" method="POST" class="form-horizontal" role="form">              
-                <div class="form-group">
-                  <form:select path="selectedUser" class="form-control">
-                    <form:option value="NONE" label="${selectUserOptionText}" />
-                    <c:forEach items="${staticUsers}" var="user" varStatus="user_s">
-                      <c:choose>
-                        <c:when test="${not empty preSelectedUser and preSelectedUser.personalIdentityNumber eq user.personalIdentityNumber}">
-                          <option value="${user.personalIdentityNumber}" selected>${user.uiDisplayName}</option>
-                        </c:when>
-                        <c:otherwise>
-                          <option value="${user.personalIdentityNumber}">${user.uiDisplayName}</option>
-                        </c:otherwise>
-                      </c:choose>                      
-                    </c:forEach>
-                  </form:select>
-                </div>
-                <br />
-                <div class="form-group">
-
-                  <c:choose>
-                    <c:when test="${fn:length(authnContextUris) eq 1}">
-                      <form:hidden path="selectedAuthnContextUri" value="${authnContextUris[0]}" />
-                    </c:when>
-                    <c:otherwise>
-                      Tillitsnivå:
-                      <br />
-                      <form:select path="selectedAuthnContextUri" class="form-control">
-                        <c:forEach items="${authnContextUris}" var="uri">
-                          <form:option value="${uri}">${uri}</form:option>
-                        </c:forEach>
-                      </form:select>
-                      <br />                      
-                    </c:otherwise>                    
-                  </c:choose>                  
-                </div>
-                
-                <form:errors path="*" cssClass="form-group alert alert-danger" element="div" />
-                
-                <form:hidden path="authenticationKey" value="${authenticationKey}" />
-                
-                <c:choose>
-                  <c:when test="${not empty signMessage}">
-                    <form:hidden path="signMessageDisplayed" value="true" />
-                  </c:when>
-                  <c:otherwise>
-                    <form:hidden path="signMessageDisplayed" value="false" />
-                  </c:otherwise>
-                </c:choose>                
-                 
-                <button type="submit" class="btn btn-danger" name="action" value="cancel"><spring:message code='sweid.ui.cancelBtn' /></button>
-                &nbsp;&nbsp;&nbsp;&nbsp;
-                <button type="submit" class="btn btn-primary" name="action" value="ok"><spring:message code="${okButtonMessageCode}" /></button>
-                
-              </form:form>
-            </div>
-          </div>
+    </c:choose>    
+    
+    <!-- Logotypes -->
+    <div class="container-fluid header">
+      <div class="container">        
+        <div class="row">
+          <c:choose>
+            <c:when test="${not empty simulatedAuthentication.spInfo.defaultLogoUrl}">
+              <div class="col-6 top-logo">
+                <img class="top-logo-dim float-left" src="<c:out value="${simulatedAuthentication.spInfo.defaultLogoUrl}" />" alt="Logo" />
+              </div>
+              <div class="col-6 top-logo">
+                <img class="top-logo-dim float-right" src="<c:url value='/images/idp-logo.svg' />" />
+              </div>
+            </c:when>
+            <c:otherwise>
+              <div class="col-sm-12 top-logo">
+                <img class="top-logo-dim float-left" src="<c:url value='/images/idp-logo.svg' />" />
+              </div>
+            </c:otherwise>
+          </c:choose>
         </div>
       </div>
-    </div>
-    <div id="testuserDiv"></div>
-    </body>
+    </div> <!-- /.header -->
+    
+    <div class="container main">
+
+      <!-- Language -->
+      <form action="/idp/extauth/startAuth" method="POST">              
+        <div class="row" id="languageDiv">
+          <div class="col-sm-12">
+            <c:choose>
+              <c:when test="${not empty uiLanguages}">
+                <c:forEach items="${uiLanguages}" var="uiLang">
+                  <button class="lang float-right btn btn-link" type="submit" 
+                          value="${uiLang.languageTag}" name="language" id="language_${uiLang.languageTag}">${uiLang.text}</button>
+                </c:forEach>
+              </c:when>
+              <c:otherwise>
+                <span class="lang float-right">&nbsp;</span>
+              </c:otherwise>
+            </c:choose>
+          </div>
+        </div> <!-- /#languageDiv -->
+      </form>
+      
+      <form:form modelAttribute="simulatedAuthentication" action="/idp/extauth/simulatedAuth" method="POST">
+      
+        <div class="row" id="authnDiv">
+
+          <div class="col-sm-12 content-container">
+        
+            <div class="row" id="spInfoText">
+              <div class="col-sm-12 content-heading">
+                <h2><spring:message code="sweid.ui.title" /></h2>
+              </div>
+              <div class="col-sm-12">
+                <p class="info">
+                  <spring:message code="sweid.ui.default-sp-name" var="defaultName" />
+                  <c:set var="displayName" value="${not empty simulatedAuthentication.spInfo.displayName ? simulatedAuthentication.spInfo.displayName : defaultName}" />
+                  <spring:message code="${infoTextCode}" arguments="${displayName}" />              
+                </p>
+                <c:if test="${empty simulatedAuthentication.possibleAuthnContextUris}">
+                  <p class="info">
+                    <spring:message code="${loaInfoTextCode}" arguments="${simulatedAuthentication.selectedAuthnContextUri}" />
+                  </p>
+                </c:if>
+              </div>
+            </div> <!-- /#spInfoText -->
+          
+            <hr class="full-width" />
+          
+            <c:if test="${not empty simulatedAuthentication.signMessage}">
+              <!-- Sign message -->
+              <div class="full-width sign-message">
+                <div class="row no-gutters">
+                  <div class="col">
+                    <c:out value="${simulatedAuthentication.signMessage.html}" escapeXml="false" />
+                  </div>
+                </div>
+              </div> <!-- /.sign-message -->
+            </c:if>
+                              
+            <form:hidden path="signMessageDisplayed" value="${not empty simulatedAuthentication.signMessage ? 'true' : 'false'}" />            
+            <form:hidden path="authenticationKey" value="${simulatedAuthentication.authenticationKey}" />
+          
+            <div class="row section" id="selectSimulatedUserDiv">
+              <div class="col-sm-12">
+                <form:select path="selectedUser" class="form-control" id="selectSimulatedUser">
+                  <spring:message code="${selectUserOptionMessageCode}" var="selectUserText" />
+                  <form:option value="NONE" label="${selectUserText}" /> 
+                  <c:forEach items="${staticUsers}" var="user" varStatus="user_s">
+                    <form:option value="${user.personalIdentityNumber}">${user.uiDisplayName}</form:option>
+                  </c:forEach>
+                </form:select>
+              </div>            
+            </div> <!-- /#selectSimulatedUserDiv -->
+            
+            <c:if test="${not empty simulatedAuthentication.possibleAuthnContextUris}">
+              <div class="row section" id="selectLoaDiv">
+                <div class="col-sm-12">
+                  <div class="form-group">
+                    <label for="selectLoa"><spring:message code="${loaSelectTextCode}" />:</label>
+                    <form:select path="selectedAuthnContextUri" class="form-control" id="selectLoa">
+                      <c:forEach items="${simulatedAuthentication.possibleAuthnContextUris}" var="loa" varStatus="loa_s">
+                        <form:option value="${loa}">${loa}</form:option>
+                      </c:forEach>
+                    </form:select>
+                  </div>
+                </div>            
+              </div> <!-- /#selectLoaDiv -->
+            </c:if>
+            
+            <div class="row section" id="submitDiv">
+              <div class="col-12">
+                <div class="box">
+                  <button id="submitButton" type="submit" class="btn btn-primary" name="action" value="ok">
+                    <spring:message code="${okButtonMessageCode}" />
+                  </button>
+                </div>
+              </div>
+            </div> <!-- /#submitDiv -->
+            
+            <form:errors path="*" cssClass="form-group alert alert-danger" element="div" />
+            
+            <div class="drop-down-container">
+
+              <div class="col-sm-12 drop-down">
+                <p><spring:message code='sweid.ui.help.1.title' /></p>
+                <div class="drop-down-info"><spring:message code='sweid.ui.help.1.text' /></div>
+              </div>
+              <div class="col-sm-12 drop-down">
+                <p><spring:message code='sweid.ui.help.2.title' /></p>
+                <div class="drop-down-info"><spring:message code='sweid.ui.help.2.text' /></div>
+              </div>
+              <div class="col-sm-12 drop-down">
+                <p><spring:message code='sweid.ui.help.3.title' /></p>
+                <div class="drop-down-info"><spring:message code='sweid.ui.help.3.text' /></div>
+              </div>
+              
+            </div> <!-- /.drop-down-container -->
+        
+          </div> <!-- ./col-sm-12 content-container -->
+          
+          <div class="col-sm-12 return">
+            <button class="btn btn-link" type="submit" name="action" value="cancel">
+              <spring:message code="sweid.ui.button.cancel-return" />
+            </button>
+          </div>          
+        
+          <div class="col-sm-12 copyright">
+            <div class="row">
+              <div class="col-6">
+                <img class="float-left" src="<c:url value='/images/idp-logo.svg' />" height="40" /> 
+              </div>
+              <div class="col-6">
+                <p class="float-right"><spring:message code="sweid.ui.copyright" /></p>
+              </div>
+            </div>
+          </div>        
+      
+        </div> <!-- /#authnDiv -->
+    
+      </form:form>
+    
+    </div> <!-- /.container main -->    
+
+    <script src="<c:url value='/js/jquery-3.3.1.slim.min.js' />" type="text/javascript"></script>
+    <script src="<c:url value='/js/popper-1.14.0.min.js' />" type="text/javascript"></script>
+    <script src="<c:url value='/js/bootstrap-4.1.0.min.js' />" type="text/javascript"></script>
+    <script src="<c:url value='/js/refmain.js' />" type="text/javascript"></script>
+
+  </body>
     
 </html>

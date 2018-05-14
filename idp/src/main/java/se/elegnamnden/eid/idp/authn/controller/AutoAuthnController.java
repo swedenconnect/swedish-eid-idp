@@ -130,6 +130,9 @@ public class AutoAuthnController implements InitializingBean {
   @RequestMapping(value = "/autoauth/save", method = RequestMethod.POST)
   @ResponseStatus(value = HttpStatus.OK)
   public void save(HttpServletRequest request, HttpServletResponse response, @RequestParam(value = "selectedUser") String selectedUser) {
+    if ("NONE".equals(selectedUser)) {
+      return;
+    }
     AutoAuthnCookie autoAuthnCookie = new AutoAuthnCookie();
     autoAuthnCookie.setPersonalIdentityNumber(selectedUser);
     Cookie cookie = new Cookie(AutoAuthnCookie.AUTO_AUTHN_COOKIE_NAME, autoAuthnCookie.getCookieValue());

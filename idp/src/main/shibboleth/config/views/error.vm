@@ -1,0 +1,115 @@
+##
+## Velocity Template for error end-state
+##
+## Velocity context will contain the following properties
+## flowRequestContext - the Spring Web Flow RequestContext
+## profileRequestContext - root of context tree
+## encoder - HTMLEncoder class
+## request - HttpServletRequest
+## response - HttpServletResponse
+## environment - Spring Environment object for property resolution
+## custom - arbitrary object injected by deployer
+##
+#set ($title = $springMacroRequestContext.getMessage("sweid.ui.title", "Sweden Connect IdP"))
+#set ($defaultTitleSuffix = $springMacroRequestContext.getMessage("idp.title.suffix", "Error"))
+##
+#if ($flowRequestContext)
+	## This handles flow events, the most common case.
+    #set ($eventId = $flowRequestContext.getCurrentEvent().getId())
+    #set ($eventKey = $springMacroRequestContext.getMessage("$eventId", "error"))
+    #set ($titleSuffix = $springMacroRequestContext.getMessage("${eventKey}.title", "$defaultTitleSuffix"))
+    #set ($message = $springMacroRequestContext.getMessage("${eventKey}.message", "$defaultTitleSuffix: $eventId"))
+    #if ($eventId == "AccessDenied" or $eventId == "ContextCheckDenied")
+        $response.setStatus(403)
+    #elseif ($eventId == "AttributeReleaseRejected" || $eventId == "TermsRejected")
+        $response.setStatus(200)
+    #elseif ($eventKey == "unexpected" || $eventKey == "runtime-error" || $eventKey == "error")
+        $response.setStatus(500)
+    #else
+        $response.setStatus(400)
+    #end
+#elseif ($exception)
+	## This handles exceptions that reach the Spring-MVC exception handler.
+    #set ($eventId = $exception.getClass().getSimpleName())
+    #set ($eventKey = $springMacroRequestContext.getMessage("$eventId", "error"))
+    #set ($titleSuffix = $springMacroRequestContext.getMessage("${eventKey}.title", "$defaultTitleSuffix"))
+    #set ($message = $springMacroRequestContext.getMessage("${eventKey}.message", "$defaultTitleSuffix: $eventId"))
+#else
+	## This is a catch-all that theoretically shouldn't happen?
+    #set ($titleSuffix = $defaultTitleSuffix)
+    #set ($message = $springMacroRequestContext.getMessage("idp.message", "An unidentified error occurred."))
+#end
+##
+<!DOCTYPE html>
+<html>
+    <head>
+    
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <meta name="description" content="Swedish eID Reference IdP">
+      <meta http-equiv='pragma' content='no-cache'/>
+      <meta http-equiv='cache-control' content='no-cache, no-store, must-revalidate'/>
+      <meta http-equiv="Expires" content="-1"/>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+      
+      <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/bootstrap-4.1.0.min.css" >
+      <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/open-sans-fonts.css" >
+      <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/refmain.css" >    
+                    
+      <title>$title - $titleSuffix</title>
+    </head>
+  	
+    <body>
+    
+      <div class="container-fluid header">
+        <div class="container"> 
+          <div class="row no-gutter">
+            <div class="top-logo">
+              <img class="top-logo-dim" src="$request.getContextPath()/images/idp-logo.svg" />
+            </div>
+          </div>
+        </div>
+      </div>    
+      
+      <div class="container main">
+      
+        <div class="row" style="padding-top: 29px;">
+          <div class="col-sm-12 content-container"> 
+
+            <div class="error">
+              <div class="row">
+                <div class="col-12">
+                  <h2>$titleSuffix</h2>
+                </div>
+                <div class="col-12">
+                  #evaluate($message)
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="col-sm-12 copyright">
+            <div class="row">
+              <div class="col-6">
+                <img class="float-left" src="$request.getContextPath()/images/idp-logo.svg" height="40" /> 
+              </div>
+              <div class="col-6">
+                <p class="float-right">#springMessageText("sweid.ui.copyright", "")</p>
+              </div>
+            </div>
+          </div>
+
+        </div>  <!-- /.row -->  
+      </div> <!-- /.container .main -->
+      
+      <script src="$request.getContextPath()/js/jquery-3.3.1.slim.min.js" type="text/javascript"></script>
+      <script src="$request.getContextPath()/js/popper-1.14.0.min.js" type="text/javascript"></script>
+      <script src="$request.getContextPath()/js/bootstrap-4.1.0.min.js" type="text/javascript"></script>
+      
+      <script src="$request.getContextPath()/js/refmain.js" type="text/javascript"></script>      
+      
+    </body>
+         
+</html>
