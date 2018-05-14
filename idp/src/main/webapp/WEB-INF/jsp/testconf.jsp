@@ -1,93 +1,115 @@
-<%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@taglib prefix="spring" uri="http://www.springframework.org/tags"%>
-<%@taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
+<%@page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <!DOCTYPE html>
 
 <html>
   <head>
-  <title><spring:message code="sweid.ui.title" /></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Swedish eID Reference IdP">
 
-  <c:set var="contextPath" value="${pageContext.request.contextPath}" />
+    <meta http-equiv='pragma' content='no-cache'/>
+    <meta http-equiv='cache-control' content='no-cache, no-store, must-revalidate'/>
+    <meta http-equiv="Expires" content="-1"/>
 
-  <script type="text/javascript" src="${contextPath}/js/jquery-1.11.3.min.js"></script>
-  <script type="text/javascript" src="${contextPath}/js/jquery_cookie.js"></script>
-  <script type="text/javascript" src="${contextPath}/js/testconf.js"></script>
-
-  <link rel="stylesheet" type="text/css" href="${contextPath}/css/authstyle.css" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>    
+    
+    <link rel="stylesheet" type="text/css" href="<c:url value='/css/bootstrap-4.1.0.min.css' />" >
+    <link rel="stylesheet" type="text/css" href="<c:url value='/css/open-sans-fonts.css' />" >
+    <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,400i,700" rel="stylesheet"> -->
+    <link rel="stylesheet" type="text/css" href="<c:url value='/css/refmain.css' />" >    
 
   </head>
   <body>
-
-    <img class="logo" src="${contextPath}/images/idpLogo.png" />
-    <div class="mainIdpFrame">
-      <h1><spring:message code="sweid.ui.title" /></h1>
-      <h2><spring:message code="sweid.ui.autoAuthSubtitle" /></h2>
+  
+    <!-- Logotypes -->
+    <div class="container-fluid header">
+      <div class="container">        
+        <div class="row">
+          <div class="col-sm-12 top-logo">
+            <img class="top-logo-dim float-left" src="<c:url value='/images/idp-logo.svg' />" />
+          </div>
+        </div>
+      </div>
+    </div> <!-- /.header -->
     
-      <p><spring:message code="sweid.ui.autoAuthSelectUser" /><p>
+    <div class="container main">
     
-      <table>
-        <tr>
-          <td>
-            <div class="mainAuthFrame">
-              <form action="/idp/extauth/autoauth/action" method="POST">
-                <div id="testuserDiv">
-                  <table class="demoUserTableClass">
-                    <c:forEach var="user" items="${staticUsers}">
-                      <tr class="demouserrow">                      
-                        <td>
-                          <input type="radio" name="selectedUser" value="${user.personalIdentityNumber}" <c:out value="${selectedUserId == user.personalIdentityNumber ? 'checked' : ''}" />  />
-                        </td>
-                        <td><c:out value="${user.displayName}" /></td>
-                        <td><c:out value="${user.personalIdentityNumber}" /></td>
-                      </tr>
-                    </c:forEach>
-                  </table>
-                </div>
-                <br />
-
-                <button type="submit" id="saveButton" name="action" value="save"><spring:message code='sweid.ui.autoAuthSelectBtn' /></button>
-                <button type="submit" id="eraseButton" name="action" value="clear"><spring:message code='sweid.ui.autoAuthCancelBtn' /></button>
-              </form>
-            </div>
-          </td>
-          <td valign="top">
-            <div id="currentSetting">
-            
-              <c:choose>
-                <c:when test="${not empty selectedUserId}">
-                  <spring:message code="sweid.ui.autoauth-active-yes" var="activeFlagText" />
-                  <c:set var="selectedUserText" value="${selectedUserId}" />
-                </c:when>
-                <c:otherwise>
-                  <spring:message code="sweid.ui.autoauth-active-no" var="activeFlagText" />
-                  <spring:message code="sweid.ui.not-selected" var="selectedUserText" />
-                </c:otherwise>
-              </c:choose>
-            
-              <table>
-                <tr>
-                  <td><i><spring:message code='sweid.ui.autoauth-active-title' />:</i></td>
-                  <td><b><span id="autoAuthActiveFlag">${activeFlagText}</span></b></td>
-                </tr>
-                <tr>
-                  <td><i><spring:message code='sweid.ui.selected-user' />:</i></td>
-                  <td><b><span id="selectedUserId">${selectedUserText}</span></b></td>
-                </tr>
-              </table>
-            
-            </div>
-          </td>
+      <div class="row"><div class="col-sm-12">            
+        <span class="lang float-right">&nbsp;</span>
+      </div></div>            
+    
+      <div class="row" id="autoAuthnDiv">
+    
+        <form action="/idp/extauth/autoauth/action" method="POST">
+        
+          <div class="col-sm-12 content-container">
           
-        </tr>
-               
-      </table>
+            <div class="row" id="infoText">
+              <div class="col-sm-12 content-heading">
+                <h2><spring:message code="sweid.ui.title" /></h2>
+                <h3><spring:message code="sweid.ui.auto-authn.subtitle" /></h3>
+              </div>              
+              <div class="col-sm-12">                
+                <p class="info">
+                  <spring:message code="sweid.ui.auto-authn.select-user" />              
+                </p>
+              </div>
+            </div> <!-- /#infoText -->
+                        
+            <hr class="full-width" />
+            
+            <div class="row section" id="selectAutoUserDiv">
+              <div class="col-sm-12">
+                <select class="form-control" id="selectSimulatedUser" name="selectedUser">
+                  <option value="NONE"><spring:message code="sweid.ui.auto-authn.select-label" /></option>
+                  <c:forEach items="${staticUsers}" var="user" varStatus="user_s">
+                    <option value="${user.personalIdentityNumber}" <c:out value="${selectedUserId == user.personalIdentityNumber ? 'selected' : ''}" />>
+                      ${user.uiDisplayName}
+                    </option>
+                  </c:forEach>
+                </select>
+              </div>            
+            </div> <!-- /#selectAutoUserDiv -->
+            
+            <div class="row section" id="submitDiv">
+              <div class="col-12">
+                <div class="box">
+                  <button type="submit" id="saveButton" class="btn btn-primary" name="action" value="save">
+                    <spring:message code='sweid.ui.auto-authn.button.select' />
+                  </button>
+                  <button type="submit" id="eraseButton" class="btn btn-primary" name="action" value="clear">
+                    <spring:message code='sweid.ui.auto-authn.button.clear' />
+                  </button>                  
+                </div>
+              </div>
+            </div> <!-- /#submitDiv -->            
+          
+          </div> <!-- /.content-container -->
       
-    </div>
+        </form>
+        
+        <div class="col-sm-12 copyright">
+          <div class="row">
+            <div class="col-6">
+              <img class="float-left" src="<c:url value='/images/idp-logo.svg' />" height="40" /> 
+            </div>
+            <div class="col-6">
+              <p class="float-right"><spring:message code="sweid.ui.copyright" /></p>
+            </div>
+          </div>
+        </div>        
+      
+      </div> <!-- /.autoAuthnDiv -->
     
-    <div id="notSelectedText" style="display: none;"><spring:message code='sweid.ui.not-selected' /></div>
-    <div id="activeYesText" style="display: none;"><spring:message code='sweid.ui.autoauth-active-yes' /></div>
-    <div id="activeNoText" style="display: none;"><spring:message code='sweid.ui.autoauth-active-no' /></div>
+    </div> <!-- /.container main -->
     
+    <script src="<c:url value='/js/jquery-3.3.1.slim.min.js' />" type="text/javascript"></script>
+    <script src="<c:url value='/js/popper-1.14.0.min.js' />" type="text/javascript"></script>
+    <script src="<c:url value='/js/bootstrap-4.1.0.min.js' />" type="text/javascript"></script>
+    <script src="<c:url value='/js/testconf.js' />" type="text/javascript"></script>    
   </body>
 </html>

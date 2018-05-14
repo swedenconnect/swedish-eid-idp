@@ -15,14 +15,13 @@
        
   <import resource="test-users.xml" />
   
-  <!-- 
-  <bean id="sweid.AuthnContextService" class="se.litsec.shibboleth.idp.authn.service.impl.AuthnContextServiceImpl" scope="singleton"
-    p:flowName="authn/External"
-    p:authnContextweightMap-ref="shibboleth.AuthenticationPrincipalWeightMap" />  
-  
-  <bean id="sweid.SignMessageService" class="se.litsec.shibboleth.idp.authn.service.impl.SignatureMessageServiceImpl" scope="singleton"
-    p:authnContextService-ref="eidas.EidasAuthnContextService"
-    p:signMessageDecrypter-ref="sweid.SignMessageDecryptionService" />
-   -->    
+  <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver"
+    p:cookieName="refidp-ui-lang"
+    p:cookieDomain="%{idp.cookie.domain:}"
+    p:cookieHttpOnly="%{idp.cookie.httpOnly:true}"
+    p:cookieSecure="%{idp.cookie.secure:false}"
+    p:cookiePath="%{idp.cookie.path:}"
+    p:cookieMaxAge="%{idp.cookie.maxAge:31536000}"
+    p:defaultLocale="sv" />
     
 </beans>

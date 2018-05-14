@@ -14,7 +14,13 @@
        default-init-method="initialize"
        default-destroy-method="destroy">
        
-  <bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver" p:defaultLocale="sv" />       
+  <util:list id="sweid.uiLanguages">
+    <bean class="se.elegnamnden.eid.idp.authn.model.UiLanguage" p:languageTag="sv" p:text="Svenska" />
+    <bean class="se.elegnamnden.eid.idp.authn.model.UiLanguage" p:languageTag="en" p:text="English" />
+  </util:list>
+  
+  <bean id="sweid.UiLanguageHandler" class="se.elegnamnden.eid.idp.authn.controller.UiLanguageHandler" scope="singleton"
+    p:languages-ref="sweid.uiLanguages" />
 
   <!--
     Abstract base controller for external authentication controllers.
@@ -31,7 +37,8 @@
   <bean id="sweid.SimulatedAuthenticationController" class="se.elegnamnden.eid.idp.authn.controller.SimulatedAuthenticationController"
     parent="sweid.AbstractExternalAuthenticationController"
     p:authenticatorName="%{idp.authn.external-authn.name}" 
-    p:staticUsers-ref="sweid.TestUserList">
+    p:staticUsers-ref="sweid.TestUserList"
+    p:uiLanguageHandler-ref="sweid.UiLanguageHandler">
     
     <property name="fallbackLanguages">
       <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
@@ -40,6 +47,7 @@
   </bean>
          
   <bean id="sweid.AutoAuthnController" class="se.elegnamnden.eid.idp.authn.controller.AutoAuthnController"
+    p:controllerPath="/extauth"
     p:staticUsers-ref="sweid.TestUserList" /> 
         
 </beans>

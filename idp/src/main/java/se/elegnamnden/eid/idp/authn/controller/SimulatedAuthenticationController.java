@@ -42,7 +42,7 @@ import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.ExternalAuthenticationException;
 import se.elegnamnden.eid.idp.authn.model.SignMessageModel;
 import se.elegnamnden.eid.idp.authn.model.SignMessageModel.DisplayType;
-import se.elegnamnden.eid.idp.authn.model.SimulatedAuthenticationResult;
+import se.elegnamnden.eid.idp.authn.model.SimulatedAuthentication;
 import se.elegnamnden.eid.idp.authn.model.SimulatedUser;
 import se.litsec.shibboleth.idp.authn.ExternalAutenticationErrorCodeException;
 import se.litsec.shibboleth.idp.authn.context.SignMessageContext;
@@ -60,6 +60,12 @@ import se.litsec.swedisheid.opensaml.saml2.signservice.dss.SignMessageMimeTypeEn
 @Controller
 public class SimulatedAuthenticationController extends AbstractExternalAuthenticationController implements InitializingBean {
 
+  /** Symbolic name for the action parameter value of "cancel". */
+  public static final String ACTION_CANCEL = "cancel";
+
+  /** Symbolic name for OK. */
+  public static final String ACTION_OK = "ok";
+
   /** The name of the selected-user cookie. */
   public static final String SELECTED_USER_COOKIE_NAME = "selectedUser";
 
@@ -75,6 +81,9 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
   /** Fallback languages to be used in the currently selected language can not be used. */
   private List<String> fallbackLanguages;
 
+  /** Helper bean for UI language select. */
+  private UiLanguageHandler uiLanguageHandler;
+
   /** {@inheritDoc} */
   @Override
   public String getAuthenticatorName() {
@@ -89,59 +98,109 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
       String key,
       ProfileRequestContext<?, ?> profileRequestContext) throws ExternalAuthenticationException, IOException {
 
-    try {
+    // Is there an "auto authentication" cookie there?
+    // This cookie enables automatic testing scenarios where no UI is displayed.
+    //
+    AutoAuthnCookie autoAuthnCookie = Arrays.asList(httpRequest.getCookies())
+      .stream()
+      .filter(c -> c.getName().equals(AutoAuthnCookie.AUTO_AUTHN_COOKIE_NAME))
+      .map(Cookie::getValue)
+      .map(v -> AutoAuthnCookie.parse(v))
+      .findFirst()
+      .orElse(null);
 
-      // Is there an "auto authentication" cookie there?
-      // This cookie enables automatic testing scenarios where no UI is displayed.
+    if (autoAuthnCookie != null) {
+      SimulatedAuthentication simResult = SimulatedAuthentication.builder()
+        .authenticationKey(key)
+        .selectedUser(autoAuthnCookie.getPersonalIdentityNumber())
+        .signMessageDisplayed(true)
+        .build();
+
+      return this.processAuthentication(httpRequest, httpResponse, ACTION_OK, simResult);
+    }
+
+    return this.startAuthentication(httpRequest, httpResponse, null);
+  }
+
+  /**
+   * Start controller for the simulated authentication.
+   * 
+   * @param httpRequest
+   *          the HTTP request
+   * @param httpResponse
+   *          the HTTP response
+   * @param language
+   *          the language (optional)
+   * @return a model and view object
+   * @throws ExternalAuthenticationException
+   *           for Shibboleth session errors
+   * @throws IOException
+   *           for IO errors
+   */
+  @RequestMapping(value = "/startAuth", method = RequestMethod.POST)
+  public ModelAndView startAuthentication(
+      HttpServletRequest httpRequest,
+      HttpServletResponse httpResponse,
+      @RequestParam(name = "language", required = false) String language) throws ExternalAuthenticationException, IOException {
+
+    if (language != null) {
+      this.uiLanguageHandler.setUiLanguage(httpRequest, httpResponse, language);
+    }
+
+    final ProfileRequestContext<?, ?> context = this.getProfileRequestContext(httpRequest);
+
+    try {
+      ModelAndView modelAndView = new ModelAndView("simauth");
+      modelAndView.addObject("uiLanguages", this.uiLanguageHandler.getUiLanguages());
+      modelAndView.addObject("staticUsers", this.getStaticUsers());
+
+      SimulatedAuthentication simAuth = new SimulatedAuthentication();
+      simAuth.setAuthenticationKey(this.getExternalAuthenticationKey(httpRequest));
+
+      // Check if we already have a selected user (from previous sessions).
       //
-      AutoAuthnCookie autoAuthnCookie = Arrays.asList(httpRequest.getCookies())
-        .stream()
-        .filter(c -> c.getName().equals(AutoAuthnCookie.AUTO_AUTHN_COOKIE_NAME))
-        .map(Cookie::getValue)
-        .map(v -> AutoAuthnCookie.parse(v))
-        .findFirst()
-        .orElse(null);
-      if (autoAuthnCookie != null) {
-        SimulatedAuthenticationResult simResult = SimulatedAuthenticationResult.builder()
-            .authenticationKey(key)
-            .selectedUser(autoAuthnCookie.getPersonalIdentityNumber())
-            .signMessageDisplayed(true)
-            .build();
-        return this.processAuthentication(httpRequest, httpResponse, null, simResult);
+      SimulatedUser selectedUser = this.getSelectedUser(httpRequest);
+      if (selectedUser != null) {
+        simAuth.setSelectedUser(selectedUser.getPersonalIdentityNumber());
+        simAuth.setSelectedUserFull(selectedUser);
       }
 
-      ModelAndView modelAndView = new ModelAndView("simauth");
-      modelAndView.addObject("authenticationKey", key);
-      modelAndView.addObject("authenticationResult", new SimulatedAuthenticationResult());
+      // Assign the SP info ...
+      //
+      simAuth.setSpInfo(SpInfoHandler.buildSpInfo(this.getPeerMetadata(context), LocaleContextHolder.getLocale().getLanguage(),
+        this.fallbackLanguages));
 
-      modelAndView.addObject("spInfo",
-        SpInfoHandler.buildSpInfo(this.getPeerMetadata(profileRequestContext), LocaleContextHolder.getLocale().getLanguage(),
-          this.fallbackLanguages));
-
+      // Sign message support ...
+      //
       boolean willDisplaySignMessage = false;
 
-      if (this.getSignSupportService().isSignatureServicePeer(profileRequestContext)) {
+      if (this.getSignSupportService().isSignatureServicePeer(context)) {
 
-        modelAndView.addObject("signature", Boolean.TRUE);
-        SignMessageContext signMessageContext = this.getSignSupportService().getSignMessageContext(profileRequestContext);
+        simAuth.setSignature(true);
+
+        SignMessageContext signMessageContext = this.getSignSupportService().getSignMessageContext(context);
         if (signMessageContext != null && signMessageContext.isDoDisplayMessage()) {
           SignMessageModel signMessageModel = new SignMessageModel();
           signMessageModel.setHtml(signMessageContext.getMessageToDisplay());
           signMessageModel.setDisplayType(signMessageContext.getMimeType() == SignMessageMimeTypeEnum.TEXT ? DisplayType.MONOSPACE_TEXT
               : DisplayType.HTML);
-          modelAndView.addObject("signMessage", signMessageModel);
+          simAuth.setSignMessage(signMessageModel);
           willDisplaySignMessage = true;
         }
       }
       else {
-        modelAndView.addObject("signature", Boolean.FALSE);
+        simAuth.setSignature(false);
       }
 
       // Get hold of the possible authentication context URI:s that the user can authenticate under ...
       //
-      List<String> authnContextUris = this.getAuthnContextService().getPossibleAuthnContextClassRefs(
-        profileRequestContext, willDisplaySignMessage);
-      modelAndView.addObject("authnContextUris", authnContextUris);
+      List<String> authnContextUris = this.getAuthnContextService().getPossibleAuthnContextClassRefs(context, willDisplaySignMessage);
+      simAuth.setSelectedAuthnContextUri(authnContextUris.get(0));
+      if (authnContextUris.size() > 1) {
+        simAuth.setPossibleAuthnContextUris(authnContextUris);
+      }
+
+      modelAndView.addObject("simulatedAuthentication", simAuth);
 
       return modelAndView;
     }
@@ -158,6 +217,8 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
    *          the HTTP request
    * @param httpResponse
    *          the HTTP response
+   * @param action
+   *          the result from the action (ok or cancel)
    * @param result
    *          the "authentication result"
    * @return a {@code ModelAndView} if control is to return to the view or {@code null} to terminate the operation
@@ -167,10 +228,10 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
    *           for IO errors
    */
   @RequestMapping(value = "/simulatedAuth", method = RequestMethod.POST)
-  public ModelAndView processAuthentication(HttpServletRequest httpRequest, 
+  public ModelAndView processAuthentication(HttpServletRequest httpRequest,
       HttpServletResponse httpResponse,
       @RequestParam("action") String action,
-      @ModelAttribute("authenticationResult") SimulatedAuthenticationResult result) throws ExternalAuthenticationException, IOException {
+      @ModelAttribute("authenticationResult") SimulatedAuthentication result) throws ExternalAuthenticationException, IOException {
 
     if ("cancel".equals(action)) {
       this.cancel(httpRequest, httpResponse);
@@ -179,7 +240,8 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
 
     if ("NONE".equals(result.getSelectedUser())) {
       logger.debug("Binding errors, returning control to the view");
-      return this.doExternalAuthentication(httpRequest, httpResponse, result.getAuthenticationKey(), this.getProfileRequestContext(httpRequest));
+      return this.doExternalAuthentication(httpRequest, httpResponse, result.getAuthenticationKey(), this.getProfileRequestContext(
+        httpRequest));
     }
 
     if (result.getSelectedUser() == null) {
@@ -206,7 +268,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
     this.saveSelectedUser(user.getPersonalIdentityNumber(), httpResponse);
 
     try {
-      ProfileRequestContext<?, ?> context = this.getProfileRequestContext(httpRequest);
+      final ProfileRequestContext<?, ?> context = this.getProfileRequestContext(httpRequest);
 
       // Which authentication context URI should be included in the assertion?
       //
@@ -234,7 +296,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
           context, attributes, AttributeConstants.ATTRIBUTE_NAME_PERSONAL_IDENTITY_NUMBER, authnContextClassRef);
         attributes.add(AttributeConstants.ATTRIBUTE_TEMPLATE_SAD.createBuilder().value(sad).build());
       }
-      
+
       this.success(httpRequest, httpResponse, user.getPersonalIdentityNumber(), attributes, authnContextClassRef, null, null);
       return null;
     }
@@ -265,7 +327,6 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
    *          the HTTP servlet request
    * @return the user or {@code null} if no cookie is available
    */
-  @ModelAttribute("preSelectedUser")
   private SimulatedUser getSelectedUser(HttpServletRequest request) {
     String id = Arrays.asList(request.getCookies())
       .stream()
@@ -287,15 +348,10 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
 
   /**
    * Returns the list of static users.
-   * <p>
-   * Since this method is annotated with {@code ModelAttribute("staticUsers)} it means that the JSP-views automatically
-   * will get this list of {@link SimulatedUser} objects assigned to the variable "staticUsers".
-   * </p>
    * 
    * @return the static list of simulated users.
    */
-  @ModelAttribute("staticUsers")
-  public List<SimulatedUser> getStaticUsers() {
+  private List<SimulatedUser> getStaticUsers() {
     return this.staticUsers;
   }
 
@@ -329,6 +385,16 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
     this.fallbackLanguages = fallbackLanguages;
   }
 
+  /**
+   * Assigns the helper bean for handling user UI language.
+   * 
+   * @param uiLanguageHandler
+   *          the UI language handler
+   */
+  public void setUiLanguageHandler(UiLanguageHandler uiLanguageHandler) {
+    this.uiLanguageHandler = uiLanguageHandler;
+  }
+
   /** {@inheritDoc} */
   @Override
   public void afterPropertiesSet() throws Exception {
@@ -336,6 +402,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
     Assert.notEmpty(this.staticUsers, "The property 'staticUsers' must be assigned");
     Assert.hasText(this.authenticatorName, "The property 'authenticatorName' must be assigned");
     Assert.notNull(this.fallbackLanguages, "The property 'fallbackLanguages' must be assigned");
+    Assert.notNull(this.uiLanguageHandler, "The property 'uiLanguageHandler' must be assigned");
   }
 
 }

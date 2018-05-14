@@ -15,34 +15,20 @@
  */
 package se.elegnamnden.eid.idp.authn.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 /**
- * Class representing the result passed back from the simulated authentication view to the controller.
+ * Model class for representing a selectable language in the UI.
  * 
  * @author Martin Lindström (martin.lindstrom@litsec.se)
  */
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
-@Builder
-public class SimulatedAuthenticationResult {
-    
-  /** The selected user. */
-  private String selectedUser;
-  
-  /** The selected LoA. */
-  private String selectedAuthnContextUri;
-  
-  /** Was the sign message displayed? */
-  private boolean signMessageDisplayed;
-  
-  /** The current authentication key. */
-  private String authenticationKey;
-  
+public class UiLanguage {
+
+  private String languageTag;
+  private String text;
 }
