@@ -5,7 +5,7 @@
 
   <groupId>se.elegnamnden.eid.idp</groupId>
   <artifactId>swedish-eid-idp</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <packaging>jar</packaging>
 
   <name>Swedish eID :: Reference IdP</name>
@@ -122,6 +122,17 @@
     <dependency>
       <groupId>net.shibboleth.idp</groupId>
       <artifactId>idp-authn-impl</artifactId>
+      <exclusions>
+        <!-- 
+          DuoWeb is delivered in the Shibboleth lib package. But it seems like
+          it isn't published to any official Maven repos. We exclude it from the
+          dependencies so that everyone can build ... 
+        -->
+        <exclusion>
+          <groupId>com.duosecurity</groupId>
+          <artifactId>DuoWeb</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     
     <dependency>
