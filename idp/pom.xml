@@ -5,7 +5,7 @@
 
   <groupId>se.elegnamnden.eid.idp</groupId>
   <artifactId>swedish-eid-idp</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <packaging>jar</packaging>
 
   <name>Swedish eID :: Reference IdP</name>
