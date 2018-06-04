@@ -41,6 +41,7 @@
     <bean class="se.elegnamnden.eid.idp.authn.model.SimulatedUser" c:personalIdentityNumber="198611062384" c:displayName="Ulla Alm" c:givenName="Ulla" c:surname="Alm" />
     <bean class="se.elegnamnden.eid.idp.authn.model.SimulatedUser" c:personalIdentityNumber="193512208194" c:displayName="Uno Kovalev" c:givenName="Uno" c:surname="Kovalev" />
     <bean class="se.elegnamnden.eid.idp.authn.model.SimulatedUser" c:personalIdentityNumber="191704109279" c:displayName="Åke Jansson" c:givenName="Åke" c:surname="Jansson" />
+    <bean class="se.elegnamnden.eid.idp.authn.model.SimulatedUser" c:personalIdentityNumber="196512643772" c:displayName="Sixten von Samordnungsnummer" c:givenName="Sixten" c:surname="von Samordnungsnummer" />
   </util:list>
     
 </beans>

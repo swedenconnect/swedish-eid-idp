@@ -55,7 +55,7 @@ public class SimulatedAuthentication {
   
   /** All attributes for the selected user. */
   private SimulatedUser selectedUserFull;
-  
+    
   /** The selected LoA. */
   private String selectedAuthnContextUri;
   

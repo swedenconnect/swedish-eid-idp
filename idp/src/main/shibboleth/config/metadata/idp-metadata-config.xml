@@ -104,7 +104,7 @@
         <property name="logos">
           <util:list>
             <bean class="se.litsec.opensaml.saml2.metadata.build.spring.LogoFactoryBean" c:url="%{idp.baseurl}/images/idp-logo-notext.svg" c:width="68" c:height="68" />
-            <bean class="se.litsec.opensaml.saml2.metadata.build.spring.LogoFactoryBean" c:url="%{idp.baseurl}/images/idp-logo.svg" c:width="391" c:height="140" />
+            <bean class="se.litsec.opensaml.saml2.metadata.build.spring.LogoFactoryBean" c:url="%{idp.baseurl}/images/idp-logo.svg" c:width="527" c:height="411" />
           </util:list>
         </property>
       </bean>

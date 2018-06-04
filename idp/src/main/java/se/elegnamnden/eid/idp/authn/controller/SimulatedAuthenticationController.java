@@ -18,6 +18,7 @@ package se.elegnamnden.eid.idp.authn.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
@@ -68,6 +69,12 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
 
   /** The name of the selected-user cookie. */
   public static final String SELECTED_USER_COOKIE_NAME = "selectedUser";
+
+  /** The name of the cookie that saves custom users. */
+  public static final String SAVED_USERS_COOKIE_NAME = "savedUsers";
+
+  /** Maximum number of users to save in the above cookie. */
+  public static final int MAX_SAVED_USERS = 20;
 
   /** Logging instance. */
   private final Logger logger = LoggerFactory.getLogger(SimulatedAuthenticationController.class);
@@ -150,19 +157,21 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
     final ProfileRequestContext<?, ?> context = this.getProfileRequestContext(httpRequest);
 
     try {
+      List<SimulatedUser> users = this.getStaticAndSavedUsers(httpRequest);
+
       ModelAndView modelAndView = new ModelAndView("simauth");
       modelAndView.addObject("uiLanguages", this.uiLanguageHandler.getUiLanguages());
-      modelAndView.addObject("staticUsers", this.getStaticUsers());
+      modelAndView.addObject("staticUsers", users);
 
       SimulatedAuthentication simAuth = new SimulatedAuthentication();
       simAuth.setAuthenticationKey(this.getExternalAuthenticationKey(httpRequest));
 
       // Check if we already have a selected user (from previous sessions).
       //
-      SimulatedUser selectedUser = this.getSelectedUser(httpRequest);
+      SimulatedUser selectedUser = this.getSavedSelectedUser(httpRequest, users);
       if (selectedUser != null) {
         simAuth.setSelectedUser(selectedUser.getPersonalIdentityNumber());
-        simAuth.setSelectedUserFull(selectedUser);
+        // simAuth.setSelectedUserFull(selectedUser);
       }
 
       // Assign the SP info ...
@@ -244,28 +253,13 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
         httpRequest));
     }
 
-    if (result.getSelectedUser() == null) {
-      logger.error("No user selected");
-      this.error(httpRequest, httpResponse, AuthnEventIds.INVALID_AUTHN_CTX);
-      return null;
-    }
-
-    SimulatedUser user = this.staticUsers.stream()
-      .filter(u -> result.getSelectedUser().equals(u.getPersonalIdentityNumber()))
-      .findFirst()
-      .orElse(null);
+    SimulatedUser user = this.processSelectedUser(httpRequest, httpResponse, result);
 
     if (user == null) {
-      logger.error("No user selected");
       this.error(httpRequest, httpResponse, AuthnEventIds.INVALID_AUTHN_CTX);
       return null;
     }
-
     logger.debug("Authenticated user: {}", user);
-
-    // Save the selected user in a cookie (for pre-selection the next time).
-    //
-    this.saveSelectedUser(user.getPersonalIdentityNumber(), httpResponse);
 
     try {
       final ProfileRequestContext<?, ?> context = this.getProfileRequestContext(httpRequest);
@@ -287,6 +281,8 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
         AttributeConstants.ATTRIBUTE_TEMPLATE_SN.createBuilder().value(user.getSurname()).build());
       attributes.add(
         AttributeConstants.ATTRIBUTE_TEMPLATE_DISPLAY_NAME.createBuilder().value(user.getDisplayName()).build());
+      attributes.add(
+        AttributeConstants.ATTRIBUTE_TEMPLATE_DATE_OF_BIRTH.createBuilder().value(getBirthDate(user.getPersonalIdentityNumber())).build());
 
       // Check if we should issue a SAD attribute.
       //
@@ -307,17 +303,109 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
   }
 
   /**
-   * Saves the user id of the selected test user.
+   * Given a Swedish personal identity number or "samordningsnummer" a person's date of birth is returned.
    * 
-   * @param selectedUser
-   *          the id of the selected user
-   * @param response
-   *          the HTTP servlet response
+   * @param personalIdentityNumber
+   *          the personal identity number
+   * @return the birth date on the format YYYY-MM-DD
    */
-  private void saveSelectedUser(String selectedUser, HttpServletResponse response) {
-    Cookie cookie = new Cookie(SELECTED_USER_COOKIE_NAME, selectedUser);
+  private static String getBirthDate(String personalIdentityNumber) {
+    Integer day = Integer.parseInt(personalIdentityNumber.substring(6, 8));
+    return String.format("%s-%s-%02d", personalIdentityNumber.substring(0, 4), personalIdentityNumber.substring(4, 6),
+      day > 60 ? day - 60 : day);
+
+  }
+
+  /**
+   * Helper method that is invoked when a user has been selected. It will save the selected user in a cookie for future
+   * use.
+   * 
+   * @param httpRequest
+   *          the HTTP request
+   * @param httpResponse
+   *          the HTTP response
+   * @param result
+   *          the result from the view
+   * @return the selected user or {@code null}
+   */
+  private SimulatedUser processSelectedUser(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
+      final SimulatedAuthentication result) {
+
+    if (result.getSelectedUser() == null && result.getSelectedUserFull() == null) {
+      // Should never happen ...
+      logger.error("No user selected");
+      return null;
+    }
+    SimulatedUser user = null;
+
+    if (result.getSelectedUser() != null) {
+      // Find the given name and surname. First check the static users ...
+      user = this.staticUsers.stream()
+        .filter(u -> result.getSelectedUser().equals(u.getPersonalIdentityNumber()))
+        .findFirst()
+        .orElse(null);
+
+      if (user == null) {
+        // Check if we find the name among the user-saved names ...
+        List<SimulatedUser> savedUsers = this.getSavedUsers(httpRequest);
+        user = savedUsers.stream()
+          .filter(u -> result.getSelectedUser().equals(u.getPersonalIdentityNumber()))
+          .findFirst()
+          .orElse(null);
+      }
+    }
+    else {
+      user = result.getSelectedUserFull();
+      final String pnr = user.getPersonalIdentityNumber();
+
+      // Do we have to update the saved users? It may also be a user from the static users.
+      boolean staticUser = this.staticUsers.stream()
+        .filter(u -> u.getPersonalIdentityNumber().equals(pnr))
+        .findFirst()
+        .isPresent();
+
+      if (!staticUser) {
+        List<SimulatedUser> savedUsers = this.getSavedUsers(httpRequest);
+
+        boolean completeMatch = savedUsers.stream()
+          .filter(u -> result.getSelectedUserFull().equals(u))
+          .findFirst()
+          .isPresent();
+        if (!completeMatch) {
+          List<SimulatedUser> newSavedUsers = new ArrayList<>();
+          newSavedUsers.add(user);
+          for (SimulatedUser s : savedUsers) {
+            if (newSavedUsers.size() >= MAX_SAVED_USERS) {
+              break;
+            }
+            if (s.getPersonalIdentityNumber().equals(pnr)) {
+              // The personal id number existed (but not the same name). Skip this.
+              continue;
+            }
+            newSavedUsers.add(s);
+          }
+
+          // Update the cookie ...
+          Cookie userCookie = new Cookie(SAVED_USERS_COOKIE_NAME, SimulatedUser.encodeList(newSavedUsers));
+          userCookie.setPath("/idp");
+          httpResponse.addCookie(userCookie);
+        }
+      }
+    }
+
+    if (user == null) {
+      // Should never happen ...
+      logger.error("No user selected");
+      return null;
+    }
+
+    // Save the selected user in a cookie (for pre-selection the next time).
+    //
+    Cookie cookie = new Cookie(SELECTED_USER_COOKIE_NAME, user.getPersonalIdentityNumber());
     cookie.setPath("/idp");
-    response.addCookie(cookie);
+    httpResponse.addCookie(cookie);
+
+    return user;
   }
 
   /**
@@ -325,9 +413,11 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
    * 
    * @param request
    *          the HTTP servlet request
+   * @param users
+   *          the simulated users available
    * @return the user or {@code null} if no cookie is available
    */
-  private SimulatedUser getSelectedUser(HttpServletRequest request) {
+  private SimulatedUser getSavedSelectedUser(HttpServletRequest request, List<SimulatedUser> users) {
     String id = Arrays.asList(request.getCookies())
       .stream()
       .filter(c -> c.getName().equals(SELECTED_USER_COOKIE_NAME))
@@ -336,7 +426,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
       .orElse(null);
 
     if (id != null) {
-      return this.staticUsers.stream()
+      return users.stream()
         .filter(u -> u.getPersonalIdentityNumber().equals(id))
         .findFirst()
         .orElse(null);
@@ -347,12 +437,36 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
   }
 
   /**
-   * Returns the list of static users.
+   * Returns a list of the users that have been entered in the "Advanced" view.
    * 
-   * @return the static list of simulated users.
+   * @param request
+   *          the HTTP request
+   * @return a list of simulated users
    */
-  private List<SimulatedUser> getStaticUsers() {
-    return this.staticUsers;
+  private List<SimulatedUser> getSavedUsers(HttpServletRequest request) {
+    String v = Arrays.asList(request.getCookies())
+      .stream()
+      .filter(c -> c.getName().equals(SAVED_USERS_COOKIE_NAME))
+      .map(c -> c.getValue())
+      .findFirst()
+      .orElse(null);
+
+    return v != null ? SimulatedUser.parseList(v) : Collections.emptyList();
+  }
+
+  /**
+   * Returns a list of the users that have been entered in the "Advanced" view and the static users.
+   * 
+   * @param request
+   *          the HTTP request
+   * @return a list of simulated users
+   */
+  private List<SimulatedUser> getStaticAndSavedUsers(HttpServletRequest request) {
+    List<SimulatedUser> users = new ArrayList<>(this.staticUsers.size());
+    users.addAll(this.getSavedUsers(request));
+    users.addAll(this.staticUsers);
+    Collections.sort(users);
+    return users;
   }
 
   /**
