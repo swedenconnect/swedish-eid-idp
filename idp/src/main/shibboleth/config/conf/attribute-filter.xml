@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<AttributeFilterPolicyGroup id="ShibbolethFilterPolicy"
+        xmlns="urn:mace:shibboleth:2.0:afp"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="urn:mace:shibboleth:2.0:afp http://shibboleth.net/schema/idp/shibboleth-afp.xsd">
+
+  <!--
+    Attribute release of basic attributes that are part of all release policies below. 
+   -->
+  <AttributeFilterPolicy id="attribute-release-basic">
+    <PolicyRequirementRule xsi:type="ANY" />
+    <AttributeRule attributeID="sn">
+      <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+    <AttributeRule attributeID="givenName">
+      <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+    <AttributeRule attributeID="displayName">
+      <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+    <AttributeRule attributeID="mail">
+      <PermitValueRule xsi:type="AttributeInMetadata" onlyIfRequired="false" />
+    </AttributeRule>
+  </AttributeFilterPolicy>
+
+  <!--
+    Attribute release according to "http://id.elegnamnden.se/ap/1.0/pnr-01"
+    Natural Personal Identity with Civic Registration Number (personnummer)   
+  -->  
+  <AttributeFilterPolicy id="attribute-release-pnr-01">
+    <PolicyRequirementRule xsi:type="OR">
+      <Rule xsi:type="EntityAttributeExactMatch" attributeName="http://macedir.org/entity-category" attributeValue="http://id.elegnamnden.se/ec/1.0/loa2-pnr" />
+      <Rule xsi:type="EntityAttributeExactMatch" attributeName="http://macedir.org/entity-category" attributeValue="http://id.elegnamnden.se/ec/1.0/loa3-pnr" />
+      <Rule xsi:type="EntityAttributeExactMatch" attributeName="http://macedir.org/entity-category" attributeValue="http://id.elegnamnden.se/ec/1.0/loa4-pnr" />
+    </PolicyRequirementRule>
+    <AttributeRule attributeID="personalIdentityNumber">
+      <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+    <AttributeRule attributeID="dateOfBirth">
+      <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>    
+  </AttributeFilterPolicy>
+    
+  <!--
+    Attribute release for signature services.   
+  -->  
+  <AttributeFilterPolicy id="attribute-release-signature-services">
+    <PolicyRequirementRule xsi:type="EntityAttributeExactMatch" 
+                           attributeName="http://macedir.org/entity-category" 
+                           attributeValue="http://id.elegnamnden.se/st/1.0/sigservice" />
+    <AttributeRule attributeID="sad">
+      <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+    <AttributeRule attributeID="userSignature">
+      <PermitValueRule xsi:type="AttributeInMetadata" onlyIfRequired="false" />
+    </AttributeRule>
+  </AttributeFilterPolicy>  
+  
+  <!--
+    Attribute release according to "http://id.elegnamnden.se/ap/1.0/eidas-natural-person-01"
+    eIDAS Natural Person Attribute Set
+  -->  
+  <AttributeFilterPolicy id="attribute-release-eidas-natural-person-01">
+    <PolicyRequirementRule xsi:type="OR">
+      <Rule xsi:type="EntityAttributeExactMatch" attributeName="http://macedir.org/entity-category" attributeValue="http://id.elegnamnden.se/ec/1.0/eidas-naturalperson" />
+      <!-- For supporting previous versions of the Swedish eID Framework -->
+      <Rule xsi:type="EntityAttributeExactMatch" attributeName="http://macedir.org/entity-category" attributeValue="http://id.elegnamnden.se/ec/1.0/loa3-int" />
+    </PolicyRequirementRule>
+    <AttributeRule attributeID="prid">
+      <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+    <AttributeRule attributeID="pridPersistence">
+      <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+    <AttributeRule attributeID="eidasPersonIdentifier">
+      <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+    <AttributeRule attributeID="dateOfBirth">
+      <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+    <AttributeRule attributeID="transactionIdentifier">
+      <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+    <AttributeRule attributeID="birthName">
+      <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+    <AttributeRule attributeID="placeOfBirth">
+      <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+    <AttributeRule attributeID="eidasNaturalPersonAddress">
+      <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+    <AttributeRule attributeID="gender">
+      <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+    <AttributeRule attributeID="personalIdentityNumber">
+      <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+    <AttributeRule attributeID="personalIdentityNumberBinding">
+      <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>
+  </AttributeFilterPolicy>
+  
+  <!--
+    Attribute release for IdP:s delivering assertions to the Swedish eIDAS Proxy Service. 
+   -->
+  <AttributeFilterPolicy id="attribute-release-eidas-pnr-delivery">
+    <PolicyRequirementRule xsi:type="EntityAttributeExactMatch" 
+                           attributeName="http://macedir.org/entity-category" 
+                           attributeValue="http://id.elegnamnden.se/ec/1.0/eidas-pnr-delivery" />
+    <AttributeRule attributeID="dateOfBirth">
+      <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>    
+  </AttributeFilterPolicy>  
+
+</AttributeFilterPolicyGroup>

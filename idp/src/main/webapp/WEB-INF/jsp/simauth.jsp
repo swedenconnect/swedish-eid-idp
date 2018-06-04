@@ -144,8 +144,55 @@
                     <form:option value="${user.personalIdentityNumber}">${user.uiDisplayName}</form:option>
                   </c:forEach>
                 </form:select>
+                <div class="noscripthide">
+                  <button id="advancedButton" class="btn btn-link float-right" type="button"><spring:message code="sweid.ui.button.advanced" /> &gt;&gt;</button>
+                </div>                
               </div>            
             </div> <!-- /#selectSimulatedUserDiv -->
+            
+            <div id="advancedSettings" class="row section noscripthide">
+              <div class="col-sm-12">
+                <div class="advanced">
+                  <div class="box">
+                    <div class="form-group row">
+                      <label for="personalIdNumber" class="col-sm-3 col-form-label"><spring:message code="sweid.ui.advanced.personal-id.label" /></label>
+                      <div class="col-sm-9">
+                        <spring:message code="sweid.ui.advanced.personal-id.placeholder" var="personalIdNumberPlaceholder" />
+                        <form:input path="selectedUserFull.personalIdentityNumber" id="personalIdNumber" class="form-control" 
+                          placeholder="${personalIdNumberPlaceholder}" />
+                          <!-- <input type="text" class="form-control" placeholder="12 digits" id="personalIdNumber"> -->
+                        <div id="badPersonalIdNumber" class="invalid-feedback"><spring:message code="sweid.ui.advanced.personal-id.bad" /></div>
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="givenName" class="col-sm-3 col-form-label"><spring:message code="sweid.ui.advanced.given-name.label" /></label>
+                      <div class="col-sm-9">
+                        <spring:message code="sweid.ui.advanced.given-name.placeholder" var="givenNamePlaceholder" />
+                        <form:input path="selectedUserFull.givenName" id="givenName" class="form-control" placeholder="${givenNamePlaceholder}" />
+                        <!-- <input type="text" class="form-control" placeholder="Enter given name ..." id="givenName"> -->
+                      </div>
+                    </div>
+                    <div class="form-group row">
+                      <label for="surname" class="col-sm-3 col-form-label"><spring:message code="sweid.ui.advanced.surname.label" /></label>
+                      <div class="col-sm-9">
+                        <spring:message code="sweid.ui.advanced.surname.placeholder" var="surnamePlaceholder" />
+                        <form:input path="selectedUserFull.surname" id="surname" class="form-control" placeholder="${surnamePlaceholder}" />
+                        <!-- <input type="text" class="form-control" placeholder="Enter surname ..." id="surname"> -->
+                      </div>
+                    </div>
+                    <fieldset class="form-group">
+                      <div class="row">
+                        <div class="col-sm-12">
+                          <button id="cancelAdvancedButton" class="btn btn-link float-right" type="button">
+                            <spring:message code="sweid.ui.button.cancel" />
+                          </button>                        
+                        </div>
+                      </div>
+                    </fieldset>
+                  </div>
+                </div>
+              </div>
+            </div>            
             
             <c:if test="${not empty simulatedAuthentication.possibleAuthnContextUris}">
               <div class="row section" id="selectLoaDiv">
@@ -214,11 +261,25 @@
     
       </form:form>
     
-    </div> <!-- /.container main -->    
-
+    </div> <!-- /.container main -->
+    
+    <script>
+      var users = [];
+      
+      <c:forEach items="${staticUsers}" var="user" varStatus="user_s">
+      users.push({
+        "pnr" : "${user.personalIdentityNumber}",
+        "givenName" : "${user.givenName}",
+        "surname" : "${user.surname}"
+      });    
+      </c:forEach>
+          
+    </script>
+    
     <script src="<c:url value='/js/jquery-3.3.1.slim.min.js' />" type="text/javascript"></script>
     <script src="<c:url value='/js/popper-1.14.0.min.js' />" type="text/javascript"></script>
     <script src="<c:url value='/js/bootstrap-4.1.0.min.js' />" type="text/javascript"></script>
+    <script src="<c:url value='/js/valfor.js' />" type="text/javascript"></script>
     <script src="<c:url value='/js/refmain.js' />" type="text/javascript"></script>
 
   </body>
