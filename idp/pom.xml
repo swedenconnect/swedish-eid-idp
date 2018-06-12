@@ -5,7 +5,7 @@
 
   <groupId>se.elegnamnden.eid.idp</groupId>
   <artifactId>swedish-eid-idp</artifactId>
-  <version>1.0.4</version>
+  <version>1.0.5</version>
   <packaging>jar</packaging>
 
   <name>Swedish eID :: Reference IdP</name>
@@ -41,7 +41,7 @@
     <docker.image.prefix>docker.eidastest.se:5000</docker.image.prefix>
 
     <!-- Versions on dependencies -->
-    <shibboleth-base-package.version>1.4.2</shibboleth-base-package.version>
+    <shibboleth-base-package.version>1.4.3</shibboleth-base-package.version>
     <tomcat.version>8.5.23</tomcat.version>
     
     <flexmark.version>0.32.18</flexmark.version>
@@ -63,7 +63,7 @@
       <dependency>
         <groupId>se.litsec.sweid.idp</groupId>
         <artifactId>shibboleth-base-bom</artifactId>
-        <version>1.4.2</version>
+        <version>1.4.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -71,7 +71,7 @@
       <dependency>
         <groupId>se.litsec.sweid.idp</groupId>
         <artifactId>shibboleth-base-dependency-bom</artifactId>
-        <version>1.3.2</version>
+        <version>1.3.3</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>      
