@@ -221,7 +221,7 @@
             
             <form:errors path="*" cssClass="form-group alert alert-danger" element="div" />
             
-            <div class="drop-down-container">
+            <div class="drop-down-container noscripthide">
 
               <div class="col-sm-12 drop-down">
                 <p><spring:message code='sweid.ui.help.1.title' /></p>
