@@ -1,6 +1,8 @@
 $(document).ready(
 
     function() {
+      
+      $('.drop-down-container').show();      
 
       var selectedUser = $('#selectSimulatedUser').val();
       if (selectedUser == 'NONE') {        
