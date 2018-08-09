@@ -12,11 +12,11 @@
   </IDPSSODescriptor>
   
   <Organization>
-    <OrganizationName xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="en">Swedish E-Identification Board</OrganizationName>
-    <OrganizationName xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="sv">E-legitimationsnämnden</OrganizationName>
-    <OrganizationDisplayName xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="en">Swedish E-Identification Board</OrganizationDisplayName>
-    <OrganizationDisplayName xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="sv">E-legitimationsnämnden</OrganizationDisplayName>
-    <OrganizationURL xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="en">http://www.elegnamnden.se</OrganizationURL>
+    <OrganizationName xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="en">Sweden Connect</OrganizationName>
+    <OrganizationName xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="sv">Sweden Connect</OrganizationName>
+    <OrganizationDisplayName xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="en">Sweden Connect</OrganizationDisplayName>
+    <OrganizationDisplayName xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="sv">Sweden Connect</OrganizationDisplayName>
+    <OrganizationURL xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="en">https://swedenconnect.se</OrganizationURL>
   </Organization>
    <ContactPerson contactType="technical" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata">
       <Company>Litsec AB</Company>

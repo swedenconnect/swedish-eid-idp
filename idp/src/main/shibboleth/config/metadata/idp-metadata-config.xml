@@ -103,8 +103,14 @@
         </property>
         <property name="logos">
           <util:list>
-            <bean class="se.litsec.opensaml.saml2.metadata.build.spring.LogoFactoryBean" c:url="%{idp.baseurl}/images/idp-logo-notext.svg" c:width="68" c:height="68" />
-            <bean class="se.litsec.opensaml.saml2.metadata.build.spring.LogoFactoryBean" c:url="%{idp.baseurl}/images/idp-logo.svg" c:width="527" c:height="411" />
+            <bean class="se.litsec.opensaml.saml2.metadata.build.spring.LogoFactoryBean" 
+              c:url="%{idp.metadata.uiInfo.smallLogo.url}" 
+              c:width="%{idp.metadata.uiInfo.smallLogo.width}" 
+              c:height="%{idp.metadata.uiInfo.smallLogo.height}" />
+            <bean class="se.litsec.opensaml.saml2.metadata.build.spring.LogoFactoryBean" 
+              c:url="%{idp.metadata.uiInfo.largeLogo.url}" 
+              c:width="%{idp.metadata.uiInfo.largeLogo.width}" 
+              c:height="%{idp.metadata.uiInfo.largeLogo.height}" />                        
           </util:list>
         </property>
       </bean>
