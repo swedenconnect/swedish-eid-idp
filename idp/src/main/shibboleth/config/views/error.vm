@@ -82,7 +82,7 @@
                 <div class="col-12">
                   <h2>$titleSuffix</h2>
                 </div>
-                <div class="col-12">
+                <div class="col-12" style="padding-top: 10px;">
                   #evaluate($message)
                 </div>
               </div>
@@ -91,14 +91,17 @@
           </div>
 
           <div class="col-sm-12 copyright">
+            <p class="float-right">#springMessageText("sweid.ui.copyright", "")</p>
+            <!--
             <div class="row">
               <div class="col-6">
                 <img class="float-left" src="$request.getContextPath()/images/idp-logo.svg" height="40" /> 
               </div>
               <div class="col-6">
-                <p class="float-right">#springMessageText("sweid.ui.copyright", "")</p>
+                
               </div>
             </div>
+            -->
           </div>
 
         </div>  <!-- /.row -->  
