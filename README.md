@@ -1,4 +1,4 @@
-![Logo](https://raw.githubusercontent.com/elegnamnden/technical-framework/master/img/eln-logo.png)
+![Logo](docs/img/sc-logo-temporary.png)
 
 # swedish-eid-idp
 
@@ -83,4 +83,4 @@ docker run -d --name my-own-idp --restart=always \
 ```
 
 
-Copyright &copy; 2016-2018, [E-legitimationsnämnden](https://www.elegnamnden.se). Licensed under version 2.0 of the [Apache License](http://www.apache.org/licenses/LICENSE-2.0).
+Copyright &copy; 2016-2018, [Sweden Connect](https://swedenconnect.se). Licensed under version 2.0 of the [Apache License](http://www.apache.org/licenses/LICENSE-2.0).
