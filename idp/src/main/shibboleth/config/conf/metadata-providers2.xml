@@ -11,6 +11,20 @@
                         urn:oasis:names:tc:SAML:2.0:metadata http://docs.oasis-open.org/security/saml/v2.0/saml-schema-metadata-2.0.xsd">
                         
 
+    <MetadataProvider id="FederationMetadata"
+                      xsi:type="FileBackedHTTPMetadataProvider"
+                      backingFile="%{idp.home}/metadata/cache/cached-metadata.xml"
+                      metadataURL="%{idp.metadata.federation.url}"
+                      disregardTLSCertificate="true"        
+                      maxRefreshDelay="PT10M"
+                      backupFileInitNextRefreshDelay="5000"
+                      failFastInitialization="false"> 
+        <MetadataFilter xsi:type="SignatureValidation" requireSignedRoot="true" certificateFile="%{idp.metadata.federation.validation-certificate}" />
+        <MetadataFilter xsi:type="EntityRoleWhiteList">
+            <RetainedRole>md:SPSSODescriptor</RetainedRole>
+        </MetadataFilter>
+    </MetadataProvider>
+    
     <MetadataProvider id="SecondaryFederationMetadata"
                       xsi:type="FileBackedHTTPMetadataProvider"
                       backingFile="%{idp.home}/metadata/cache/cached-metadata2.xml"
@@ -23,6 +37,6 @@
         <MetadataFilter xsi:type="EntityRoleWhiteList">
             <RetainedRole>md:SPSSODescriptor</RetainedRole>
         </MetadataFilter>
-    </MetadataProvider>
+    </MetadataProvider>    
     
 </MetadataProvider>
