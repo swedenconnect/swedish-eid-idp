@@ -63,12 +63,6 @@
             <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/eidas-nf-sub" />
             <!-- <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/eidas-high" /> -->
             <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/eidas-nf-high" />
-            <!-- <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/eidas-low-sigm" /> -->
-            <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/eidas-nf-low-sigm" />
-            <!-- <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/eidas-sub-sigm" /> -->
-            <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/eidas-nf-sub-sigm" />
-            <!-- <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/eidas-high-sigm" /> -->
-            <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/eidas-nf-high-sigm" />
           </util:list>
         </property>
       </bean>
