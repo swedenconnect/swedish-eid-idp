@@ -61,12 +61,12 @@
                 <img class="top-logo-dim float-left" src="<c:out value="${simulatedAuthentication.spInfo.defaultLogoUrl}" />" alt="Logo" />
               </div>
               <div class="col-6 top-logo">
-                <img class="top-logo-dim float-right" src="<c:url value='/images/idp-logo.svg' />" />
+                <img class="top-logo-dim float-right" src="<c:url value='/images/ref-idp-logo.svg' />" />
               </div>
             </c:when>
             <c:otherwise>
               <div class="col-sm-12 top-logo">
-                <img class="top-logo-dim float-left" src="<c:url value='/images/idp-logo.svg' />" />
+                <img class="top-logo-dim float-left" src="<c:url value='/images/ref-idp-logo.svg' />" />
               </div>
             </c:otherwise>
           </c:choose>

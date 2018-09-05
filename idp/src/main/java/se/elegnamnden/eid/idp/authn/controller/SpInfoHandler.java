@@ -30,6 +30,8 @@ import org.springframework.validation.Validator;
 
 import se.elegnamnden.eid.idp.authn.model.SpInfo;
 import se.litsec.opensaml.saml2.metadata.MetadataUtils;
+import se.litsec.swedisheid.opensaml.saml2.metadata.entitycategory.EntityCategoryConstants;
+import se.litsec.swedisheid.opensaml.saml2.metadata.entitycategory.EntityCategoryMetadataHelper;
 
 /**
  * Handler class for constructing a {@link SpInfo} model object.
@@ -76,7 +78,8 @@ public class SpInfoHandler {
     }
     spInfo.setDescription(getLocalizedName(uiInfo.getDescriptions(), language, fallbackLanguages));
 
-    // Try to find something larger than 40px and less than 100px first
+    // If there is a logo that is wider than its height, we use that. We also prefer
+    // something larger than 40px and less than 100px.
     //
     Logo small = null;
     Logo large = null;
@@ -84,7 +87,11 @@ public class SpInfoHandler {
       if (logo.getHeight() == null) {
         continue;
       }
-      if (logo.getHeight() > 40 && logo.getHeight() < 100) {
+      if (logo.getWidth() != null && logo.getWidth() > logo.getHeight()) {
+        spInfo.setDefaultLogoUrl(logo.getURL());
+        break;
+      }
+      else if (logo.getHeight() > 40 && logo.getHeight() < 100) {
         spInfo.setDefaultLogoUrl(logo.getURL());
         break;
       }
@@ -109,6 +116,16 @@ public class SpInfoHandler {
       else if (!uiInfo.getLogos().isEmpty()) {
         spInfo.setDefaultLogoUrl(uiInfo.getLogos().get(0).getURL());
       }
+    }
+    
+    // A hack because we don't want to display the eIDAS Proxy Service logo (it's the same as
+    // for the IdP). Only affects eIDAS testing.
+    //
+    boolean eidasPs = EntityCategoryMetadataHelper.getEntityCategories(metadata).stream()
+      .filter(ec -> ec.equals(EntityCategoryConstants.SERVICE_ENTITY_CATEGORY_EIDAS_PNR_DELIVERY.getUri()))
+      .findFirst().isPresent();
+    if (eidasPs) {
+      spInfo.setDefaultLogoUrl(null);
     }
 
     return spInfo;
