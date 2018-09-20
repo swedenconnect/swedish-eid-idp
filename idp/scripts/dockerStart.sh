@@ -146,6 +146,9 @@ if [ "$IDP_LOG_CONSOLE" = true ]; then
   IDP_PROCESS_APPENDER=CONSOLE
 fi
 
+: ${IDP_LOG_PUBLISH_ENABLED:=false}
+: ${IDP_LOG_PUBLISH_PATH:=""}
+
 export JAVA_OPTS="\
           -Djava.net.preferIPv4Stack=true \
           -Didp.home=$IDP_HOME \
@@ -174,6 +177,8 @@ export JAVA_OPTS="\
           -Didp.consent.appender=NOOP_APPENDER \
           -Didp.warn.appender=NOOP_APPENDER \
           -Didp.process.appender=$IDP_PROCESS_APPENDER \
+          -Didp.log-publish.enabled=$IDP_LOG_PUBLISH_ENABLED \
+          -Didp.log-publish.path=$IDP_LOG_PUBLISH_PATH \
           ${JAVA_OPTS}"
 
 #
