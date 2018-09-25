@@ -30,5 +30,8 @@ export IDP_FEDERATION_METADATA_VALIDATION_CERT=$IDP_CREDENTIALS/trust/sveleg-met
 
 export IDP_LOG_SETTINGS_FILE=$BASE_DIR/shibboleth/conf/logback-devel.xml
 
+export IDP_LOG_PUBLISH_ENABLED=true
+export IDP_LOG_PUBLISH_PATH=${IDP_HOME}/logs/idp-process.log
+
 
 "$SCRIPT_DIR"/standaloneStart.sh $BASE_DIR $1

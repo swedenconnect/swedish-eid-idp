@@ -148,6 +148,25 @@
     <servlet-mapping>
       <servlet-name>extauthn</servlet-name>
       <url-pattern>/extauth/*</url-pattern>
+    </servlet-mapping>
+    
+    <!-- For easy log access during development - Should be commented out in production systems -->
+    <servlet>
+      <servlet-name>log-publisher</servlet-name>
+      <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+      <init-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>${idp.home}/system/conf/shibext-mvc-beans.xml, ${idp.home}/conf/log-publish-beans.xml</param-value>
+      </init-param>
+      <init-param>
+        <param-name>contextClass</param-name>
+        <param-value>net.shibboleth.ext.spring.context.DelimiterAwareApplicationContext</param-value>
+      </init-param>
+      <load-on-startup>4</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+      <servlet-name>log-publisher</servlet-name>
+      <url-pattern>/logs/*</url-pattern>
     </servlet-mapping>    
 
     <!-- Servlet protected by container used for RemoteUser authentication -->
