@@ -1,4 +1,4 @@
-![Logo](https://github.com/swedenconnect/resources/blob/master/logos/temporary/sc-logo-temporary-small.png)
+![Logo](https://github.com/swedenconnect/resources/blob/master/images/sc-logo.png)
 
 # swedish-eid-idp
 
