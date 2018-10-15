@@ -1,7 +1,7 @@
 FROM openjdk:8-jre
 
 RUN mkdir /opt/swedish-eid-idp
-ADD target/dependency/apache-tomcat-8.5.23 /opt/swedish-eid-idp/tomcat/
+ADD target/dependency/apache-tomcat-8.5.34 /opt/swedish-eid-idp/tomcat/
 ADD scripts/dockerStart.sh /opt/swedish-eid-idp/tomcat/bin/
 ADD target/shibboleth /opt/swedish-eid-idp/shibboleth/
 

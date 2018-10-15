@@ -42,7 +42,7 @@
 
     <!-- Versions on dependencies -->
     <shibboleth-base-package.version>1.4.5</shibboleth-base-package.version>
-    <tomcat.version>8.5.23</tomcat.version>
+    <tomcat.version>8.5.34</tomcat.version>
     
     <flexmark.version>0.32.18</flexmark.version>
     <jsoup.version>1.10.2</jsoup.version>    
