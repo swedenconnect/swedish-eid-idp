@@ -153,6 +153,9 @@ if [ "$IDP_LOG_CONSOLE" = true ]; then
   IDP_PROCESS_APPENDER=CONSOLE
 fi
 
+: ${IDP_LOG_PUBLISH_ENABLED:=false}
+: ${IDP_LOG_PUBLISH_PATH:=""}
+
 export JAVA_OPTS="\
           -Djava.net.preferIPv4Stack=true \
           -Didp.home=$IDP_HOME \
