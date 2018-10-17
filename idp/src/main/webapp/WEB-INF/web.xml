@@ -10,7 +10,7 @@
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath*:/META-INF/net.shibboleth.idp/preconfig.xml,${idp.home}/system/conf/global-system.xml,${idp.home}/system/conf/global-extensions.xml,classpath*:/META-INF/net.shibboleth.idp/config.xml,classpath*:/META-INF/net.shibboleth.idp/postconfig.xml</param-value>
     </context-param>
-    
+        
     <context-param>
         <param-name>contextClass</param-name>
         <param-value>net.shibboleth.ext.spring.context.DelimiterAwareApplicationContext</param-value>
@@ -20,11 +20,11 @@
         <param-name>contextInitializerClasses</param-name>
         <param-value>net.shibboleth.idp.spring.IdPPropertiesApplicationContextInitializer</param-value>
     </context-param>
-
+    
     <!-- Spring listener used to load up the configuration -->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
+    </listener>    
     
     <!-- Filters and filter mappings -->
     <!-- Try and force I18N, probably won't help much. -->
@@ -45,6 +45,15 @@
         <filter-name>CookieBufferingFilter</filter-name>
         <filter-class>net.shibboleth.utilities.java.support.net.CookieBufferingFilter</filter-class>
     </filter>
+    <!-- Allows control of response headers from within Spring beans. -->
+    <filter>
+        <filter-name>DynamicResponseHeaderFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+        <init-param>
+            <param-name>targetBeanName</param-name>
+            <param-value>shibboleth.ResponseHeaderFilter</param-value>
+        </init-param>
+    </filter>    
     <!-- Automates TLS-based propagation of HttpServletRequest/Response into beans. -->
     <filter>
         <filter-name>RequestResponseContextFilter</filter-name>
@@ -65,6 +74,7 @@
     <filter-mapping>
         <!-- Only listen on URL-patterns that match bindings supported by the Swedish eID Framework -->
         <filter-name>CookieBufferingFilter</filter-name>
+        <url-pattern>/profile/admin/*</url-pattern>
         <url-pattern>/profile/Logout</url-pattern>
         <url-pattern>/profile/Shibboleth/SSO</url-pattern>
         <url-pattern>/profile/SAML2/Unsolicited/SSO</url-pattern>
@@ -74,8 +84,21 @@
         <url-pattern>/profile/SAML2/Redirect/SLO</url-pattern>
         <url-pattern>/profile/SAML2/POST/SLO</url-pattern>
         <url-pattern>/profile/SAML2/POST-SimpleSign/SLO</url-pattern>
-        <url-pattern>/profile/cas/login</url-pattern>
+        <url-pattern>/profile/cas/login</url-pattern>        
     </filter-mapping>
+    <filter-mapping>
+        <filter-name>DynamicResponseHeaderFilter</filter-name>
+        <url-pattern>/profile/admin/*</url-pattern>
+        <url-pattern>/profile/Shibboleth/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/Unsolicited/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/Redirect/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/POST/SSO</url-pattern>
+        <url-pattern>/profile/SAML2/POST-SimpleSign/SSO</url-pattern>
+        <url-pattern>/profile/cas/login</url-pattern>
+        <url-pattern>/metadata/*</url-pattern>
+        <url-pattern>/extauth/*</url-pattern>
+        <url-pattern>/logs/*</url-pattern>
+    </filter-mapping>    
     <filter-mapping>
         <filter-name>CharacterEncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -113,7 +136,7 @@
         <url-pattern>/status</url-pattern>
         <url-pattern>/profile/*</url-pattern>
     </servlet-mapping>
-    
+        
     <servlet>
       <servlet-name>metadata-publisher</servlet-name>
       <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -204,7 +227,15 @@
     <error-page>
       <error-code>404</error-code>
       <location>/404.html</location>
-    </error-page>
+    </error-page>    
+    
+    <session-config>
+        <cookie-config>
+            <http-only>true</http-only>
+            <secure>true</secure>
+        </cookie-config>
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>    
 
     <!-- Block commonly flagged methods by using an empty auth-constraint. -->
     <security-constraint>
@@ -218,7 +249,7 @@
             <http-method>TRACE</http-method>
         </web-resource-collection>
         <auth-constraint/>
-    </security-constraint>
+    </security-constraint>    
 
     <!-- Allow any HTTP methods to the API flows. -->
     <security-constraint>
