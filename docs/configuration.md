@@ -52,6 +52,10 @@ This document describes all variables that can be set to control the Shibboleth 
 | `IDP_METADATA_SIGNING_KEY` | The path to the key used to sign the IdP metadata. | `$IDP_CREDENTIALS/metadata-signing.key` |
 | `IDP_METADATA_SIGNING_CERT` | The path to the certificate used to sign the IdP metadata. | `$IDP_CREDENTIALS/metadata-signing.crt` |
 | `IDP_PERSISTENT_ID_SALT` | The salt that is used when creating a hash for persistent NameIDs. | `this_needs_to_be_supplied` |
+| `IDP_LOG_PUBLISH_ENABLED` | Flag that may be used in test-installations to expose the `/idp/logs` endpoint. This endpoint will return the IdP (process) log. **Do not use in production!** <br/>(\*) See comment below. | false |
+| `IDP_LOG_PUBLISH_PATH` | The path to the IdP process log (requires that `IDP_LOG_PUBLISH_ENABLED` is set to `true`). | - |
+
+(\*) - Since exposing the logs is sensitive, and we really don't want to do that in a production system, we have commented out the `/idp/logs` endpoint from the [web.xml](https://github.com/litsec/swedish-eid-shibboleth-base/blob/master/idp/src/main/webapp/WEB-INF/web.xml), so if you want to use this for a test system, you need to uncomment the log-publisher servlet **and** set the `IDP_LOG_PUBLISH_ENABLED` to true.
 
 
 ### Metadata settings
