@@ -175,6 +175,7 @@
     </servlet-mapping>
     
     <!-- For easy log access during development - Should be commented out in production systems -->
+    <!-- 
     <servlet>
       <servlet-name>log-publisher</servlet-name>
       <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
@@ -191,7 +192,8 @@
     <servlet-mapping>
       <servlet-name>log-publisher</servlet-name>
       <url-pattern>/logs/*</url-pattern>
-    </servlet-mapping>    
+    </servlet-mapping>
+    -->    
 
     <!-- Servlet protected by container used for RemoteUser authentication -->
     <!-- 
