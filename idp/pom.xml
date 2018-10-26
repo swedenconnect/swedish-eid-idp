@@ -5,7 +5,7 @@
 
   <groupId>se.elegnamnden.eid.idp</groupId>
   <artifactId>swedish-eid-idp</artifactId>
-  <version>1.1.0</version>
+  <version>1.2.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Swedish eID :: Reference IdP</name>
@@ -41,7 +41,7 @@
     <docker.image.prefix>docker.eidastest.se:5000</docker.image.prefix>
 
     <!-- Versions on dependencies -->
-    <shibboleth-base-package.version>1.5.0</shibboleth-base-package.version>
+    <shibboleth-base.version>1.6.0.RC1</shibboleth-base.version>
     <tomcat.version>8.5.34</tomcat.version>
     
     <flexmark.version>0.32.18</flexmark.version>
@@ -49,6 +49,11 @@
   </properties>
 
   <repositories>
+    <repository>
+      <id>central</id>
+      <name>Maven Central</name>
+      <url>https://repo1.maven.org/maven2/</url>
+    </repository>  
     <repository>
       <id>shibboleth</id>
       <name>Shibboleth Maven Repo</name>
@@ -59,19 +64,11 @@
   <dependencyManagement>
   
     <dependencies>
-    
-      <dependency>
-        <groupId>se.litsec.sweid.idp</groupId>
-        <artifactId>shibboleth-base-bom</artifactId>
-        <version>1.5.0</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
       
       <dependency>
         <groupId>se.litsec.sweid.idp</groupId>
         <artifactId>shibboleth-base-dependency-bom</artifactId>
-        <version>1.5.0</version>
+        <version>${shibboleth-base.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>      
@@ -88,25 +85,32 @@
     </dependency>
     
     <dependency>
-      <groupId>se.litsec.sweid.idp</groupId>
-      <artifactId>shibboleth-authn-support</artifactId>
+      <groupId>se.litsec.opensaml.sweid</groupId>
+      <artifactId>swedish-eid-opensaml3</artifactId>
     </dependency>
     
     <dependency>
       <groupId>se.litsec.sweid.idp</groupId>
-      <artifactId>shibboleth-attribute-support</artifactId>
-    </dependency>            
-    
+      <artifactId>shibboleth-sweid-extensions</artifactId>
+      <version>${shibboleth-base.version}</version>
+      <scope>provided</scope>
+    </dependency>
+        
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
     </dependency>
 
     <dependency>
-      <groupId>jstl</groupId>
-      <artifactId>jstl</artifactId>
+      <groupId>org.apache.taglibs</groupId>
+      <artifactId>taglibs-standard-spec</artifactId>
     </dependency>
-    
+      
+    <dependency>
+      <groupId>org.apache.taglibs</groupId>
+      <artifactId>taglibs-standard-impl</artifactId>
+    </dependency>
+        
     <!-- For some reason the scope gets set to runtime so we need to add this explicitly -->
     <dependency>
       <groupId>joda-time</groupId>
@@ -115,46 +119,44 @@
     </dependency>
     
     <dependency>
-      <groupId>net.shibboleth.idp</groupId>
-      <artifactId>idp-authn-api</artifactId>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+    </dependency>
+    
+    <!-- Spring -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
     </dependency>
     
     <dependency>
-      <groupId>net.shibboleth.idp</groupId>
-      <artifactId>idp-authn-impl</artifactId>
-      <exclusions>
-        <!-- 
-          DuoWeb is delivered in the Shibboleth lib package. But it seems like
-          it isn't published to any official Maven repos. We exclude it from the
-          dependencies so that everyone can build ... 
-        -->
-        <exclusion>
-          <groupId>com.duosecurity</groupId>
-          <artifactId>DuoWeb</artifactId>
-        </exclusion>
-      </exclusions>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
     </dependency>
     
     <dependency>
-      <groupId>net.shibboleth.idp</groupId>
-      <artifactId>idp-attribute-resolver-impl</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
     </dependency>
     
     <dependency>
-      <groupId>net.shibboleth.idp</groupId>
-      <artifactId>idp-attribute-resolver-spring</artifactId>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
     </dependency>
     
     <dependency>
-      <groupId>net.shibboleth.idp</groupId>
-      <artifactId>idp-session-impl</artifactId>
-    </dependency>
-    
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <version>4.3.19.RELEASE</version>
+      <scope>provided</scope>
+    </dependency>    
+            
     <dependency>
-      <groupId>net.shibboleth.idp</groupId>
-      <artifactId>idp-ui</artifactId>
+      <groupId>org.springframework.mobile</groupId>
+      <artifactId>spring-mobile-device</artifactId>
     </dependency>    
     
+    <!-- Shibboleth and OpenSAML -->          
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-core</artifactId>
@@ -164,42 +166,18 @@
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-saml-api</artifactId>
     </dependency>
-    
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml-messaging-api</artifactId>
-    </dependency>
-    
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml-messaging-impl</artifactId>
-    </dependency>
-    
+
     <dependency>
       <groupId>org.opensaml</groupId>
       <artifactId>opensaml-profile-api</artifactId>
     </dependency>
     
     <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml-profile-impl</artifactId>
+      <groupId>net.shibboleth.idp</groupId>
+      <artifactId>idp-authn-api</artifactId>
     </dependency>
     
-    <dependency>
-      <groupId>org.opensaml</groupId>
-      <artifactId>opensaml-saml-impl</artifactId>
-    </dependency>
-        
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-    </dependency>
-            
-    <dependency>
-      <groupId>org.springframework.mobile</groupId>
-      <artifactId>spring-mobile-device</artifactId>
-    </dependency>    
-
+    <!-- Lombok -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -241,8 +219,7 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
     </dependency>
-
-    
+ 
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
@@ -261,16 +238,6 @@
           <include>logback-local.xml</include>
         </includes>
       </resource>
-      <!-- 
-      <resource>
-        <directory>src/main/scripts</directory>
-        <filtering>true</filtering>
-        <includes>
-          <include>**/*.sh</include>
-          <include>**/*.bat</include>
-        </includes>
-      </resource>
-      -->
     </resources>
 
     <plugins>
@@ -292,7 +259,7 @@
                 <artifactItem>
                   <groupId>se.litsec.sweid.idp</groupId>
                   <artifactId>shibboleth-base</artifactId>
-                  <version>${shibboleth-base-package.version}</version>
+                  <version>${shibboleth-base.version}</version>
                   <type>zip</type>
                 </artifactItem>
                 <artifactItem>
