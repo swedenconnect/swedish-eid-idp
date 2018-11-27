@@ -67,7 +67,7 @@
     <property name="cookieGenerator">
       <bean parent="abstractCookieGenerator">
         <property name="cookieName">
-          <util:constant static-field="se.elegnamnden.eid.idp.authn.controller.AUTO_AUTHN_COOKIE_NAME" />
+          <util:constant static-field="se.elegnamnden.eid.idp.authn.controller.AutoAuthnCookie.AUTO_AUTHN_COOKIE_NAME" />
         </property>
       </bean>
     </property>
