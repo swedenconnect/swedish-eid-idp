@@ -26,7 +26,7 @@ public class AutoAuthnCookie {
 
   /** The name of the auto-auth cookie. */
   public static final String AUTO_AUTHN_COOKIE_NAME = "autoAuthUser";
-
+  
   /** The user id stored in the cookie. */
   private String personalIdentityNumber;
 
