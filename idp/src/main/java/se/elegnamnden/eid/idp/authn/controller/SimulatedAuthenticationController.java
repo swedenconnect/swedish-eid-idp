@@ -38,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.CookieGenerator;
 
 import net.shibboleth.idp.authn.AuthnEventIds;
 import net.shibboleth.idp.authn.ExternalAuthenticationException;
@@ -67,12 +68,6 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
   /** Symbolic name for OK. */
   public static final String ACTION_OK = "ok";
 
-  /** The name of the selected-user cookie. */
-  public static final String SELECTED_USER_COOKIE_NAME = "selectedUser";
-
-  /** The name of the cookie that saves custom users. */
-  public static final String SAVED_USERS_COOKIE_NAME = "savedUsers";
-
   /** Maximum number of users to save in the above cookie. */
   public static final int MAX_SAVED_USERS = 20;
 
@@ -90,6 +85,12 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
 
   /** Helper bean for UI language select. */
   private UiLanguageHandler uiLanguageHandler;
+
+  /** The cookie generator for selected user. */
+  private CookieGenerator selectedUserCookieGenerator;
+
+  /** The cookie generator for saved users. */
+  private CookieGenerator savedUsersCookieGenerator;
 
   /** {@inheritDoc} */
   @Override
@@ -266,8 +267,9 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
 
       // Which authentication context URI should be included in the assertion?
       //
-      String authnContextClassRef = this.getAuthnContextService().getReturnAuthnContextClassRef(
-        context, result.getSelectedAuthnContextUri(), result.isSignMessageDisplayed());
+      String authnContextClassRef = this.getAuthnContextService()
+        .getReturnAuthnContextClassRef(
+          context, result.getSelectedAuthnContextUri(), result.isSignMessageDisplayed());
 
       // Issue attributes ...
       //
@@ -288,8 +290,9 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
       //
       SignatureActivationDataContext sadContext = this.getSignSupportService().getSadContext(context);
       if (sadContext != null && result.isSignMessageDisplayed() && this.getSignSupportService().isSignatureServicePeer(context)) {
-        String sad = this.getSignSupportService().issueSAD(
-          context, attributes, AttributeConstants.ATTRIBUTE_NAME_PERSONAL_IDENTITY_NUMBER, authnContextClassRef);
+        String sad = this.getSignSupportService()
+          .issueSAD(
+            context, attributes, AttributeConstants.ATTRIBUTE_NAME_PERSONAL_IDENTITY_NUMBER, authnContextClassRef);
         attributes.add(AttributeConstants.ATTRIBUTE_TEMPLATE_SAD.createBuilder().value(sad).build());
       }
 
@@ -386,9 +389,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
           }
 
           // Update the cookie ...
-          Cookie userCookie = new Cookie(SAVED_USERS_COOKIE_NAME, SimulatedUser.encodeList(newSavedUsers));
-          userCookie.setPath("/idp");
-          httpResponse.addCookie(userCookie);
+          this.savedUsersCookieGenerator.addCookie(httpResponse, SimulatedUser.encodeList(newSavedUsers));
         }
       }
     }
@@ -401,9 +402,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
 
     // Save the selected user in a cookie (for pre-selection the next time).
     //
-    Cookie cookie = new Cookie(SELECTED_USER_COOKIE_NAME, user.getPersonalIdentityNumber());
-    cookie.setPath("/idp");
-    httpResponse.addCookie(cookie);
+    this.selectedUserCookieGenerator.addCookie(httpResponse, user.getPersonalIdentityNumber());
 
     return user;
   }
@@ -420,7 +419,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
   private SimulatedUser getSavedSelectedUser(HttpServletRequest request, List<SimulatedUser> users) {
     String id = Arrays.asList(request.getCookies())
       .stream()
-      .filter(c -> c.getName().equals(SELECTED_USER_COOKIE_NAME))
+      .filter(c -> c.getName().equals(this.selectedUserCookieGenerator.getCookieName()))
       .map(c -> c.getValue())
       .findFirst()
       .orElse(null);
@@ -446,7 +445,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
   private List<SimulatedUser> getSavedUsers(HttpServletRequest request) {
     String v = Arrays.asList(request.getCookies())
       .stream()
-      .filter(c -> c.getName().equals(SAVED_USERS_COOKIE_NAME))
+      .filter(c -> c.getName().equals(this.savedUsersCookieGenerator.getCookieName()))
       .map(c -> c.getValue())
       .findFirst()
       .orElse(null);
@@ -509,6 +508,26 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
     this.uiLanguageHandler = uiLanguageHandler;
   }
 
+  /**
+   * Assigns the cookie generator for the selected user cookie.
+   * 
+   * @param selectedUserCookieGenerator
+   *          cookie generator
+   */
+  public void setSelectedUserCookieGenerator(CookieGenerator selectedUserCookieGenerator) {
+    this.selectedUserCookieGenerator = selectedUserCookieGenerator;
+  }
+
+  /**
+   * Assigns the cookie generator for the saved users cookie.
+   * 
+   * @param savedUsersCookieGenerator
+   *          cookie generator
+   */
+  public void setSavedUsersCookieGenerator(CookieGenerator savedUsersCookieGenerator) {
+    this.savedUsersCookieGenerator = savedUsersCookieGenerator;
+  }
+
   /** {@inheritDoc} */
   @Override
   public void afterPropertiesSet() throws Exception {
@@ -517,6 +536,8 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
     Assert.hasText(this.authenticatorName, "The property 'authenticatorName' must be assigned");
     Assert.notNull(this.fallbackLanguages, "The property 'fallbackLanguages' must be assigned");
     Assert.notNull(this.uiLanguageHandler, "The property 'uiLanguageHandler' must be assigned");
+    Assert.notNull(this.selectedUserCookieGenerator, "The property 'selectedUserCookieGenerator' must be assigned");
+    Assert.notNull(this.savedUsersCookieGenerator, "The property 'savedUsersCookieGenerator' must be assigned");
   }
 
 }

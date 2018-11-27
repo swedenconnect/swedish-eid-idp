@@ -17,7 +17,6 @@ package se.elegnamnden.eid.idp.authn.controller;
 
 import java.util.List;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -34,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.CookieGenerator;
 
 import se.elegnamnden.eid.idp.authn.model.SimulatedUser;
 
@@ -54,6 +54,9 @@ public class AutoAuthnController implements InitializingBean {
 
   /** A list of simulated users that we offer as a choice when authenticating. */
   private List<SimulatedUser> staticUsers;
+
+  /** The cookie generator. */
+  private CookieGenerator cookieGenerator;
 
   /**
    * Main request mapping.
@@ -135,9 +138,7 @@ public class AutoAuthnController implements InitializingBean {
     }
     AutoAuthnCookie autoAuthnCookie = new AutoAuthnCookie();
     autoAuthnCookie.setPersonalIdentityNumber(selectedUser);
-    Cookie cookie = new Cookie(AutoAuthnCookie.AUTO_AUTHN_COOKIE_NAME, autoAuthnCookie.getCookieValue());
-    cookie.setPath("/idp");
-    response.addCookie(cookie);
+    this.cookieGenerator.addCookie(response, autoAuthnCookie.getCookieValue());
   }
 
   /**
@@ -151,10 +152,7 @@ public class AutoAuthnController implements InitializingBean {
   @RequestMapping(value = "/autoauth/reset", method = RequestMethod.POST)
   @ResponseStatus(value = HttpStatus.OK)
   public void reset(HttpServletRequest request, HttpServletResponse response) {
-    Cookie cookie = new Cookie(AutoAuthnCookie.AUTO_AUTHN_COOKIE_NAME, null);
-    cookie.setPath("/idp");
-    cookie.setMaxAge(0);
-    response.addCookie(cookie);
+    this.cookieGenerator.removeCookie(response);
   }
 
   /**
@@ -191,10 +189,21 @@ public class AutoAuthnController implements InitializingBean {
     this.controllerPath = controllerPath;
   }
 
+  /**
+   * Assigns the cookie generator.
+   * 
+   * @param cookieGenerator
+   *          the cookie generator
+   */
+  public void setCookieGenerator(CookieGenerator cookieGenerator) {
+    this.cookieGenerator = cookieGenerator;
+  }
+
   /** {@inheritDoc} */
   @Override
   public void afterPropertiesSet() throws Exception {
     Assert.notEmpty(this.staticUsers, "The property 'staticUsers' must be assigned");
+    Assert.notNull(this.cookieGenerator, "The property 'cookieGenerator' must be assigned");
   }
 
 }

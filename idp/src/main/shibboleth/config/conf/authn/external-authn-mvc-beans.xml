@@ -21,7 +21,14 @@
   
   <bean id="sweid.UiLanguageHandler" class="se.elegnamnden.eid.idp.authn.controller.UiLanguageHandler" scope="singleton"
     p:languages-ref="sweid.uiLanguages" />
-
+    
+  <bean id="abstractCookieGenerator" class="org.springframework.web.util.CookieGenerator" abstract="true"
+    p:cookieDomain="%{idp.cookie.domain:}"
+    p:cookieHttpOnly="%{idp.cookie.httpOnly:true}"
+    p:cookieSecure="%{idp.cookie.secure:true}"
+    p:cookiePath="%{idp.cookie.path:/idp}"
+    p:cookieMaxAge="%{idp.cookie.maxAge:31536000}" />
+    
   <!--
     Abstract base controller for external authentication controllers.
     Path: /idp/extauth 
@@ -40,6 +47,13 @@
     p:staticUsers-ref="sweid.TestUserList"
     p:uiLanguageHandler-ref="sweid.UiLanguageHandler">
     
+    <property name="selectedUserCookieGenerator">
+      <bean parent="abstractCookieGenerator" p:cookieName="selectedUser" />    
+    </property>
+    <property name="savedUsersCookieGenerator">
+      <bean parent="abstractCookieGenerator" p:cookieName="savedUsers" />
+    </property>
+    
     <property name="fallbackLanguages">
       <bean parent="shibboleth.CommaDelimStringArray" c:_0="#{'%{idp.ui.fallbackLanguages:}'.trim()}" />
     </property>
@@ -48,6 +62,16 @@
          
   <bean id="sweid.AutoAuthnController" class="se.elegnamnden.eid.idp.authn.controller.AutoAuthnController"
     p:controllerPath="/extauth"
-    p:staticUsers-ref="sweid.TestUserList" /> 
+    p:staticUsers-ref="sweid.TestUserList">
+    
+    <property name="cookieGenerator">
+      <bean parent="abstractCookieGenerator">
+        <property name="cookieName">
+          <util:constant static-field="se.elegnamnden.eid.idp.authn.controller.AutoAuthnCookie.AUTO_AUTHN_COOKIE_NAME" />
+        </property>
+      </bean>
+    </property>
+    
+  </bean> 
         
 </beans>
