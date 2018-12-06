@@ -41,8 +41,9 @@
     <docker.image.prefix>docker.eidastest.se:5000</docker.image.prefix>
 
     <!-- Versions on dependencies -->
-    <shibboleth-base.version>1.6.0.RC1</shibboleth-base.version>
-    <tomcat.version>8.5.34</tomcat.version>
+    <shibboleth-base.version>1.6.0</shibboleth-base.version>
+    <shibboleth-base-deps.version>1.6.0</shibboleth-base-deps.version>
+    <tomcat.version>8.5.35</tomcat.version>
     
     <flexmark.version>0.32.18</flexmark.version>
     <jsoup.version>1.10.2</jsoup.version>    
@@ -68,7 +69,7 @@
       <dependency>
         <groupId>se.litsec.sweid.idp</groupId>
         <artifactId>shibboleth-base-dependency-bom</artifactId>
-        <version>${shibboleth-base.version}</version>
+        <version>${shibboleth-base-deps.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>      
@@ -147,7 +148,6 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-webmvc</artifactId>
-      <version>4.3.19.RELEASE</version>
       <scope>provided</scope>
     </dependency>    
             
