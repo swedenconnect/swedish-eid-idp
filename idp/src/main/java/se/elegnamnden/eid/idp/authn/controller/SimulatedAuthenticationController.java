@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 E-legitimationsnämnden
+ * Copyright 2016-2019 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,6 +51,8 @@ import se.litsec.shibboleth.idp.authn.context.SignMessageContext;
 import se.litsec.shibboleth.idp.authn.context.SignatureActivationDataContext;
 import se.litsec.shibboleth.idp.authn.controller.AbstractExternalAuthenticationController;
 import se.litsec.swedisheid.opensaml.saml2.attribute.AttributeConstants;
+import se.litsec.swedisheid.opensaml.saml2.authentication.psc.MatchValue;
+import se.litsec.swedisheid.opensaml.saml2.authentication.psc.PrincipalSelection;
 import se.litsec.swedisheid.opensaml.saml2.signservice.dss.SignMessageMimeTypeEnum;
 
 /**
@@ -167,12 +169,39 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
       SimulatedAuthentication simAuth = new SimulatedAuthentication();
       simAuth.setAuthenticationKey(this.getExternalAuthenticationKey(httpRequest));
 
+      // Check if the requester passed a PrincipalSelection extension. If so, we have a
+      // pre-selected user ...
+      //
+      PrincipalSelection principalSelection = this.getPrincipalSelection(context);
+      if (principalSelection != null) {
+        String preSelectedIdentityNumber = principalSelection.getMatchValues()
+          .stream()
+          .filter(mv -> AttributeConstants.ATTRIBUTE_NAME_PERSONAL_IDENTITY_NUMBER.equals(mv.getName()))
+          .map(MatchValue::getValue)
+          .findFirst()
+          .orElse(null);
+        if (preSelectedIdentityNumber != null) {
+          // Check that it is a valid user ...
+          if (!users.stream().filter(u -> preSelectedIdentityNumber.equals(u.getPersonalIdentityNumber())).findFirst().isPresent()) {
+            logger.info("AuthnRequest contained PrincipalSelection for user '{}' - this user is unknown - ignoring",
+              preSelectedIdentityNumber);
+          }
+          else {
+            logger.debug("User '{}' was pre-selected (PrincipalSelection extension)", preSelectedIdentityNumber);
+            simAuth.setSelectedUser(preSelectedIdentityNumber);
+            simAuth.setFixedSelectedUser(true);
+          }
+        }
+      }
+
       // Check if we already have a selected user (from previous sessions).
       //
-      SimulatedUser selectedUser = this.getSavedSelectedUser(httpRequest, users);
-      if (selectedUser != null) {
-        simAuth.setSelectedUser(selectedUser.getPersonalIdentityNumber());
-        // simAuth.setSelectedUserFull(selectedUser);
+      if (simAuth.getSelectedUser() == null) {
+        SimulatedUser selectedUser = this.getSavedSelectedUser(httpRequest, users);
+        if (selectedUser != null) {
+          simAuth.setSelectedUser(selectedUser.getPersonalIdentityNumber());
+          // simAuth.setSelectedUserFull(selectedUser);
+        }
       }
 
       // Assign the SP info ...

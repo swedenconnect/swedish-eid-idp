@@ -31,10 +31,24 @@
       <c:when test="${simulatedAuthentication.signature == true}">
         <c:choose>
           <c:when test="${not empty simulatedAuthentication.signMessage}">
-            <c:set var="infoTextCode" value="sweid.ui.sp-info-text.sign" />
+            <c:choose>
+              <c:when test="${simulatedAuthentication.fixedSelectedUser == true}">         
+                <c:set var="infoTextCode" value="sweid.ui.sp-info-text.sign-noselect" />
+              </c:when>
+              <c:otherwise>
+                <c:set var="infoTextCode" value="sweid.ui.sp-info-text.sign" />
+              </c:otherwise>
+            </c:choose>
           </c:when>
           <c:otherwise>
-            <c:set var="infoTextCode" value="sweid.ui.sp-info-text.sign-notext" />
+            <c:choose>
+              <c:when test="${simulatedAuthentication.fixedSelectedUser == true}">
+                <c:set var="infoTextCode" value="sweid.ui.sp-info-text.sign-notext-noselect" />
+              </c:when>
+              <c:otherwise>
+                <c:set var="infoTextCode" value="sweid.ui.sp-info-text.sign-notext" />
+              </c:otherwise>
+            </c:choose>
           </c:otherwise>
         </c:choose>
         <c:set var="okButtonMessageCode" value="sweid.ui.button.sign" />        
@@ -43,7 +57,14 @@
         <c:set var="loaSelectTextCode" value="sweid.ui.sign.authn-context-class.label" />
       </c:when>
       <c:otherwise>
-        <c:set var="infoTextCode" value="sweid.ui.sp-info-text.auth" />
+        <c:choose>
+          <c:when test="${simulatedAuthentication.fixedSelectedUser == true}">
+            <c:set var="infoTextCode" value="sweid.ui.sp-info-text.auth-noselect" />
+          </c:when>
+          <c:otherwise>
+            <c:set var="infoTextCode" value="sweid.ui.sp-info-text.auth" />        
+          </c:otherwise>
+        </c:choose>
         <c:set var="okButtonMessageCode" value="sweid.ui.button.login" />
         <c:set var="selectUserOptionMessageCode" value="sweid.ui.auth.select-user-option-text" />
         <c:set var="loaInfoTextCode" value="sweid.ui.auth.authn-context-class.info" />
@@ -137,18 +158,24 @@
           
             <div class="row section" id="selectSimulatedUserDiv">
               <div class="col-sm-12">
-                <form:select path="selectedUser" class="form-control" id="selectSimulatedUser">
+                <form:select path="selectedUser" class="form-control" id="selectSimulatedUser" disabled="${simulatedAuthentication.fixedSelectedUser}">
                   <spring:message code="${selectUserOptionMessageCode}" var="selectUserText" />
                   <form:option value="NONE" label="${selectUserText}" /> 
                   <c:forEach items="${staticUsers}" var="user" varStatus="user_s">
                     <form:option value="${user.personalIdentityNumber}">${user.uiDisplayName}</form:option>
                   </c:forEach>
                 </form:select>
+                
+                <c:if test="${simulatedAuthentication.fixedSelectedUser == false}">
                 <div class="noscripthide">
                   <button id="advancedButton" class="btn btn-link float-right" type="button"><spring:message code="sweid.ui.button.advanced" /> &gt;&gt;</button>
-                </div>                
+                </div>
+                </c:if>
               </div>            
             </div> <!-- /#selectSimulatedUserDiv -->
+            <c:if test="${simulatedAuthentication.fixedSelectedUser == true}">
+              <form:hidden path="selectedUser" value="${simulatedAuthentication.selectedUser}" />
+            </c:if>
             
             <div id="advancedSettings" class="row section noscripthide">
               <div class="col-sm-12">
