@@ -41,9 +41,9 @@
     <docker.image.prefix>docker.eidastest.se:5000</docker.image.prefix>
 
     <!-- Versions on dependencies -->
-    <shibboleth-base.version>1.6.0</shibboleth-base.version>
-    <shibboleth-base-deps.version>1.6.0</shibboleth-base-deps.version>
-    <tomcat.version>8.5.35</tomcat.version>
+    <shibboleth-base.version>1.6.2-SNAPSHOT</shibboleth-base.version>
+    <shibboleth-base-deps.version>1.6.2-SNAPSHOT</shibboleth-base-deps.version>
+    <tomcat.version>8.5.39</tomcat.version>
     
     <flexmark.version>0.32.18</flexmark.version>
     <jsoup.version>1.10.2</jsoup.version>    
