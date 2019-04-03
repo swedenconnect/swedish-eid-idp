@@ -62,4 +62,7 @@ public class SimulatedAuthentication {
   /** Was the sign message displayed? */
   private boolean signMessageDisplayed;
   
+  /** Flag that is set to true if the selectedUser was ordered from the AuthnRequest. */
+  private boolean fixedSelectedUser;
+  
 }
