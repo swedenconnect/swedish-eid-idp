@@ -17,6 +17,7 @@
 
     <!-- This set of resources supports a native Spring relying-party.xml file. -->
     <util:list id="shibboleth.RelyingPartyResolverResources">
+        <value>%{idp.home}/conf/custom-security-configuration.xml</value>
         <value>%{idp.home}/conf/relying-party.xml</value>
         <value>%{idp.home}/conf/credentials.xml</value>
         <value>%{idp.home}/system/conf/relying-party-system.xml</value>
