@@ -50,7 +50,16 @@
     <property name="keyDescriptors">
       <util:list>
         <bean class="se.litsec.opensaml.saml2.metadata.build.spring.KeyDescriptorFactoryBean" p:use="SIGNING" p:certificateResource="%{idp.signing.cert}" />
-        <bean class="se.litsec.opensaml.saml2.metadata.build.spring.KeyDescriptorFactoryBean" p:use="ENCRYPTION" p:certificateResource="%{idp.encryption.cert}" />
+        <bean class="se.litsec.opensaml.saml2.metadata.build.spring.KeyDescriptorFactoryBean" p:use="ENCRYPTION" p:certificateResource="%{idp.encryption.cert}">
+          <property name="encryptionMethods">
+            <util:list>
+              <util:constant static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_KEYTRANSPORT_RSAOAEP" />
+              <util:constant static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES256_GCM" />
+              <util:constant static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES192_GCM" />
+              <util:constant static-field="org.opensaml.xmlsec.encryption.support.EncryptionConstants.ALGO_ID_BLOCKCIPHER_AES128_GCM" />
+            </util:list>
+          </property>
+        </bean>
         <!-- 
           <bean class="se.litsec.opensaml.saml2.metadata.build.spring.KeyDescriptorFactoryBean" p:use="ENCRYPTION" p:certificate="%{idp.encryption.cert.2}" />
          -->
