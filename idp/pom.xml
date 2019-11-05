@@ -5,7 +5,7 @@
 
   <groupId>se.elegnamnden.eid.idp</groupId>
   <artifactId>swedish-eid-idp</artifactId>
-  <version>1.2.0</version>
+  <version>1.2.1-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <name>Swedish eID :: Reference IdP</name>
@@ -41,8 +41,8 @@
     <docker.image.prefix>docker.eidastest.se:5000</docker.image.prefix>
 
     <!-- Versions on dependencies -->
-    <shibboleth-base.version>1.7.0</shibboleth-base.version>
-    <shibboleth-base-deps.version>1.7.0</shibboleth-base-deps.version>
+    <shibboleth-base.version>1.7.1-SNAPSHOT</shibboleth-base.version>
+    <shibboleth-base-deps.version>1.7.1-SNAPSHOT</shibboleth-base-deps.version>
     <tomcat.version>8.5.42</tomcat.version>
     
     <flexmark.version>0.32.18</flexmark.version>
