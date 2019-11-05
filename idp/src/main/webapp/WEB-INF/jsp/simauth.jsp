@@ -17,9 +17,8 @@
 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>    
     
-    <link rel="stylesheet" type="text/css" href="<c:url value='/css/bootstrap-4.1.0.min.css' />" >
+    <link rel="stylesheet" type="text/css" href="<c:url value='/bootstrap/css/bootstrap.min.css' />" >
     <link rel="stylesheet" type="text/css" href="<c:url value='/css/open-sans-fonts.css' />" >
-    <!-- <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,400i,700" rel="stylesheet"> -->
     <link rel="stylesheet" type="text/css" href="<c:url value='/css/refmain.css' />" >    
         
     <title><spring:message code="sweid.ui.title" /></title>
@@ -305,7 +304,7 @@
     
     <script src="<c:url value='/js/jquery-3.3.1.slim.min.js' />" type="text/javascript"></script>
     <script src="<c:url value='/js/popper-1.14.0.min.js' />" type="text/javascript"></script>
-    <script src="<c:url value='/js/bootstrap-4.1.0.min.js' />" type="text/javascript"></script>
+    <script src="<c:url value='/bootstrap/js/bootstrap.min.js' />" type="text/javascript"></script>
     <script src="<c:url value='/js/valfor.js' />" type="text/javascript"></script>
     <script src="<c:url value='/js/refmain.js' />" type="text/javascript"></script>
 

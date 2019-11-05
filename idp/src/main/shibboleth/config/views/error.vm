@@ -53,7 +53,7 @@
       <meta http-equiv="Expires" content="-1"/>
       <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
       
-      <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/bootstrap-4.1.0.min.css" >
+      <link rel="stylesheet" type="text/css" href="$request.getContextPath()/bootstrap/css/bootstrap.min.css" >
       <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/open-sans-fonts.css" >
       <link rel="stylesheet" type="text/css" href="$request.getContextPath()/css/refmain.css" >    
                     
@@ -109,7 +109,7 @@
       
       <script src="$request.getContextPath()/js/jquery-3.3.1.slim.min.js" type="text/javascript"></script>
       <script src="$request.getContextPath()/js/popper-1.14.0.min.js" type="text/javascript"></script>
-      <script src="$request.getContextPath()/js/bootstrap-4.1.0.min.js" type="text/javascript"></script>
+      <script src="$request.getContextPath()/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
       
       <script src="$request.getContextPath()/js/refmain.js" type="text/javascript"></script>      
       
