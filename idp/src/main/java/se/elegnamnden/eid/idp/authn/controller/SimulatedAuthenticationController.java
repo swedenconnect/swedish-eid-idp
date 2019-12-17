@@ -314,7 +314,14 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
         AttributeConstants.ATTRIBUTE_TEMPLATE_DISPLAY_NAME.createBuilder().value(user.getDisplayName()).build());
       attributes.add(
         AttributeConstants.ATTRIBUTE_TEMPLATE_DATE_OF_BIRTH.createBuilder().value(getBirthDate(user.getPersonalIdentityNumber())).build());
-
+      
+      // Issue signMessageDigest if we displayed the sign message.
+      //
+      if (result.isSignMessageDisplayed()) {
+        attributes.add(this.createSignMessageDigestAttribute(
+          context, this.getSignSupportService().getSignMessageContext(context).getMessage()));
+      }
+      
       // Check if we should issue a SAD attribute.
       //
       SignatureActivationDataContext sadContext = this.getSignSupportService().getSadContext(context);
