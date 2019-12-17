@@ -52,6 +52,9 @@
     <AttributeRule attributeID="sad">
       <PermitValueRule xsi:type="ANY" />
     </AttributeRule>
+    <AttributeRule attributeID="signMessageDigest">
+      <PermitValueRule xsi:type="ANY" />
+    </AttributeRule>    
     <AttributeRule attributeID="userSignature">
       <PermitValueRule xsi:type="AttributeInMetadata" onlyIfRequired="false" />
     </AttributeRule>
