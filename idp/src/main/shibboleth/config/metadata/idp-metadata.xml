@@ -2,7 +2,12 @@
 <EntityDescriptor xmlns="urn:oasis:names:tc:SAML:2.0:metadata" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xml="http://www.w3.org/XML/1998/namespace"
   xmlns:mdui="urn:oasis:names:tc:SAML:metadata:ui" entityID="dummy">
 
-  <IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+  <IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">  
+    <Extensions>
+      <psc:RequestedPrincipalSelection xmlns:psc="http://id.swedenconnect.se/authn/1.0/principal-selection/ns">
+        <psc:MatchValue Name="urn:oid:1.2.752.29.4.13" />        
+      </psc:RequestedPrincipalSelection>
+    </Extensions>  
 
     <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:persistent</NameIDFormat>
     <NameIDFormat>urn:oasis:names:tc:SAML:2.0:nameid-format:transient</NameIDFormat>
