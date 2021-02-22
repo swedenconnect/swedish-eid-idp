@@ -12,10 +12,6 @@ The swedish-eid-idp repository contains a configuration of the [Shibboleth Ident
 
 The reference implementation is built using the [Swedish eID Shibboleth base package](https://github.com/litsec/swedish-eid-shibboleth-base) which is also available as open source.
 
-#### Upgrade notice
-
-If you have built an IdP using swedish-eid-idp version 1.0.9 or older, please be aware that version 1.1.0 or higher now uses Shibboleth v3.4.0 (instead of 3.3.1). For details, see [Shibboleth Release Notes](https://wiki.shibboleth.net/confluence/display/IDP30/ReleaseNotes).
-
 ## Building
 
 Build the IdP using Maven:
@@ -89,4 +85,4 @@ docker run -d --name my-own-idp --restart=always \
 ```
 
 
-Copyright &copy; 2016-2018, [Sweden Connect](https://swedenconnect.se). Licensed under version 2.0 of the [Apache License](http://www.apache.org/licenses/LICENSE-2.0).
+Copyright &copy; 2016-2021, [Sweden Connect](https://swedenconnect.se). Licensed under version 2.0 of the [Apache License](http://www.apache.org/licenses/LICENSE-2.0).
