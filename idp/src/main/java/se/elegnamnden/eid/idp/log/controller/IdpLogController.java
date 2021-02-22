@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Litsec AB
+ * Copyright 2018-2021 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ public class IdpLogController implements InitializingBean {
    */
   @RequestMapping(method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
   @ResponseBody
-  public HttpEntity<byte[]> getProcessLog(HttpServletRequest request) {
+  public HttpEntity<byte[]> getProcessLog(final HttpServletRequest request) {
     logger.debug("Request to download log data from {}", request.getRemoteAddr());
 
     if (!this.enabled) {
@@ -88,7 +88,7 @@ public class IdpLogController implements InitializingBean {
    * @param enabled
    *          {@code true} for enabled and {@code false} for disabled
    */
-  public void setEnabled(boolean enabled) {
+  public void setEnabled(final boolean enabled) {
     this.enabled = enabled;
   }
 
@@ -98,7 +98,7 @@ public class IdpLogController implements InitializingBean {
    * @param processLogPath
    *          path
    */
-  public void setProcessLogPath(String processLogPath) {
+  public void setProcessLogPath(final String processLogPath) {
     this.processLogPath = processLogPath;
   }
 

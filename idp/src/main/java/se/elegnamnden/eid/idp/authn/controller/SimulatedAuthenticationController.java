@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Sweden Connect
+ * Copyright 2016-2021 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,14 +99,15 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
   public String getAuthenticatorName() {
     return this.authenticatorName;
   }
-
+  
   /** {@inheritDoc} */
   @Override
   protected ModelAndView doExternalAuthentication(
-      HttpServletRequest httpRequest,
-      HttpServletResponse httpResponse,
-      String key,
-      ProfileRequestContext<?, ?> profileRequestContext) throws ExternalAuthenticationException, IOException {
+      final HttpServletRequest httpRequest,
+      final HttpServletResponse httpResponse,
+      final String key,
+      final ProfileRequestContext profileRequestContext)
+      throws ExternalAuthenticationException, IOException {
 
     // Is there an "auto authentication" cookie there?
     // This cookie enables automatic testing scenarios where no UI is displayed.
@@ -149,15 +150,16 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
    */
   @RequestMapping(value = "/startAuth", method = RequestMethod.POST)
   public ModelAndView startAuthentication(
-      HttpServletRequest httpRequest,
-      HttpServletResponse httpResponse,
-      @RequestParam(name = "language", required = false) String language) throws ExternalAuthenticationException, IOException {
+      final HttpServletRequest httpRequest,
+      final HttpServletResponse httpResponse,
+      @RequestParam(name = "language", required = false) final String language)
+      throws ExternalAuthenticationException, IOException {
 
     if (language != null) {
       this.uiLanguageHandler.setUiLanguage(httpRequest, httpResponse, language);
     }
 
-    final ProfileRequestContext<?, ?> context = this.getProfileRequestContext(httpRequest);
+    final ProfileRequestContext context = this.getProfileRequestContext(httpRequest);
 
     try {
       List<SimulatedUser> users = this.getStaticAndSavedUsers(httpRequest);
@@ -211,10 +213,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
 
       // Sign message support ...
       //
-      boolean willDisplaySignMessage = false;
-
       if (this.getSignSupportService().isSignatureServicePeer(context)) {
-
         simAuth.setSignature(true);
 
         SignMessageContext signMessageContext = this.getSignSupportService().getSignMessageContext(context);
@@ -224,7 +223,6 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
           signMessageModel.setDisplayType(signMessageContext.getMimeType() == SignMessageMimeTypeEnum.TEXT ? DisplayType.MONOSPACE_TEXT
               : DisplayType.HTML);
           simAuth.setSignMessage(signMessageModel);
-          willDisplaySignMessage = true;
         }
       }
       else {
@@ -233,7 +231,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
 
       // Get hold of the possible authentication context URI:s that the user can authenticate under ...
       //
-      List<String> authnContextUris = this.getAuthnContextService().getPossibleAuthnContextClassRefs(context, willDisplaySignMessage);
+      List<String> authnContextUris = this.getAuthnContextService().getPossibleAuthnContextClassRefs(context);
       simAuth.setSelectedAuthnContextUri(authnContextUris.get(0));
       if (authnContextUris.size() > 1) {
         simAuth.setPossibleAuthnContextUris(authnContextUris);
@@ -267,10 +265,12 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
    *           for IO errors
    */
   @RequestMapping(value = "/simulatedAuth", method = RequestMethod.POST)
-  public ModelAndView processAuthentication(HttpServletRequest httpRequest,
-      HttpServletResponse httpResponse,
-      @RequestParam("action") String action,
-      @ModelAttribute("authenticationResult") SimulatedAuthentication result) throws ExternalAuthenticationException, IOException {
+  public ModelAndView processAuthentication(
+      final HttpServletRequest httpRequest,
+      final HttpServletResponse httpResponse,
+      @RequestParam("action") final String action,
+      @ModelAttribute("authenticationResult") final SimulatedAuthentication result)
+      throws ExternalAuthenticationException, IOException {
 
     if ("cancel".equals(action)) {
       this.cancel(httpRequest, httpResponse);
@@ -292,13 +292,12 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
     logger.debug("Authenticated user: {}", user);
 
     try {
-      final ProfileRequestContext<?, ?> context = this.getProfileRequestContext(httpRequest);
+      final ProfileRequestContext context = this.getProfileRequestContext(httpRequest);
 
       // Which authentication context URI should be included in the assertion?
       //
       String authnContextClassRef = this.getAuthnContextService()
-        .getReturnAuthnContextClassRef(
-          context, result.getSelectedAuthnContextUri(), result.isSignMessageDisplayed());
+        .getReturnAuthnContextClassRef(context, result.getSelectedAuthnContextUri());
 
       // Issue attributes ...
       //
@@ -314,14 +313,14 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
         AttributeConstants.ATTRIBUTE_TEMPLATE_DISPLAY_NAME.createBuilder().value(user.getDisplayName()).build());
       attributes.add(
         AttributeConstants.ATTRIBUTE_TEMPLATE_DATE_OF_BIRTH.createBuilder().value(getBirthDate(user.getPersonalIdentityNumber())).build());
-      
+
       // Issue signMessageDigest if we displayed the sign message.
       //
       if (result.isSignMessageDisplayed()) {
         attributes.add(this.createSignMessageDigestAttribute(
           context, this.getSignSupportService().getSignMessageContext(context).getMessage()));
       }
-      
+
       // Check if we should issue a SAD attribute.
       //
       SignatureActivationDataContext sadContext = this.getSignSupportService().getSadContext(context);
@@ -348,11 +347,10 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
    *          the personal identity number
    * @return the birth date on the format YYYY-MM-DD
    */
-  private static String getBirthDate(String personalIdentityNumber) {
+  private static String getBirthDate(final String personalIdentityNumber) {
     Integer day = Integer.parseInt(personalIdentityNumber.substring(6, 8));
     return String.format("%s-%s-%02d", personalIdentityNumber.substring(0, 4), personalIdentityNumber.substring(4, 6),
       day > 60 ? day - 60 : day);
-
   }
 
   /**
@@ -365,9 +363,11 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
    *          the HTTP response
    * @param result
    *          the result from the view
-   * @return the selected user or {@code null}
+   * @return the selected user or null
    */
-  private SimulatedUser processSelectedUser(HttpServletRequest httpRequest, HttpServletResponse httpResponse,
+  private SimulatedUser processSelectedUser(
+      final HttpServletRequest httpRequest, 
+      final HttpServletResponse httpResponse,
       final SimulatedAuthentication result) {
 
     if (result.getSelectedUser() == null && result.getSelectedUserFull() == null) {
@@ -452,7 +452,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
    *          the simulated users available
    * @return the user or {@code null} if no cookie is available
    */
-  private SimulatedUser getSavedSelectedUser(HttpServletRequest request, List<SimulatedUser> users) {
+  private SimulatedUser getSavedSelectedUser(final HttpServletRequest request, final List<SimulatedUser> users) {
     String id = Arrays.asList(request.getCookies())
       .stream()
       .filter(c -> c.getName().equals(this.selectedUserCookieGenerator.getCookieName()))
@@ -478,7 +478,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
    *          the HTTP request
    * @return a list of simulated users
    */
-  private List<SimulatedUser> getSavedUsers(HttpServletRequest request) {
+  private List<SimulatedUser> getSavedUsers(final HttpServletRequest request) {
     String v = Arrays.asList(request.getCookies())
       .stream()
       .filter(c -> c.getName().equals(this.savedUsersCookieGenerator.getCookieName()))
@@ -496,7 +496,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
    *          the HTTP request
    * @return a list of simulated users
    */
-  private List<SimulatedUser> getStaticAndSavedUsers(HttpServletRequest request) {
+  private List<SimulatedUser> getStaticAndSavedUsers(final HttpServletRequest request) {
     List<SimulatedUser> users = new ArrayList<>(this.staticUsers.size());
     users.addAll(this.getSavedUsers(request));
     users.addAll(this.staticUsers);
@@ -510,7 +510,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
    * @param staticUsers
    *          a list of static simulated users
    */
-  public void setStaticUsers(List<SimulatedUser> staticUsers) {
+  public void setStaticUsers(final List<SimulatedUser> staticUsers) {
     this.staticUsers = staticUsers;
   }
 
@@ -520,7 +520,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
    * @param authenticatorName
    *          the name
    */
-  public void setAuthenticatorName(String authenticatorName) {
+  public void setAuthenticatorName(final String authenticatorName) {
     this.authenticatorName = authenticatorName;
   }
 
@@ -530,7 +530,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
    * @param fallbackLanguages
    *          a list of country codes
    */
-  public void setFallbackLanguages(List<String> fallbackLanguages) {
+  public void setFallbackLanguages(final List<String> fallbackLanguages) {
     this.fallbackLanguages = fallbackLanguages;
   }
 
@@ -540,7 +540,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
    * @param uiLanguageHandler
    *          the UI language handler
    */
-  public void setUiLanguageHandler(UiLanguageHandler uiLanguageHandler) {
+  public void setUiLanguageHandler(final UiLanguageHandler uiLanguageHandler) {
     this.uiLanguageHandler = uiLanguageHandler;
   }
 
@@ -550,7 +550,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
    * @param selectedUserCookieGenerator
    *          cookie generator
    */
-  public void setSelectedUserCookieGenerator(CookieGenerator selectedUserCookieGenerator) {
+  public void setSelectedUserCookieGenerator(final CookieGenerator selectedUserCookieGenerator) {
     this.selectedUserCookieGenerator = selectedUserCookieGenerator;
   }
 
@@ -560,7 +560,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
    * @param savedUsersCookieGenerator
    *          cookie generator
    */
-  public void setSavedUsersCookieGenerator(CookieGenerator savedUsersCookieGenerator) {
+  public void setSavedUsersCookieGenerator(final CookieGenerator savedUsersCookieGenerator) {
     this.savedUsersCookieGenerator = savedUsersCookieGenerator;
   }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 E-legitimationsnämnden
+ * Copyright 2016-2021 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 package se.elegnamnden.eid.idp.authn.service;
+
+import java.util.Optional;
 
 import org.opensaml.profile.context.ProfileRequestContext;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
@@ -43,7 +45,7 @@ public class ExtendedAuthnContextServiceImpl extends AuthnContextServiceImpl {
    * authenticate according to the eIDAS LoA:s.
    */
   @Override
-  public void processRequest(ProfileRequestContext<?, ?> context) throws ExternalAutenticationErrorCodeException {
+  public void processRequest(final ProfileRequestContext context) throws ExternalAutenticationErrorCodeException {
     super.processRequest(context);
     
     if (!this.isEidasProxyServicePeer(context)) {
@@ -70,11 +72,10 @@ public class ExtendedAuthnContextServiceImpl extends AuthnContextServiceImpl {
    * 
    * @param uri
    *          the URI to test
-   * @return {@code true} if the supplied URI is for eIDAS, and {@code false} otherwise
+   * @return true if the supplied URI is for eIDAS, and false otherwise
    */
-  protected boolean isEidasURI(String uri) {
-    LoaEnum loa = LoaEnum.parse(uri);
-    return (loa != null && loa.isEidasUri());
+  protected boolean isEidasURI(final String uri) {
+    return Optional.ofNullable(LoaEnum.parse(uri)).map(LoaEnum::isEidasUri).orElse(false);
   }
 
   /**
@@ -82,9 +83,9 @@ public class ExtendedAuthnContextServiceImpl extends AuthnContextServiceImpl {
    * 
    * @param context
    *          the profile context
-   * @return {@code true} if the peer is an eIDAS proxy service and {@code false} otherwise
+   * @return true if the peer is an eIDAS proxy service and false otherwise
    */
-  protected boolean isEidasProxyServicePeer(ProfileRequestContext<?, ?> context) {
+  protected boolean isEidasProxyServicePeer(final ProfileRequestContext context) {
     EntityDescriptor peerMetadata = this.getPeerMetadata(context);
     if (peerMetadata == null) {
       log.error("No metadata available for connecting SP");

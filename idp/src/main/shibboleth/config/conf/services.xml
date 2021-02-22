@@ -8,12 +8,8 @@
                            
     default-init-method="initialize"
     default-destroy-method="destroy">
-        
-    <!--
-    Otherwise by default we look at resources whose names are derived from %{idp.home}. Services not configured
-    using native Spring syntax also need to load the property-placeholder file in order to pull settings from
-    property sources.
-    -->
+                               
+    <!-- By default we look at resources whose names are derived from %{idp.home}. -->
 
     <!-- This set of resources supports a native Spring relying-party.xml file. -->
     <util:list id="shibboleth.RelyingPartyResolverResources">
@@ -21,12 +17,6 @@
         <value>%{idp.home}/conf/relying-party.xml</value>
         <value>%{idp.home}/conf/credentials.xml</value>
         <value>%{idp.home}/system/conf/relying-party-system.xml</value>
-    </util:list>
-
-    <!-- This set of resources supports a legacy 2.x relying-party.xml file. -->
-    <util:list id="shibboleth.LegacyRelyingPartyResolverResources">
-        <value>%{idp.home}/conf/relying-party.xml</value>
-        <value>%{idp.home}/system/conf/legacy-relying-party-defaults.xml</value>
     </util:list>
 
     <util:list id="shibboleth.MetadataResolverResources">
@@ -40,6 +30,17 @@
     </util:list>    
 
     <util:list id ="shibboleth.AttributeResolverResources">
+        <value>%{idp.home}/conf/attribute-resolver.xml</value>
+    </util:list>
+
+    <!--
+    This is suitable for new installs but will usually produce duplicate Attribute
+    output if a legacy resolver file is used that contains AttributeEncoders.
+    -->
+    <util:list id ="shibboleth.AttributeRegistryResources">
+        <value>%{idp.home}/conf/attribute-registry.xml</value>
+        <value>%{idp.home}/system/conf/attribute-registry-system.xml</value>
+        <value>%{idp.home}/conf/attributes/default-rules.xml</value>
         <value>%{idp.home}/conf/attribute-resolver.xml</value>
     </util:list>
 
@@ -71,7 +72,7 @@
         <value>%{idp.home}/messages/messages</value>
         <value>%{idp.home}/system/messages/messages</value>
     </util:list>
-    
+
     <util:list id="sweid.SignatureServiceSupportResources">
       <value>%{idp.home}/conf/credentials.xml</value>
       <value>%{idp.home}/system/conf/signature-service-support.xml</value>

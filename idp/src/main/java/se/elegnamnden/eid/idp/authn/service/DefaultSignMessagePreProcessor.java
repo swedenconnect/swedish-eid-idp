@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Litsec AB
+ * Copyright 2016-2021 Litsec AB
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,12 @@ import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Element;
 import org.jsoup.safety.Whitelist;
 
-import com.vladsch.flexmark.ast.Node;
 import com.vladsch.flexmark.ext.tables.TablesExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.parser.ParserEmulationProfile;
-import com.vladsch.flexmark.util.options.MutableDataSet;
+import com.vladsch.flexmark.util.ast.Document;
+import com.vladsch.flexmark.util.data.MutableDataSet;
 
 import se.litsec.shibboleth.idp.authn.service.SignMessageContentException;
 import se.litsec.shibboleth.idp.authn.service.SignMessagePreProcessor;
@@ -82,7 +82,7 @@ public class DefaultSignMessagePreProcessor implements SignMessagePreProcessor {
 
   /** {@inheritDoc} */
   @Override
-  public String processSignMessage(String clearText, SignMessageMimeTypeEnum messageType) throws SignMessageContentException {
+  public String processSignMessage(final String clearText, final SignMessageMimeTypeEnum messageType) throws SignMessageContentException {
     
     String htmlMessage;
 
@@ -127,7 +127,7 @@ public class DefaultSignMessagePreProcessor implements SignMessagePreProcessor {
    * @throws SignMessageContentException
    *           if the HTML contains illegal tags
    */
-  private String validateAndCleanHtml(String html) throws SignMessageContentException {
+  private String validateAndCleanHtml(final String html) throws SignMessageContentException {
 
     // First validate the HTML based on allowed tags.
     // At this point we allow any attributes, but will fail on non-allowed
@@ -155,8 +155,8 @@ public class DefaultSignMessagePreProcessor implements SignMessagePreProcessor {
 
     // First translate the Markdown into HTML.
     //
-    Node document = this.markdownParser.parse(markdown);
-    String html = this.markdownHtmlRenderer.render(document);
+    final Document document = this.markdownParser.parse(markdown);
+    final String html = this.markdownHtmlRenderer.render(document);
 
     // Next, validate and clean the rendered HTML.
     //
@@ -179,7 +179,7 @@ public class DefaultSignMessagePreProcessor implements SignMessagePreProcessor {
     }
 
     @Override
-    protected boolean isSafeAttribute(String tagName, Element el, Attribute attr) {
+    protected boolean isSafeAttribute(final String tagName, final Element el, final Attribute attr) {
       return true;
     }
   }  

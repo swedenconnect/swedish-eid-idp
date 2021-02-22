@@ -11,7 +11,7 @@ SCRIPT_DIR_WIN=`echo $SCRIPT_DIR | sed 's/\/cygdrive\/c/c:/g'`
 BASE_DIR=`echo $SCRIPT_DIR_WIN | sed 's/\/scripts//g'`
 
 export IDP_HOME=$BASE_DIR/target/shibboleth
-export IDP_TOMCAT_HOME=$BASE_DIR/target/dependency/apache-tomcat-8.5.50
+export IDP_TOMCAT_HOME=$BASE_DIR/target/dependency/apache-tomcat-9.0.43
 export IDP_CREDENTIALS=$BASE_DIR/test-credentials
 
 export IDP_SERVER_HOSTNAME=localhost

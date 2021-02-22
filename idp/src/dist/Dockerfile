@@ -1,4 +1,4 @@
-FROM openjdk:8-jre
+FROM openjdk:11-jre
 
 RUN mkdir /opt/swedish-eid-idp
 ADD tomcat /opt/swedish-eid-idp/tomcat/

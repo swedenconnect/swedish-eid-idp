@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 E-legitimationsnämnden
+ * Copyright 2016-2021 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,11 +88,11 @@ public class SpInfoHandler {
         continue;
       }
       if (logo.getWidth() != null && logo.getWidth() > logo.getHeight()) {
-        spInfo.setDefaultLogoUrl(logo.getURL());
+        spInfo.setDefaultLogoUrl(logo.getURI());
         break;
       }
       else if (logo.getHeight() > 40 && logo.getHeight() < 100) {
-        spInfo.setDefaultLogoUrl(logo.getURL());
+        spInfo.setDefaultLogoUrl(logo.getURI());
         break;
       }
       else if (logo.getHeight() < 40) {
@@ -108,13 +108,13 @@ public class SpInfoHandler {
     }
     if (spInfo.getDefaultLogoUrl() == null) {
       if (large != null) {
-        spInfo.setDefaultLogoUrl(large.getURL());
+        spInfo.setDefaultLogoUrl(large.getURI());
       }
       else if (small != null) {
-        spInfo.setDefaultLogoUrl(small.getURL());
+        spInfo.setDefaultLogoUrl(small.getURI());
       }
       else if (!uiInfo.getLogos().isEmpty()) {
-        spInfo.setDefaultLogoUrl(uiInfo.getLogos().get(0).getURL());
+        spInfo.setDefaultLogoUrl(uiInfo.getLogos().get(0).getURI());
       }
     }
     
