@@ -43,7 +43,7 @@
     <tomcat.version>9.0.43</tomcat.version>
     
     <flexmark.version>0.62.2</flexmark.version>
-    <jsoup.version>1.13.1</jsoup.version>    
+    <jsoup.version>1.14.2</jsoup.version>    
   </properties>
 
   <repositories>
