@@ -5,7 +5,8 @@
   <IDPSSODescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">  
     <Extensions>
       <psc:RequestedPrincipalSelection xmlns:psc="http://id.swedenconnect.se/authn/1.0/principal-selection/ns">
-        <psc:MatchValue Name="urn:oid:1.2.752.29.4.13" />        
+        <psc:MatchValue Name="urn:oid:1.2.752.29.4.13" />
+        <psc:MatchValue Name="urn:oid:1.2.752.201.3.1" />       
       </psc:RequestedPrincipalSelection>
     </Extensions>  
 
@@ -21,21 +22,15 @@
     <OrganizationName xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="sv">Sweden Connect</OrganizationName>
     <OrganizationDisplayName xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="en">Sweden Connect</OrganizationDisplayName>
     <OrganizationDisplayName xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="sv">Sweden Connect</OrganizationDisplayName>
-    <OrganizationURL xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="en">https://swedenconnect.se</OrganizationURL>
+    <OrganizationURL xmlns:xml="http://www.w3.org/XML/1998/namespace" xml:lang="en">https://www.swedenconnect.se</OrganizationURL>
   </Organization>
    <ContactPerson contactType="technical" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata">
-      <Company>Litsec AB</Company>
-      <GivenName>Martin</GivenName>
-      <SurName>Lindström</SurName>
-      <EmailAddress>martin.lindstrom@litsec.se</EmailAddress>
-      <TelephoneNumber>+46 (0)70 361 98 80</TelephoneNumber>
+      <Company>Sweden Connect</Company>
+      <EmailAddress>operations@swedenconnect.se</EmailAddress>
    </ContactPerson>
    <ContactPerson contactType="support" xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata">
-      <Company>Litsec AB</Company>
-      <GivenName>Martin</GivenName>
-      <SurName>Lindström</SurName>
-      <EmailAddress>martin.lindstrom@litsec.se</EmailAddress>
-      <TelephoneNumber>+46 (0)70 361 98 80</TelephoneNumber>
+      <Company>Sweden Connect</Company>
+      <EmailAddress>operations@swedenconnect.se</EmailAddress>
    </ContactPerson>
 
 </EntityDescriptor>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 E-legitimationsnämnden
+ * Copyright 2016-2022 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,19 @@ public class SimulatedUser implements Comparable<SimulatedUser> {
 
   /** The user display name. */
   private String displayName;
-
+  
+  /** The organizational identity (minus the organization number). */
+  private String orgIdentity;
+  
+  /** The organization identifier (number). */
+  private String organizationIdentifier;
+  
+  /** The organization name. */
+  private String organizationName;
+  
+  /** The organization display name. */
+  private String organizationDisplayName;
+  
   /**
    * Default constructor.
    */
@@ -60,8 +72,17 @@ public class SimulatedUser implements Comparable<SimulatedUser> {
     this(personalIdentityNumber, givenName, surname);
     this.displayName = displayName;
   }
-
-  public String getDisplayName() {
+  
+  public boolean isOrganizationalUser() {
+    return this.orgIdentity != null && this.organizationIdentifier != null
+        && this.organizationName != null;
+  }
+  
+  public String getDisplayName(boolean requestOrgId) {
+    if (requestOrgId && this.organizationDisplayName != null) {
+      return this.organizationDisplayName;
+    }
+    
     if (this.displayName == null) {
       StringBuffer sb = new StringBuffer();
       if (this.givenName != null) {
@@ -80,6 +101,13 @@ public class SimulatedUser implements Comparable<SimulatedUser> {
 
   public String getUiDisplayName() {
     return String.format("%s (%s)", this.getDisplayName(), this.getPersonalIdentityNumber());
+  }
+  
+  public String getOrgAffiliation() {
+    if (this.orgIdentity != null && this.organizationIdentifier != null) {
+      return String.format("%s@%s", this.orgIdentity, this.organizationIdentifier);
+    }
+    return null;
   }
 
   public String encode() {
