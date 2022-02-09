@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>se.elegnamnden.eid.idp</groupId>
+  <groupId>se.swedenconnect.eid.idp</groupId>
   <artifactId>swedish-eid-idp</artifactId>
   <version>1.3.0-SNAPSHOT</version>
   <packaging>jar</packaging>
@@ -23,9 +23,9 @@
   
     <developer>
       <name>Martin Lindström</name>
-      <email>martin.lindstrom@litsec.se</email>
-      <organization>Litsec AB</organization>
-      <organizationUrl>http://www.litsec.se</organizationUrl>
+      <email>martin@idsec.se</email>
+      <organization>IDsec Solutions AB</organization>
+      <organizationUrl>https://www.idsec.se</organizationUrl>
     </developer>
         
   </developers>  

@@ -16,7 +16,7 @@
     Controller for publishing the Shibboleth logs.
     Path: idp/logs
    -->
-  <bean class="se.elegnamnden.eid.idp.log.controller.IdpLogController"
+  <bean class="se.swedenconnect.eid.idp.log.controller.IdpLogController"
     p:enabled="%{idp.log-publish.enabled:false}"
     p:processLogPath="%{idp.log-publish.path:}" />
         
