@@ -15,11 +15,11 @@
        default-destroy-method="destroy">
        
   <util:list id="sweid.uiLanguages">
-    <bean class="se.elegnamnden.eid.idp.authn.model.UiLanguage" p:languageTag="sv" p:text="Svenska" />
-    <bean class="se.elegnamnden.eid.idp.authn.model.UiLanguage" p:languageTag="en" p:text="English" />
+    <bean class="se.swedenconnect.eid.idp.authn.model.UiLanguage" p:languageTag="sv" p:text="Svenska" />
+    <bean class="se.swedenconnect.eid.idp.authn.model.UiLanguage" p:languageTag="en" p:text="English" />
   </util:list>
   
-  <bean id="sweid.UiLanguageHandler" class="se.elegnamnden.eid.idp.authn.controller.UiLanguageHandler" scope="singleton"
+  <bean id="sweid.UiLanguageHandler" class="se.swedenconnect.eid.idp.authn.controller.UiLanguageHandler" scope="singleton"
     p:languages-ref="sweid.uiLanguages" />
     
   <bean id="abstractCookieGenerator" class="org.springframework.web.util.CookieGenerator" abstract="true"
@@ -41,7 +41,7 @@
     p:attributeToIdMapping-ref="sweid.SAML2AttributeNameToIdMapperService"    
     p:flowName="authn/External" />
            
-  <bean id="sweid.SimulatedAuthenticationController" class="se.elegnamnden.eid.idp.authn.controller.SimulatedAuthenticationController"
+  <bean id="sweid.SimulatedAuthenticationController" class="se.swedenconnect.eid.idp.authn.controller.SimulatedAuthenticationController"
     parent="sweid.AbstractExternalAuthenticationController"
     p:authenticatorName="%{idp.authn.external-authn.name}" 
     p:staticUsers-ref="sweid.TestUserList"
@@ -60,14 +60,14 @@
     
   </bean>
          
-  <bean id="sweid.AutoAuthnController" class="se.elegnamnden.eid.idp.authn.controller.AutoAuthnController"
+  <bean id="sweid.AutoAuthnController" class="se.swedenconnect.eid.idp.authn.controller.AutoAuthnController"
     p:controllerPath="/extauth"
     p:staticUsers-ref="sweid.TestUserList">
     
     <property name="cookieGenerator">
       <bean parent="abstractCookieGenerator">
         <property name="cookieName">
-          <util:constant static-field="se.elegnamnden.eid.idp.authn.controller.AutoAuthnCookie.AUTO_AUTHN_COOKIE_NAME" />
+          <util:constant static-field="se.swedenconnect.eid.idp.authn.controller.AutoAuthnCookie.AUTO_AUTHN_COOKIE_NAME" />
         </property>
       </bean>
     </property>

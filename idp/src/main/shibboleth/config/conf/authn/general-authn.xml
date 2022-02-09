@@ -14,7 +14,7 @@
 
     <!-- Beans for external authentication -->
     
-    <bean id="sweid.AuthnContextService" class="se.elegnamnden.eid.idp.authn.service.ExtendedAuthnContextServiceImpl" scope="singleton"
+    <bean id="sweid.AuthnContextService" class="se.swedenconnect.eid.idp.authn.service.ExtendedAuthnContextServiceImpl" scope="singleton"
       p:flowName="authn/External"
       p:authnContextweightMap-ref="shibboleth.AuthenticationPrincipalWeightMap" />
             
@@ -26,7 +26,7 @@
       p:sadFactory-ref="sweid.SADBuilder"
       p:signMessagePreProcessor-ref="sweid.SignMessagePreProcessor" />
       
-   <bean id="sweid.SignMessagePreProcessor" class="se.elegnamnden.eid.idp.authn.service.DefaultSignMessagePreProcessor" scope="singleton" />
+   <bean id="sweid.SignMessagePreProcessor" class="se.swedenconnect.eid.idp.authn.service.DefaultSignMessagePreProcessor" scope="singleton" />
       
     <bean id="sweid.SADBuilder" class="se.litsec.swedisheid.opensaml.saml2.signservice.SADFactory"
       c:idpEntityID="%{idp.entityID}"
