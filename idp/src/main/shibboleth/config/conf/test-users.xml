@@ -14,6 +14,10 @@
        
 
   <util:list id="sweid.TestUserList">
+  <!-- 
+    <bean class="se.elegnamnden.eid.idp.authn.model.SimulatedUser" c:personalIdentityNumber="188803099368" c:displayName="Agda Andersson" c:givenName="Agda" c:surname="Andersson"
+      p:orgIdentity="agda" p:organizationIdentifier="2021006883" p:organizationName="DIGG" p:organizationDisplayName="DIGG-handläggare 1" />
+      -->
     <bean class="se.elegnamnden.eid.idp.authn.model.SimulatedUser" c:personalIdentityNumber="188803099368" c:displayName="Agda Andersson" c:givenName="Agda" c:surname="Andersson" />
     <bean class="se.elegnamnden.eid.idp.authn.model.SimulatedUser" c:personalIdentityNumber="197609265819" c:displayName="Alrik Lidén" c:givenName="Alrik" c:surname="Lidén" />
     <bean class="se.elegnamnden.eid.idp.authn.model.SimulatedUser" c:personalIdentityNumber="195509132386" c:displayName="Beatrice Invandro" c:givenName="Beatrice" c:surname="Invandro" />

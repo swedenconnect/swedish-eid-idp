@@ -29,7 +29,7 @@
       <div class="container">        
         <div class="row">
           <div class="col-sm-12 top-logo">
-            <img class="top-logo-dim float-left" src="<c:url value='/images/ref-idp-logo.svg' />" />
+            <img class="top-logo-dim float-left" src="<c:url value='/images/idp-logo.svg' />" />
           </div>
         </div>
       </div>

@@ -53,15 +53,9 @@
           <util:list>
             <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/loa2"/>
             <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/loa3"/>
-            <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/loa4"/>
-            <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/loa2-sigmessage"/>
-            <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/loa3-sigmessage"/>
-            <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/loa4-sigmessage"/>
-            <!-- <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/eidas-low" /> -->
+            <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.swedenconnect.se/loa/1.0/uncertified-loa3"/>            
             <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/eidas-nf-low" />
-            <!-- <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/eidas-sub" /> -->
             <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/eidas-nf-sub" />
-            <!-- <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/eidas-high" /> -->
             <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/eidas-nf-high" />
           </util:list>
         </property>
@@ -83,14 +77,8 @@
         <key>
           <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/loa3" />
         </key>
-        <value>2</value>
-      </entry>
-      <entry>
-        <key>
-          <bean parent="shibboleth.SAML2AuthnContextClassRef" c:classRef="http://id.elegnamnden.se/loa/1.0/loa3-sigmessage" />
-        </key>
         <value>1</value>
-      </entry>      
+      </entry>
     </util:map>
 
 </beans>

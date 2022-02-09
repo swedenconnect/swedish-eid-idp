@@ -110,6 +110,14 @@ if [ ! -f "$IDP_METADATA_SIGNING_CERT" ]; then
   exit 1
 fi
 
+#
+# HoK support
+#
+: ${IDP_HOK_ACTIVE:=false}
+: ${IDP_HOK_CERT_READ_EAGERLY:=true}
+: ${IDP_HOK_CERT_READ_FROM_HEADER:=false}
+: ${IDP_HOK_CERT_HEADER_NAME:=X-Client-Cert}
+: ${IDP_HOK_CERT_ATTRIBUTE_NAME:=javax.servlet.request.X509Certificate}
 
 #
 # Metadata
@@ -168,6 +176,11 @@ export JAVA_OPTS="\
           -Didp.signing.cert=$IDP_SIGNING_CERT \
           -Didp.encryption.key=$IDP_ENCRYPTION_KEY \
           -Didp.encryption.cert=$IDP_ENCRYPTION_CERT \
+          -Didp.hok.active=$IDP_HOK_ACTIVE \
+          -Didp.hok.cert.read-eagerly=$IDP_HOK_CERT_READ_EAGERLY \
+          -Didp.hok.cert.read-from-header=$IDP_HOK_CERT_READ_FROM_HEADER \
+          -Didp.hok.cert.header-name=$IDP_HOK_CERT_HEADER_NAME \
+          -Didp.hok.cert.attribute-name=$IDP_HOK_CERT_ATTRIBUTE_NAME \
           -Didp.metadata.signing.key=$IDP_METADATA_SIGNING_KEY \
           -Didp.metadata.signing.cert=$IDP_METADATA_SIGNING_CERT \
           -Didp.metadata.validity=$IDP_METADATA_VALIDITY_MINUTES \
