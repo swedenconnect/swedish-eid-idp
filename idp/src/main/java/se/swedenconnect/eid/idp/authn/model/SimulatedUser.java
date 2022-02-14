@@ -78,6 +78,13 @@ public class SimulatedUser implements Comparable<SimulatedUser> {
         && this.organizationName != null;
   }
   
+  public String getDisplayName() {
+    if (this.displayName == null) {
+      this.displayName = String.format("%s %s", this.givenName, this.surname);
+    }
+    return this.displayName;
+  }
+  
   public String getDisplayName(boolean requestOrgId) {
     if (requestOrgId && this.organizationDisplayName != null) {
       return this.organizationDisplayName;
