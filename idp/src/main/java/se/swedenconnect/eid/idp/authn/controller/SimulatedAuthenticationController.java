@@ -58,9 +58,9 @@ import se.litsec.swedisheid.opensaml.saml2.authentication.psc.MatchValue;
 import se.litsec.swedisheid.opensaml.saml2.authentication.psc.PrincipalSelection;
 import se.litsec.swedisheid.opensaml.saml2.signservice.dss.SignMessageMimeTypeEnum;
 import se.swedenconnect.eid.idp.authn.model.SignMessageModel;
+import se.swedenconnect.eid.idp.authn.model.SignMessageModel.DisplayType;
 import se.swedenconnect.eid.idp.authn.model.SimulatedAuthentication;
 import se.swedenconnect.eid.idp.authn.model.SimulatedUser;
-import se.swedenconnect.eid.idp.authn.model.SignMessageModel.DisplayType;
 
 /**
  * A Spring MVC-controller for the IdP's authentication process. This is a simulated authentication where the user
@@ -205,10 +205,10 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
         try {
           final SimulatedUser user = HolderOfKeySupport.parseCertificate(hokContext.getClientCertificate());
           users.add(user);
-          simAuth.setSelectedUserFull(user);          
+          simAuth.setSelectedUserFull(user);
           simAuth.setSelectedUser(user.getPersonalIdentityNumber());
           simAuth.setFixedSelectedUser(true);
-          
+
           simAuth.setSelectedAuthnContextUri(
             authnContextUris.stream()
               .filter(u -> LevelofAssuranceAuthenticationContextURI.AUTHN_CONTEXT_URI_LOA4.equals(u))
@@ -413,7 +413,7 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
       // Check if we should issue a SAD attribute.
       //
       final SignatureActivationDataContext sadContext = this.getSignSupportService().getSadContext(context);
-      if (sadContext != null && result.isSignMessageDisplayed() && this.getSignSupportService().isSignatureServicePeer(context)) {
+      if (sadContext != null && this.getSignSupportService().isSignatureServicePeer(context)) {
         final String sad = this.getSignSupportService()
           .issueSAD(
             context, attributes, AttributeConstants.ATTRIBUTE_NAME_PERSONAL_IDENTITY_NUMBER, authnContextClassRef);
@@ -450,16 +450,16 @@ public class SimulatedAuthenticationController extends AbstractExternalAuthentic
       return null;
     }
     SimulatedUser user = null;
-        
+
     if (result.getSelectedUser() != null) {
-      
+
       // Before looking among the static users, check if it is a certificate user.
       final SimulatedUser hokUser = (SimulatedUser) httpRequest.getSession().getAttribute("hokUser");
       if (hokUser != null && result.getSelectedUser().equals(hokUser.getPersonalIdentityNumber())) {
         httpRequest.getSession().removeAttribute("hokUser");
         return hokUser;
       }
-      
+
       // Find the given name and surname. First check the static users ...
       user = this.staticUsers.stream()
         .filter(u -> result.getSelectedUser().equals(u.getPersonalIdentityNumber()))
