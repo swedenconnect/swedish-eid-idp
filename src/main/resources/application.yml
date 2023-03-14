@@ -1,0 +1,244 @@
+#
+# Configuration for the Swedish eID Reference IdP.
+#
+
+server:
+  port: 8443
+  servlet:
+    context-path: /idp    
+  ssl:
+    enabled: true
+    key-store: classpath:ssl.jks
+    key-store-type: JKS
+    key-alias: local
+    key-store-password: secret
+    key-password: secret
+  error:
+    include-message: always
+    include-exception: true
+    include-stacktrace: always
+    
+spring:
+  messages:
+    basename: messages,idp-errors/idp-error-messages
+    
+authn:
+  provider-name: "Simulated Authentication Provider"  
+  authn-path: /extauth
+  resume-path: /resume
+  supported-loas:
+  - http://id.elegnamnden.se/loa/1.0/loa2
+  - http://id.elegnamnden.se/loa/1.0/loa3
+  - http://id.swedenconnect.se/loa/1.0/uncertified-loa3
+  - http://id.elegnamnden.se/loa/1.0/eidas-nf-low
+  - http://id.elegnamnden.se/loa/1.0/eidas-nf-sub
+  - http://id.elegnamnden.se/loa/1.0/eidas-nf-high
+  entity-categories:
+  - http://id.elegnamnden.se/ec/1.0/loa2-pnr
+  - http://id.swedenconnect.se/ec/1.0/loa2-name
+  - http://id.elegnamnden.se/ec/1.0/loa3-pnr
+  - http://id.swedenconnect.se/ec/1.0/loa3-name
+  - http://id.elegnamnden.se/ec/1.0/eidas-pnr-delivery
+  - http://id.elegnamnden.se/sprop/1.0/scal2
+  - http://id.elegnamnden.se/sprop/1.0/mobile-auth
+    
+saml:
+  idp:
+    entity-id: https://demo.swedenconnect.se/idp
+    base-url: https://local.dev.swedenconnect.se:8443/idp    
+    credentials:
+      sign:
+        resource: classpath:idp-credentials.jks
+        alias: sign
+        password: secret
+        type: JKS
+      encrypt:
+        resource: classpath:idp-credentials.jks
+        alias: encrypt
+        password: secret
+        type: JKS
+      metadata-sign:
+        resource: classpath:idp-credentials.jks
+        alias: metadata
+        password: secret
+        type: JKS
+    endpoints:
+      metadata: /saml2/metadata    
+    metadata-providers:
+    - location: https://eid.svelegtest.se/metadata/mdx/role/sp.xml
+      backup-location: target/metadata-backup.xml
+      validation-certificate: classpath:sandbox-metadata.crt
+    metadata:
+      ui-info:
+        display-names:
+          en: Sweden Connect Reference IdP
+          sv: Sweden Connect Referens-IdP
+        descriptions:
+          en: Sweden Connect Reference Identity Provider
+          sv: Sweden Connect referens-legitimeringstjänst
+        logotypes:
+        - path: /images/logo-notext.svg
+          height: 256
+          width: 256
+        - path: /images/logo.svg
+          height: 56
+          width: 280   
+      organization:
+        names:
+          en: Sweden Connect
+          sv: Sweden Connect
+        display-names:
+          en: Sweden Connect
+          sv: Sweden Connect
+        urls:
+          en: https://www.swedenconnect.se/en
+          sv: https://www.swedenconnect.se
+      contact-persons:
+        technical:
+          company: Sweden Connect
+          email-addresses:
+          - operations@swedenconnect.se
+        support:
+          company: Sweden Connect
+          email-addresses:
+          - operations@swedenconnect.se        
+              
+users:
+- personal-number: 188803099368
+  display-name: Agda Andersson 
+  given-name: Agda
+  surname: Andersson    
+- personal-number: 197609265819
+  display-name: Alrik Lidén
+  given-name: Alrik
+  surname: Lidén
+- personal-number: 195509132386
+  display-name: Beatrice Invandro
+  given-name: Beatrice
+  surname: Invandro
+- personal-number: 193911137077
+  display-name: Bernt Olof Larsson
+  given-name: Bernt Olof
+  surname: Larsson
+- personal-number: 196212282583
+  display-name: Cecilia Nyberg
+  given-name: Cecilia
+  surname: Nyberg
+- personal-number: 198907028412
+  display-name: Clarence Hammarström
+  given-name: Clarence
+  surname: Hammarström
+- personal-number: 193504049135
+  display-name: Filip Walldén
+  given-name: Filip
+  surname: Walldén
+- personal-number: 197705232382
+  display-name: Frida Kranstege
+  given-name: Frida
+  surname: Kranstege
+- personal-number: 199610065436
+  display-name: Friedrich Werner
+  given-name: Friedrich
+  surname: Werner
+- personal-number: 192011189228
+  display-name: Gunbritt Bodén
+  given-name: Gunbritt
+  surname: Bodén
+- personal-number: 194804032094
+  display-name: Laban Meijer
+  given-name: Laban
+  surname: Meijer
+- personal-number: 195611117820
+  display-name: Lilly Öhlund
+  given-name: Lilly
+  surname: Öhlund
+- personal-number: 196012243926
+  display-name: Lola Kempe
+  given-name: Lola
+  surname: Kempe
+- personal-number: 194606109108
+  display-name: Magdalena Karlgren
+  given-name: Magdalena
+  surname: Karlgren
+- personal-number: 195207306886
+  display-name: Majlis Medin
+  given-name: Majlis
+  surname: Medin
+- personal-number: 196302052383
+  display-name: Mariana Kjällström
+  given-name: Mariana
+  surname: Kjällström
+- personal-number: 199008199391
+  display-name: Mohamed Al Samed
+  given-name: Mohamed
+  surname: Al Samed
+- personal-number: 197309069289
+  display-name: Nina Greger
+  given-name: Nina
+  surname: Greger
+- personal-number: 199008252398
+  display-name: Oskar Johansson
+  given-name: Oskar
+  surname: Johansson
+- personal-number: 197006063080
+  display-name: Paula Rylander
+  given-name: Paula
+  surname: Rylander
+- personal-number: 192705178354
+  display-name: Per-Uno Karlsson
+  given-name: Per-Uno
+  surname: Karlsson
+- personal-number: 195903133279
+  display-name: Ronald Borg
+  given-name: Ronald
+  surname: Borg
+- personal-number: 194911172296
+  display-name: Sven Sturesson
+  given-name: Sven
+  surname: Sturesson
+- personal-number: 197802031877
+  display-name: Tryggve Bäckström
+  given-name: Tryggve
+  surname: Bäckström
+- personal-number: 198611062384
+  display-name: Ulla Alm
+  given-name: Ulla
+  surname: Alm
+- personal-number: 193512208194
+  display-name: Uno Kovalev
+  given-name: Uno
+  surname: Kovalev
+- personal-number: 191704109279
+  display-name: Åke Jansson
+  given-name: Åke
+  surname: Jansson
+- personal-number: 197010632391
+  date-of-birth: 1970-10-03
+  display-name: Sixten von Samordnungsnummer
+  given-name: Sixten
+  surname: von Samordnungsnummer        
+
+logging:
+  level:
+    se:
+      swedenconnect:
+        spring:
+          saml: TRACE
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: localhost
+      
+server:
+  port: 9160  
+  
+saml:
+  idp:
+    base-url: https://localhost:${server.port}/idp
+    endpoints:
+      metadata: /metadata/idp.xml 
+      # /metadata/idp.xml
+      
