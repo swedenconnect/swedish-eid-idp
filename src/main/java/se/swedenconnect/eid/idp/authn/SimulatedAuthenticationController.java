@@ -48,6 +48,7 @@ import se.swedenconnect.eid.idp.config.UiConfigurationProperties.Language;
 import se.swedenconnect.eid.idp.users.SimulatedUser;
 import se.swedenconnect.eid.idp.users.SimulatedUserDetailsManager;
 import se.swedenconnect.opensaml.sweid.saml2.attribute.AttributeConstants;
+import se.swedenconnect.opensaml.sweid.saml2.metadata.entitycategory.EntityCategoryConstants;
 import se.swedenconnect.spring.saml.idp.authentication.Saml2ServiceProviderUiInfo;
 import se.swedenconnect.spring.saml.idp.authentication.provider.external.AbstractAuthenticationController;
 import se.swedenconnect.spring.saml.idp.authentication.provider.external.RedirectForAuthenticationToken;
@@ -138,6 +139,11 @@ public class SimulatedAuthenticationController
     //
     ui.setPossibleAuthnContextUris(
         token.getAuthnInputToken().getAuthnRequirements().getAuthnContextRequirements());
+    
+    // Signature service support ...
+    //
+    ui.setSignature(token.getAuthnInputToken().getAuthnRequirements().getEntityCategories().stream()
+        .anyMatch(e -> EntityCategoryConstants.SERVICE_TYPE_CATEGORY_SIGSERVICE.getUri().equals(e)));
 
     mav.addObject("ui", ui);
     mav.addObject("result", new SelectedUserModel());

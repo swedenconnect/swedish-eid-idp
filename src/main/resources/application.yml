@@ -238,15 +238,23 @@ spring:
   config:
     activate:
       on-profile: localhost
-      
-server:
-  port: 9160  
   
 saml:
   idp:
-    base-url: https://localhost:${server.port}/idp
-    endpoints:
-      redirect-authn: /profile/SAML2/Redirect/SSO
-      post-authn: /profile/SAML2/POST/SSO
-      metadata: /metadata/idp.xml 
+    entity-id: https://local.swedenconnect.se/idp
+    metadata:
+      ui-info:
+        display-names:
+          en: Local Sweden Connect Reference IdP
+          sv: Local Sweden Connect Referens-IdP
+        descriptions:
+          en: Local Sweden Connect Reference Identity Provider
+          sv: Local Sweden Connect referens-legitimeringstjänst
+        logotypes:
+        - path: /images/logo-notext.svg
+          height: 256
+          width: 256
+        - path: /images/logo.svg
+          height: 56
+          width: 280
       

@@ -17,27 +17,32 @@
       
         <div class="col-sm-12 content-container">
         
-          <div class="row" id="spInfoText">
+          <div class="row" id="spInfoText" th:with="isSign = ${ui.isSignature()}">
             <div class="col-sm-12 content-heading">
               <h2 th:text="#{idp.msg.heading}">Sweden Connect Reference IdP</h2>
             </div>
                         
-            <div class="col-sm-12" th:with="isSign = ${ui.isSignature()}, isFixed = ${ui.isFixedSelectedUser()}">
+            <div class="col-sm-12" th:with="isFixed = ${ui.isFixedSelectedUser()}">
               <p class="info">
                 <span th:if="${ui.getSpDisplayName() != null}" th:utext="${ui.getSpDisplayName()}">Example organization</span>
                 <span th:unless="${ui.getSpDisplayName() != null}" th:text="#{idp.msg.sp-generic}">A service provider</span>
                 <span th:text="${isSign} ? #{idp.msg.request-sign} : #{idp.msg.request-authn}">
                   requests your authentication OR requests your signature of the text below.
                 </span>
-                <span th:if="${!isFixed}" th:text="${isSign} ? #{idp.msg.request-sign.select} : #{idp.msg.request-authn.select}">
+                <span th:if="${isFixed == false}" th:text="${isSign} ? #{idp.msg.request-sign.select} : #{idp.msg.request-authn.select}">
                   Select the person to authenticate/sign as from the list below.
                 </span>
               </p>              
             </div>
             <th:block th:if="${ui.getPossibleAuthnContextUris().size() == 1}">
               <div class="col-sm-12">
-                <p class="info" th:text="#{idp.msg.auth.authn-context-class.info(${ui.getPossibleAuthnContextUris().get(0)})}">
-                  The authentication will be performed according to the X assurance level.
+                <p class="info">
+                  <span th:if="${isSign}" th:text="#{idp.msg.sign.authn-context-class.info(${ui.getPossibleAuthnContextUris().get(0)})}">
+                    The signature will be performed according to the X assurance level.
+                  </span>
+                  <span th:if="${!isSign}" th:text="#{idp.msg.auth.authn-context-class.info(${ui.getPossibleAuthnContextUris().get(0)})}">
+                    The authentication will be performed according to the X assurance level.
+                  </span>
                 </p>
               </div>
               <input type="hidden" name="loa" th:value="${ui.getPossibleAuthnContextUris().get(0)}" />
@@ -59,7 +64,10 @@
                   User info
                 </option>
               </select>
-            
+              <th:block th:if="${ui.fixedSelectedUser}">
+                <input type="hidden" name="personalIdentityNumber" th:value="${ui.getSelectedUser()}" />
+              </th:block>
+                
               <th:block th:if="${ui.fixedSelectedUser == false}">
                 <div class="noscripthide">
                   <button id="advancedButton" class="btn btn-link float-right" type="button">
