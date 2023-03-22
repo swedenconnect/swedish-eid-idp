@@ -15,6 +15,7 @@
  */
 package se.swedenconnect.eid.idp.config;
 
+import java.time.Duration;
 import java.util.Objects;
 
 import org.opensaml.core.xml.util.XMLObjectSupport;
@@ -25,6 +26,7 @@ import org.opensaml.saml.saml2.metadata.Extensions;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.KeyDescriptor;
 import org.opensaml.security.credential.UsageType;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +36,8 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.util.CookieGenerator;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import se.swedenconnect.eid.idp.authn.SimulatedAuthenticationProvider;
 import se.swedenconnect.eid.idp.users.SimulatedUserDetailsManager;
@@ -43,6 +47,7 @@ import se.swedenconnect.opensaml.sweid.saml2.authn.psc.RequestedPrincipalSelecti
 import se.swedenconnect.opensaml.sweid.saml2.authn.psc.build.MatchValueBuilder;
 import se.swedenconnect.opensaml.sweid.saml2.authn.psc.build.RequestedPrincipalSelectionBuilder;
 import se.swedenconnect.spring.saml.idp.config.annotation.web.configurers.Saml2IdpConfigurerAdapter;
+import se.swedenconnect.spring.saml.idp.response.ThymeleafResponsePage;
 
 /**
  * IdP configuration.
@@ -68,6 +73,17 @@ public class IdpConfiguration {
   public IdpConfiguration(final IdpConfigurationProperties properties, final UsersConfigurationProperties users) {
     this.properties = Objects.requireNonNull(properties, "properties must not be null");
     this.users = Objects.requireNonNull(users, "users must not be null");
+  }
+
+  /**
+   * For Tomcat configuration.
+   * 
+   * @return a {@link TomcatAjpConfigurationProperties}
+   */
+  @Bean
+  @ConfigurationProperties(prefix = "tomcat.ajp")
+  TomcatAjpConfigurationProperties tomcatAjpConfigurationProperties() {
+    return new TomcatAjpConfigurationProperties();
   }
 
   /**
@@ -99,10 +115,12 @@ public class IdpConfiguration {
 
   @Bean
   Saml2IdpConfigurerAdapter samlIdpSettingsAdapter() {
-    return (h, c) -> {
-      c.idpMetadataEndpoint(mdCustomizer -> {
-        mdCustomizer.entityDescriptorCustomizer(this.metadataCustomizer());
-      });
+    return (http, configurer) -> {
+      configurer
+//          .responseSender(s -> s.setResponsePage("/idp/post"))
+          .idpMetadataEndpoint(mdCustomizer -> {
+            mdCustomizer.entityDescriptorCustomizer(this.metadataCustomizer());
+          });
     };
   }
 
@@ -150,6 +168,48 @@ public class IdpConfiguration {
   }
 
   /**
+   * A response page using Thymeleaf to post the response.
+   * 
+   * @param templateEngine the template engine
+   * @return a {@link ThymeleafResponsePage}
+   */
+  @Bean
+  ThymeleafResponsePage responsePage(final SpringTemplateEngine templateEngine) {
+    return new ThymeleafResponsePage(templateEngine, "post-response.html");
+  }
+
+  /**
+   * Creates a {@link CookieGenerator} for saving selected (simulated) user.
+   * 
+   * @return a {@link CookieGenerator}
+   */
+  @Bean("selectedUserCookieGenerator")
+  CookieGenerator selectedUserCookieGenerator() {
+    final CookieGenerator c = new CookieGenerator();
+    c.setCookieName("selectedUser");
+    c.setCookieHttpOnly(true);
+    c.setCookieSecure(true);
+    c.setCookieMaxAge((int) Duration.ofDays(365).getSeconds());
+    return c;
+  }
+
+  
+  /**
+   * Creates a {@link CookieGenerator} for saving custom users.
+   * 
+   * @return a {@link CookieGenerator}
+   */
+  @Bean("savedUsersCookieGenerator")
+  CookieGenerator savedUsersCookieGenerator() {
+    final CookieGenerator c = new CookieGenerator();
+    c.setCookieName("savedUsers");
+    c.setCookieHttpOnly(true);
+    c.setCookieSecure(true);
+    c.setCookieMaxAge((int) Duration.ofDays(365).getSeconds());
+    return c;
+  }
+  
+  /**
    * Gets a default {@link SecurityFilterChain} protecting other resources.
    *
    * @param http the HttpSecurity object
@@ -163,7 +223,8 @@ public class IdpConfiguration {
     http
         .csrf().disable()
         .authorizeHttpRequests((authorize) -> authorize
-            .antMatchers("/images/**", "/error", "/css/**", "/scripts/**", "/webjars/**").permitAll()
+            .antMatchers(this.properties.getAuthnPath() + "/**").permitAll()
+            .antMatchers("/idp/post", "/images/**", "/error", "/css/**", "/scripts/**", "/webjars/**").permitAll()
             .anyRequest().denyAll());
 
     return http.build();

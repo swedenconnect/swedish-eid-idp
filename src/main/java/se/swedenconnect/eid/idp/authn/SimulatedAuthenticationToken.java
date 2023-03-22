@@ -31,14 +31,18 @@ public class SimulatedAuthenticationToken extends AbstractAuthenticationToken {
 
   private static final long serialVersionUID = -4646659410285834357L;
 
+  /** The level of assurance URI. */
+  private final String loa;
+
   /**
    * Constructor.
    * 
    * @param user the simulated user (i.e., the user that was authenticated)
    */
-  public SimulatedAuthenticationToken(final SimulatedUser user) {
+  public SimulatedAuthenticationToken(final SimulatedUser user, final String loa) {
     super(Collections.emptyList());
     this.setDetails(user);
+    this.loa = loa;
     this.setAuthenticated(true);
   }
 
@@ -56,6 +60,15 @@ public class SimulatedAuthenticationToken extends AbstractAuthenticationToken {
   @Override
   public Object getPrincipal() {
     return this.getDetails();
+  }
+
+  /**
+   * Returns the selected level of assurance.
+   * 
+   * @return the LoA URI
+   */
+  public String getLoa() {
+    return this.loa;
   }
 
 }

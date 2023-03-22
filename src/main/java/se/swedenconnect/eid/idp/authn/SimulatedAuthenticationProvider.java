@@ -109,7 +109,7 @@ public class SimulatedAuthenticationProvider extends AbstractUserRedirectAuthent
             AttributeConstants.ATTRIBUTE_FRIENDLY_NAME_DATE_OF_BIRTH, user.getDateOfBirth()));
 
     final Saml2UserDetails userDetails = new Saml2UserDetails(attributes,
-        AttributeConstants.ATTRIBUTE_NAME_PERSONAL_IDENTITY_NUMBER, LevelOfAssuranceUris.AUTHN_CONTEXT_URI_LOA3,
+        AttributeConstants.ATTRIBUTE_NAME_PERSONAL_IDENTITY_NUMBER, simAuth.getLoa(),
         Instant.now(), token.getServletRequest().getRemoteAddr());
 
     final Saml2UserAuthentication userAuth = new Saml2UserAuthentication(userDetails);

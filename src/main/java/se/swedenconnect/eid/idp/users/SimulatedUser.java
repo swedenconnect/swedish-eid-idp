@@ -15,8 +15,13 @@
  */
 package se.swedenconnect.eid.idp.users;
 
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -27,10 +32,10 @@ import lombok.Setter;
 
 /**
  * Representation of a user.
- * 
+ *
  * @author Martin Lindström
  */
-public class SimulatedUser implements UserDetails {
+public class SimulatedUser implements UserDetails, Comparable<SimulatedUser> {
 
   private static final long serialVersionUID = 6822029385234222613L;
 
@@ -58,7 +63,6 @@ public class SimulatedUser implements UserDetails {
   /**
    * The display name.
    */
-  @Getter
   @Setter
   private String displayName;
 
@@ -88,15 +92,26 @@ public class SimulatedUser implements UserDetails {
 
   /**
    * The date of birth (YYYY-MM-DD).
-   * 
+   *
    * @return the date of birth (YYYY-MM-DD).
    */
   public String getDateOfBirth() {
     if (this.dateOfBirth == null && this.personalNumber != null) {
-      this.dateOfBirth = String.format("%s-%s-%s", this.personalNumber.substring(0, 4),
-          this.personalNumber.substring(4, 6), this.personalNumber.substring(6, 8));
+      this.dateOfBirth = PersonalIdentityNumberSupport.getBirthDate(this.personalNumber);
     }
     return this.dateOfBirth;
+  }
+
+  /**
+   * Gets the display name.
+   * 
+   * @return the display name
+   */
+  public String getDisplayName() {
+    if (this.displayName == null) {
+      this.displayName = String.format("%s %s", this.givenName, this.surname);
+    }
+    return this.displayName;
   }
 
   /** {@inheritDoc} */
@@ -121,7 +136,63 @@ public class SimulatedUser implements UserDetails {
   }
 
   public String toViewString() {
-    return String.format("%s (%s)", this.displayName, this.personalNumber);
+    return String.format("%s (%s)", this.getDisplayName(), this.personalNumber);
+  }
+
+  @Override
+  public int compareTo(final SimulatedUser o) {
+    if (this.surname != null && o.surname != null) {
+      return this.surname.compareTo(o.surname);
+    }
+    return this.surname == null ? 1 : -1;
+  }
+
+  public String encode() {
+    return URLEncoder.encode(
+        String.format("%s#%s#%s#%s", this.personalNumber, this.givenName, this.surname, this.getDateOfBirth()),
+        StandardCharsets.UTF_8);
+  }
+
+  public static String encodeList(final List<SimulatedUser> list) {
+    final StringBuffer sb = new StringBuffer();
+    for (final SimulatedUser s : list) {
+      if (sb.length() > 0) {
+        sb.append(":::");
+      }
+      sb.append(s.encode());
+    }
+    return sb.toString();
+  }
+
+  public static SimulatedUser parse(final String s) {
+    final String user = URLDecoder.decode(s, StandardCharsets.UTF_8);
+    final String[] parts = user.split("#");
+    if (parts.length < 3) {
+      return null;
+    }
+    final SimulatedUser su = new SimulatedUser();
+    su.setPersonalNumber(parts[0]);
+    su.setGivenName(parts[1]);
+    su.setSurname(parts[2]);
+    if (parts.length > 3) {
+      su.setDateOfBirth(parts[3]);
+    }
+    return su;
+  }
+
+  public static List<SimulatedUser> parseList(final String list) {
+    if (list.trim().isEmpty()) {
+      return Collections.emptyList();
+    }
+    final String parts[] = list.split(":::");
+    final List<SimulatedUser> users = new ArrayList<>();
+    for (final String p : parts) {
+      final SimulatedUser su = parse(p);
+      if (su != null) {
+        users.add(su);
+      }
+    }
+    return users;
   }
 
   @Override
@@ -134,7 +205,7 @@ public class SimulatedUser implements UserDetails {
     if (this == obj) {
       return true;
     }
-    if ((obj == null) || (this.getClass() != obj.getClass())) {
+    if (obj == null || this.getClass() != obj.getClass()) {
       return false;
     }
     final SimulatedUser other = (SimulatedUser) obj;

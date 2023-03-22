@@ -15,7 +15,7 @@
 
   <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.6.2/css/bootstrap.min.css}" href="webjars/bootstrap/4.6.2/css/bootstrap.min.css" />
   <link rel="stylesheet" th:href="@{/css/open-sans-fonts.css}" href="../../css/open-sans-fonts.css" />
-  <link rel="stylesheet" th:href="@{/css/main.css}" href="../../css/main.css" />
+  <link rel="stylesheet" th:href="@{/css/refmain.css}" href="../../css/refmain.css" />
   
   <link rel="apple-touch-icon" sizes="180x180" th:href="@{/images/favicon/apple-touch-icon.png}" href="images/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" th:href="@{/images/favicon/favicon-32x32.png}" href="images/favicon/favicon-32x32.png">
@@ -34,7 +34,14 @@
 <th:block th:fragment="scriptFragment">
   <script type="text/javascript" th:src="@{/webjars/jquery/3.6.1/jquery.min.js}" src="webjars/jquery/3.6.1/jquery.min.js"></script>
   <script type="text/javascript" th:src="@{/webjars/popper.js/1.16.1-lts/umd/popper.min.js}" src="/webjars/popper.js/1.16.1-lts/umd/popper.min.js"></script>
-  <script type="text/javascript" th:src="@{/webjars/bootstrap/4.6.2/js/bootstrap.min.js}" src="/webjars/bootstrap/4.6.2/js/bootstrap.min.js"></script>    
+  <script type="text/javascript" th:src="@{/webjars/bootstrap/4.6.2/js/bootstrap.min.js}" src="/webjars/bootstrap/4.6.2/js/bootstrap.min.js"></script>
+  <!--<script type="text/javascript" th:src="@{/scripts/valfor.js}" src="../../static/scripts/valfor.js"></script>--> 
+  <!--<script type="text/javascript" th:src="@{/scripts/refmain.js}" src="../../static/scripts/refmain.js"></script>-->
+</th:block>
+
+<th:block th:fragment="scriptFragment2">
+  <script type="text/javascript" th:src="@{/scripts/valfor.js}" src="../../static/scripts/valfor.js"></script> 
+  <script type="text/javascript" th:src="@{/scripts/main.js}" src="../../static/scripts/main.js"></script>
 </th:block>
 
 </body>
