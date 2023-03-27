@@ -20,6 +20,8 @@ import java.util.Collections;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
+import lombok.Getter;
+import lombok.Setter;
 import se.swedenconnect.eid.idp.users.SimulatedUser;
 
 /**
@@ -33,6 +35,13 @@ public class SimulatedAuthenticationToken extends AbstractAuthenticationToken {
 
   /** The level of assurance URI. */
   private final String loa;
+  
+  /**
+   * Whether the SignMessage was displayed.
+   */
+  @Getter
+  @Setter
+  private boolean signMessageDisplayed = false;
 
   /**
    * Constructor.

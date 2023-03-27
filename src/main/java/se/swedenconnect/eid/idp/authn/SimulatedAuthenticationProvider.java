@@ -26,7 +26,6 @@ import lombok.NonNull;
 import lombok.Setter;
 import se.swedenconnect.eid.idp.users.SimulatedUser;
 import se.swedenconnect.opensaml.sweid.saml2.attribute.AttributeConstants;
-import se.swedenconnect.opensaml.sweid.saml2.authn.LevelOfAssuranceUris;
 import se.swedenconnect.spring.saml.idp.attributes.UserAttribute;
 import se.swedenconnect.spring.saml.idp.authentication.Saml2UserAuthentication;
 import se.swedenconnect.spring.saml.idp.authentication.Saml2UserDetails;
@@ -111,6 +110,7 @@ public class SimulatedAuthenticationProvider extends AbstractUserRedirectAuthent
     final Saml2UserDetails userDetails = new Saml2UserDetails(attributes,
         AttributeConstants.ATTRIBUTE_NAME_PERSONAL_IDENTITY_NUMBER, simAuth.getLoa(),
         Instant.now(), token.getServletRequest().getRemoteAddr());
+    userDetails.setSignMessageDisplayed(simAuth.isSignMessageDisplayed());
 
     final Saml2UserAuthentication userAuth = new Saml2UserAuthentication(userDetails);
     userAuth.setReuseAuthentication(true);

@@ -31,9 +31,11 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,7 +58,7 @@ import se.swedenconnect.spring.saml.idp.error.Saml2ErrorStatus;
 import se.swedenconnect.spring.saml.idp.error.Saml2ErrorStatusException;
 
 /**
- * The controller implementing the user authentication.
+ * The controller implementing the simulated user authentication.
  * 
  * @author Martin Lindström
  */
@@ -65,6 +67,16 @@ public class SimulatedAuthenticationController
     extends AbstractAuthenticationController<SimulatedAuthenticationProvider> {
 
   public static final String AUTHN_PATH = "/extauth";
+  
+  public static final String AUTO_AUTHN_PATH = AUTHN_PATH + "/autoauth";
+  
+  /** The name of the auto-auth cookie. */
+  public static final String AUTO_AUTHN_COOKIE_NAME = "autoAuthUser";
+  
+  /** The context path. */
+  @Setter
+  @Value("${server.servlet.context-path:}")
+  private String contextPath;
 
   /** The authentication provider that is the "manager" for this authentication. */
   @Setter
@@ -92,10 +104,16 @@ public class SimulatedAuthenticationController
   @Autowired
   @Qualifier("savedUsersCookieGenerator")
   private CookieGenerator savedUsersCookieGenerator;
+  
+  /** For saving/getting auto authentication user. */
+  @Setter
+  @Autowired
+  @Qualifier(AUTO_AUTHN_COOKIE_NAME)
+  private CookieGenerator autoAuthnCookieGenerator;
 
   /** Maximum number of users to save in the above cookie. */
   public static final int MAX_SAVED_USERS = 40;
-
+  
   /**
    * The entry point for the external authentication process.
    * 
@@ -113,7 +131,7 @@ public class SimulatedAuthenticationController
 
     final UiModel ui = new UiModel();
     this.updateSpUiDisplayItems(ui, uiInfo);
-    
+
     // Check if we have the last user and LoA saved ...
     //
     final Pair<String, String> userAndLoa = this.getSelectedUserAndLoa(request);
@@ -137,20 +155,53 @@ public class SimulatedAuthenticationController
 
     // Authentication context(s) ...
     //
-    ui.setPossibleAuthnContextUris(
-        token.getAuthnInputToken().getAuthnRequirements().getAuthnContextRequirements());
-    
+    ui.setPossibleAuthnContextUris(new ArrayList<>(
+        token.getAuthnInputToken().getAuthnRequirements().getAuthnContextRequirements()));
+
     // Signature service support ...
     //
     ui.setSignature(token.getAuthnInputToken().getAuthnRequirements().getEntityCategories().stream()
         .anyMatch(e -> EntityCategoryConstants.SERVICE_TYPE_CATEGORY_SIGSERVICE.getUri().equals(e)));
+    if (ui.isSignature() && token.getAuthnInputToken().getAuthnRequirements().getSignatureMessageExtension() != null) {
+      ui.setSignMessage(token.getAuthnInputToken().getAuthnRequirements().getSignatureMessageExtension().getProcessedMessage());
+    }
 
     mav.addObject("ui", ui);
     mav.addObject("result", new SelectedUserModel());
+    
+    // Automatic authentication?
+    //
+    final String autoUser = Arrays.asList(request.getCookies())
+        .stream()
+        .filter(c -> c.getName().equals(AUTO_AUTHN_COOKIE_NAME))
+        .map(c -> c.getValue())
+        .findFirst()
+        .orElse(null);
+    if (autoUser != null) {
+      if (preSelected != null && !preSelected.equals(autoUser)) {
+        return mav;
+      }
+      final SelectedUserModel result = new SelectedUserModel();
+      result.setPersonalIdentityNumber(autoUser);
+      result.setLoa(ui.getPossibleAuthnContextUris().get(0));
+      if (ui.getSignMessage() != null) {
+        result.setSignMessageDisplayed(true);
+      }
+      return this.complete(request, response, "ok", result);
+    }
 
     return mav;
   }
 
+  /**
+   * Receives the result from the simulated authentication UI view and hands over the result to the provider.
+   * 
+   * @param request the HTTP servlet request
+   * @param response the HTTP servlet response
+   * @param action the overall result
+   * @param result the result model
+   * @return a {@link ModelAndView}
+   */
   @PostMapping(AUTHN_PATH + "/complete")
   public ModelAndView complete(final HttpServletRequest request, final HttpServletResponse response,
       @RequestParam("action") final String action,
@@ -164,10 +215,64 @@ public class SimulatedAuthenticationController
       if (user == null) {
         return this.complete(request, new Saml2ErrorStatusException(Saml2ErrorStatus.UNKNOWN_PRINCIPAL));
       }
-      return this.complete(request, new SimulatedAuthenticationToken(user, result.getLoa()));
+      final SimulatedAuthenticationToken token = new SimulatedAuthenticationToken(user, result.getLoa());
+      token.setSignMessageDisplayed(result.isSignMessageDisplayed());
+      return this.complete(request, token);
     }
   }
+  
+  /**
+   * Handles the automatic authentication setup view.
+   * 
+   * @param request the HTTP servlet request
+   * @param response the HTTP servlet response
+   * @param authnCookieValue the auto authn cookie value (optional)
+   * @return a {@link ModelAndView}
+   */
+  @GetMapping(AUTO_AUTHN_PATH)
+  public ModelAndView autoAuthn(final HttpServletRequest request, final HttpServletResponse response,
+      @CookieValue(value = AUTO_AUTHN_COOKIE_NAME, required = false) String authnCookieValue) {
+    
+    final ModelAndView mav = new ModelAndView("testconf");
+    final List<SimulatedUser> users = this.getStaticAndSavedUsers(request); 
+    mav.addObject("users", users);
+    
+    // Make sure the cookie contains a valid user.
+    if (authnCookieValue != null && users.stream().anyMatch(u -> authnCookieValue.equals(u.getPersonalNumber()))) {
+      mav.addObject("selectedUserId", authnCookieValue);
+    }
+    else {
+      mav.addObject("selectedUserId", "NONE");
+    }
+    
+    return mav;
+  }
+  
+  /**
+   * Saves the user for automatic testing.
+   * @param request the HTTP servlet request
+   * @param response the HTTP servlet response
+   * @param action result
+   * @param selectedUser the user
+   * @return a {@link ModelAndView}
+   */
+  @PostMapping(AUTO_AUTHN_PATH + "/save")
+  public ModelAndView saveAutoAuthn(final HttpServletRequest request, final HttpServletResponse response,
+      @RequestParam("action") String action,
+      @RequestParam(value = "selectedUser") String selectedUser) {
+    
+    if ("save".equals(action) && selectedUser != null) {
+      if (!"NONE".equals(selectedUser)) {
+        this.autoAuthnCookieGenerator.addCookie(response, selectedUser);
+      }
+    }
+    else {
+      this.autoAuthnCookieGenerator.removeCookie(response);
+    }
 
+    return new ModelAndView("redirect:" + AUTO_AUTHN_PATH);
+  }
+  
   /** {@inheritDoc} */
   @Override
   protected SimulatedAuthenticationProvider getProvider() {
@@ -290,7 +395,8 @@ public class SimulatedAuthenticationController
 
     // Save the selected user in a cookie (for pre-selection the next time).
     //
-    this.selectedUserCookieGenerator.addCookie(httpResponse, String.format("%s#%s", user.getPersonalNumber(), result.getLoa()));
+    this.selectedUserCookieGenerator.addCookie(httpResponse,
+        String.format("%s#%s", user.getPersonalNumber(), result.getLoa()));
 
     return user;
   }

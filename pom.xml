@@ -46,6 +46,9 @@
 
     <spring.boot.version>2.7.7</spring.boot.version>
     <spring.version>5.3.25</spring.version>    
+    
+    <flexmark.version>0.64.0</flexmark.version>
+    <jsoup.version>1.15.4</jsoup.version>
   </properties>
   
   <repositories>
@@ -180,7 +183,33 @@
       <groupId>org.webjars</groupId>
       <artifactId>jquery</artifactId>
       <version>3.6.1</version>
-    </dependency>        
+    </dependency>
+    
+    <!-- For Markdown parsing -->
+    <dependency>
+      <groupId>com.vladsch.flexmark</groupId>
+      <artifactId>flexmark</artifactId>
+      <version>${flexmark.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.vladsch.flexmark</groupId>
+      <artifactId>flexmark-util</artifactId>
+      <version>${flexmark.version}</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.vladsch.flexmark</groupId>
+      <artifactId>flexmark-ext-tables</artifactId>
+      <version>${flexmark.version}</version>
+    </dependency>    
+    
+    <!-- For HTML parsing -->
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>${jsoup.version}</version>
+    </dependency>    
 
   </dependencies>
 

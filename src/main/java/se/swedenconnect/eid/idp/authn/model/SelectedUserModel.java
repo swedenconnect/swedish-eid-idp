@@ -56,6 +56,10 @@ public class SelectedUserModel {
   @Getter
   @Setter
   private String surname;
+  
+  @Getter
+  @Setter
+  private boolean signMessageDisplayed;
 
   public String getPersonalIdentityNumber() {
     return StringUtils.hasText(this.personalIdentityNumber)

@@ -15,7 +15,7 @@
  */
 package se.swedenconnect.eid.idp.authn.model;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import lombok.Data;
@@ -41,13 +41,16 @@ public class UiModel {
   private boolean fixedSelectedUser = false;
   
   /** Possible authentication context URI:s. */
-  private Collection<String> possibleAuthnContextUris;
+  private List<String> possibleAuthnContextUris;
   
   /** The authn context URI to pre-select. */
   private String selectedAuthnContextUri;
   
   /** Whether this is "authentication for signature". */
   private boolean signature = false;
+  
+  /** The SignMessage (HTML). */
+  private String signMessage;
 
   /**
    * Predicate that tells if the supplied ID is "selected".

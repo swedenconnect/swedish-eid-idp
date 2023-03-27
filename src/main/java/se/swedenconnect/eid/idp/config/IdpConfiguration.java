@@ -26,6 +26,7 @@ import org.opensaml.saml.saml2.metadata.Extensions;
 import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.KeyDescriptor;
 import org.opensaml.security.credential.UsageType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -39,6 +40,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.util.CookieGenerator;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 
+import lombok.Setter;
+import se.swedenconnect.eid.idp.authn.SimulatedAuthenticationController;
 import se.swedenconnect.eid.idp.authn.SimulatedAuthenticationProvider;
 import se.swedenconnect.eid.idp.users.SimulatedUserDetailsManager;
 import se.swedenconnect.eid.idp.users.UsersConfigurationProperties;
@@ -47,6 +50,7 @@ import se.swedenconnect.opensaml.sweid.saml2.authn.psc.RequestedPrincipalSelecti
 import se.swedenconnect.opensaml.sweid.saml2.authn.psc.build.MatchValueBuilder;
 import se.swedenconnect.opensaml.sweid.saml2.authn.psc.build.RequestedPrincipalSelectionBuilder;
 import se.swedenconnect.spring.saml.idp.config.annotation.web.configurers.Saml2IdpConfigurerAdapter;
+import se.swedenconnect.spring.saml.idp.extensions.SignatureMessagePreprocessor;
 import se.swedenconnect.spring.saml.idp.response.ThymeleafResponsePage;
 
 /**
@@ -63,6 +67,11 @@ public class IdpConfiguration {
 
   /** The simulated users. */
   private final UsersConfigurationProperties users;
+
+  /** The context path. */
+  @Setter
+  @Value("${server.servlet.context-path:/}")
+  private String contextPath;
 
   /**
    * Constructor.
@@ -113,17 +122,26 @@ public class IdpConfiguration {
     return provider;
   }
 
+  /**
+   * Gets a {@link Saml2IdpConfigurerAdapter} that applies custom configuration for the IdP.
+   * 
+   * @param signMessageProcessor a {@link SignatureMessagePreprocessor} for display of sign messages
+   * @return a {@link Saml2IdpConfigurerAdapter}
+   */
   @Bean
-  Saml2IdpConfigurerAdapter samlIdpSettingsAdapter() {
+  Saml2IdpConfigurerAdapter samlIdpSettingsAdapter(final SignatureMessagePreprocessor signMessageProcessor) {
     return (http, configurer) -> {
       configurer
-//          .responseSender(s -> s.setResponsePage("/idp/post"))
+          .authnRequestProcessor(c -> c.authenticationProvider(
+              pc -> pc.signatureMessagePreprocessor(signMessageProcessor)))
           .idpMetadataEndpoint(mdCustomizer -> {
             mdCustomizer.entityDescriptorCustomizer(this.metadataCustomizer());
           });
     };
   }
 
+  // For customizing the metadata published by the IdP
+  //
   private Customizer<EntityDescriptor> metadataCustomizer() {
     return e -> {
       final RequestedPrincipalSelection rps = RequestedPrincipalSelectionBuilder.builder()
@@ -187,13 +205,13 @@ public class IdpConfiguration {
   CookieGenerator selectedUserCookieGenerator() {
     final CookieGenerator c = new CookieGenerator();
     c.setCookieName("selectedUser");
+    c.setCookiePath(this.contextPath);
     c.setCookieHttpOnly(true);
     c.setCookieSecure(true);
     c.setCookieMaxAge((int) Duration.ofDays(365).getSeconds());
     return c;
   }
 
-  
   /**
    * Creates a {@link CookieGenerator} for saving custom users.
    * 
@@ -203,12 +221,29 @@ public class IdpConfiguration {
   CookieGenerator savedUsersCookieGenerator() {
     final CookieGenerator c = new CookieGenerator();
     c.setCookieName("savedUsers");
+    c.setCookiePath(this.contextPath);
     c.setCookieHttpOnly(true);
     c.setCookieSecure(true);
     c.setCookieMaxAge((int) Duration.ofDays(365).getSeconds());
     return c;
   }
-  
+
+  /**
+   * Creates a {@link CookieGenerator} for saving custom users.
+   * 
+   * @return a {@link CookieGenerator}
+   */
+  @Bean(SimulatedAuthenticationController.AUTO_AUTHN_COOKIE_NAME)
+  CookieGenerator autoAuthnCookieGenerator() {
+    final CookieGenerator c = new CookieGenerator();
+    c.setCookieName(SimulatedAuthenticationController.AUTO_AUTHN_COOKIE_NAME);
+    c.setCookiePath(this.contextPath);
+    c.setCookieHttpOnly(true);
+    c.setCookieSecure(true);
+    c.setCookieMaxAge((int) Duration.ofDays(365).getSeconds());
+    return c;
+  }
+
   /**
    * Gets a default {@link SecurityFilterChain} protecting other resources.
    *
@@ -224,20 +259,11 @@ public class IdpConfiguration {
         .csrf().disable()
         .authorizeHttpRequests((authorize) -> authorize
             .antMatchers(this.properties.getAuthnPath() + "/**").permitAll()
-            .antMatchers("/idp/post", "/images/**", "/error", "/css/**", "/scripts/**", "/webjars/**").permitAll()
+            .antMatchers("/images/**", "/error", "/css/**", "/scripts/**", "/webjars/**").permitAll()
+            .antMatchers(SimulatedAuthenticationController.AUTO_AUTHN_PATH + "/**").permitAll()
             .anyRequest().denyAll());
 
     return http.build();
   }
-
-  /**
-   * Gets a {@link WebSecurityCustomizer} that is configured to ignore static resources.
-   *
-   * @return a WebSecurityCustomizer
-   */
-//  @Bean
-//  WebSecurityCustomizer webSecurityCustomizer() {
-//    return (web) -> web.ignoring().antMatchers("/images/**", "/css/**", "/scripts/**", "/webjars/**");
-//  }
 
 }
