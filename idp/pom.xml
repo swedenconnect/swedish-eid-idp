@@ -45,7 +45,7 @@
     <shibboleth-base-deps.version>1.8.1</shibboleth-base-deps.version>
     <tomcat.version>8.5.73</tomcat.version>
     
-    <flexmark.version>0.64.0</flexmark.version>
+    <flexmark.version>0.64.4</flexmark.version>
     <jsoup.version>1.15.3</jsoup.version>    
   </properties>
 
@@ -349,7 +349,7 @@
                 </exec>
                 <exec dir="${project.build.directory}/dependency/shibboleth-base/bin/" executable="./install.sh" osfamily="unix">                
                   <!-- <arg value="if not exist ${project.build.directory}/shibboleth"/> --><!-- Check if install has run. This will speedup local development. -->
-                  <arg value="-Didp.target.dir=${project.build.directory}/shibboleth" />
+                  <arg value="-Didp.target.dir=${project.build.directory}/shibboleth"/>
                   <arg value="-Didp.noprompt=true"/>
                   <arg value="-Didp.merge.properties=${project.build.directory}/idp.merge.properties"/>
                   <arg value="-Didp.host.name=www.litsec.se"/>
@@ -388,17 +388,17 @@
                 
                 <echo>Replace values in idp.properties ${project.build.directory}/shibboleth-${project.artifactId}-${project.version}/conf/idp.properties</echo>
                 <propertyfile file="${project.build.directory}/shibboleth/conf/idp.properties">
-                  <entry key="idp.entityID" value="%{idp.entityID}" />
-                  <entry key="idp.sealer.storeResource" value="%{idp.sealer.storeResource}" />
-                  <entry key="idp.sealer.versionResource" value="%{idp.sealer.versionResource}" />
-                  <entry key="idp.sealer.storePassword" value="%{idp.sealer.password}" />
-                  <entry key="idp.sealer.keyPassword" value="%{idp.sealer.password}" />
-                  <entry key="idp.signing.key" value="%{idp.signing.key}" />
-                  <entry key="idp.signing.cert" value="%{idp.signing.cert}" />
-                  <entry key="idp.encryption.key" value="%{idp.encryption.key}" />
-                  <entry key="idp.encryption.cert" value="%{idp.encryption.cert}" />
-                  <entry key="idp.metadata.signing.key" value="%{idp.metadata.signing.key}" />
-                  <entry key="idp.metadata.signing.cert" value="%{idp.metadata.signing.cert}" />
+                  <entry key="idp.entityID" value="%{idp.entityID}"/>
+                  <entry key="idp.sealer.storeResource" value="%{idp.sealer.storeResource}"/>
+                  <entry key="idp.sealer.versionResource" value="%{idp.sealer.versionResource}"/>
+                  <entry key="idp.sealer.storePassword" value="%{idp.sealer.password}"/>
+                  <entry key="idp.sealer.keyPassword" value="%{idp.sealer.password}"/>
+                  <entry key="idp.signing.key" value="%{idp.signing.key}"/>
+                  <entry key="idp.signing.cert" value="%{idp.signing.cert}"/>
+                  <entry key="idp.encryption.key" value="%{idp.encryption.key}"/>
+                  <entry key="idp.encryption.cert" value="%{idp.encryption.cert}"/>
+                  <entry key="idp.metadata.signing.key" value="%{idp.metadata.signing.key}"/>
+                  <entry key="idp.metadata.signing.cert" value="%{idp.metadata.signing.cert}"/>
                 </propertyfile>
                              
                 <echo>Copy tomcat override config</echo>
@@ -426,7 +426,7 @@
 
                 <echo>Installing new war into tomcat</echo>
                 <delete includeEmptyDirs="true">
-                  <fileset dir="${project.build.directory}/dependency/apache-tomcat-${tomcat.version}/webapps/" includes="**/*" />
+                  <fileset dir="${project.build.directory}/dependency/apache-tomcat-${tomcat.version}/webapps/" includes="**/*"/>
                 </delete>
                                 
                 <copy file="${project.build.directory}/shibboleth/war/idp.war" tofile="${project.build.directory}/dependency/apache-tomcat-${tomcat.version}/webapps/idp.war"/>
