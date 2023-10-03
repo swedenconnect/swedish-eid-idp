@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Element;
@@ -98,7 +98,7 @@ public class HtmlSignMessagePreProcessor implements SignatureMessagePreprocessor
       htmlMessage = "<div style='font-family: \"Lucida Console\", Monaco, monospace'>";
 
       // Filter to protect against XSS
-      htmlMessage += StringEscapeUtils.escapeHtml(input);
+      htmlMessage += StringEscapeUtils.escapeHtml4(input);
 
       // Replace NL with <br />
       htmlMessage = htmlMessage.replaceAll("(\r\n|\n\r|\r|\n)", "<br />");

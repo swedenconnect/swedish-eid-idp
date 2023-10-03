@@ -24,9 +24,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,11 +38,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.CookieGenerator;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Setter;
 import se.swedenconnect.eid.idp.authn.model.SelectedUserModel;
 import se.swedenconnect.eid.idp.authn.model.UiModel;
+import se.swedenconnect.eid.idp.config.CookieGenerator;
 import se.swedenconnect.eid.idp.config.UiConfigurationProperties.Language;
 import se.swedenconnect.eid.idp.users.SimulatedUser;
 import se.swedenconnect.eid.idp.users.SimulatedUserDetailsManager;
@@ -59,7 +58,7 @@ import se.swedenconnect.spring.saml.idp.error.Saml2ErrorStatusException;
 
 /**
  * The controller implementing the simulated user authentication.
- * 
+ *
  * @author Martin Lindström
  */
 @Controller
@@ -67,12 +66,12 @@ public class SimulatedAuthenticationController
     extends AbstractAuthenticationController<SimulatedAuthenticationProvider> {
 
   public static final String AUTHN_PATH = "/extauth";
-  
+
   public static final String AUTO_AUTHN_PATH = AUTHN_PATH + "/autoauth";
-  
+
   /** The name of the auto-auth cookie. */
   public static final String AUTO_AUTHN_COOKIE_NAME = "autoAuthUser";
-  
+
   /** The context path. */
   @Setter
   @Value("${server.servlet.context-path:}")
@@ -104,7 +103,7 @@ public class SimulatedAuthenticationController
   @Autowired
   @Qualifier("savedUsersCookieGenerator")
   private CookieGenerator savedUsersCookieGenerator;
-  
+
   /** For saving/getting auto authentication user. */
   @Setter
   @Autowired
@@ -113,10 +112,10 @@ public class SimulatedAuthenticationController
 
   /** Maximum number of users to save in the above cookie. */
   public static final int MAX_SAVED_USERS = 40;
-  
+
   /**
    * The entry point for the external authentication process.
-   * 
+   *
    * @param request the HTTP servlet request
    * @param response the HTTP servlet response
    * @return a {@link ModelAndView}
@@ -163,12 +162,13 @@ public class SimulatedAuthenticationController
     ui.setSignature(token.getAuthnInputToken().getAuthnRequirements().getEntityCategories().stream()
         .anyMatch(e -> EntityCategoryConstants.SERVICE_TYPE_CATEGORY_SIGSERVICE.getUri().equals(e)));
     if (ui.isSignature() && token.getAuthnInputToken().getAuthnRequirements().getSignatureMessageExtension() != null) {
-      ui.setSignMessage(token.getAuthnInputToken().getAuthnRequirements().getSignatureMessageExtension().getProcessedMessage());
+      ui.setSignMessage(
+          token.getAuthnInputToken().getAuthnRequirements().getSignatureMessageExtension().getProcessedMessage());
     }
 
     mav.addObject("ui", ui);
     mav.addObject("result", new SelectedUserModel());
-    
+
     // Automatic authentication?
     //
     final String autoUser = Arrays.asList(request.getCookies())
@@ -195,7 +195,7 @@ public class SimulatedAuthenticationController
 
   /**
    * Receives the result from the simulated authentication UI view and hands over the result to the provider.
-   * 
+   *
    * @param request the HTTP servlet request
    * @param response the HTTP servlet response
    * @param action the overall result
@@ -220,10 +220,10 @@ public class SimulatedAuthenticationController
       return this.complete(request, token);
     }
   }
-  
+
   /**
    * Handles the automatic authentication setup view.
-   * 
+   *
    * @param request the HTTP servlet request
    * @param response the HTTP servlet response
    * @param authnCookieValue the auto authn cookie value (optional)
@@ -232,11 +232,11 @@ public class SimulatedAuthenticationController
   @GetMapping(AUTO_AUTHN_PATH)
   public ModelAndView autoAuthn(final HttpServletRequest request, final HttpServletResponse response,
       @CookieValue(value = AUTO_AUTHN_COOKIE_NAME, required = false) String authnCookieValue) {
-    
+
     final ModelAndView mav = new ModelAndView("testconf");
-    final List<SimulatedUser> users = this.getStaticAndSavedUsers(request); 
+    final List<SimulatedUser> users = this.getStaticAndSavedUsers(request);
     mav.addObject("users", users);
-    
+
     // Make sure the cookie contains a valid user.
     if (authnCookieValue != null && users.stream().anyMatch(u -> authnCookieValue.equals(u.getPersonalNumber()))) {
       mav.addObject("selectedUserId", authnCookieValue);
@@ -244,12 +244,13 @@ public class SimulatedAuthenticationController
     else {
       mav.addObject("selectedUserId", "NONE");
     }
-    
+
     return mav;
   }
-  
+
   /**
    * Saves the user for automatic testing.
+   *
    * @param request the HTTP servlet request
    * @param response the HTTP servlet response
    * @param action result
@@ -260,19 +261,19 @@ public class SimulatedAuthenticationController
   public ModelAndView saveAutoAuthn(final HttpServletRequest request, final HttpServletResponse response,
       @RequestParam("action") String action,
       @RequestParam(value = "selectedUser") String selectedUser) {
-    
+
     if ("save".equals(action) && selectedUser != null) {
       if (!"NONE".equals(selectedUser)) {
-        this.autoAuthnCookieGenerator.addCookie(response, selectedUser);
+        this.autoAuthnCookieGenerator.addCookie(selectedUser, response);
       }
     }
     else {
-      this.autoAuthnCookieGenerator.removeCookie(response);
+      this.autoAuthnCookieGenerator.clearCookie(response);
     }
 
     return new ModelAndView("redirect:" + AUTO_AUTHN_PATH);
   }
-  
+
   /** {@inheritDoc} */
   @Override
   protected SimulatedAuthenticationProvider getProvider() {
@@ -296,7 +297,7 @@ public class SimulatedAuthenticationController
   private Pair<String, String> getSelectedUserAndLoa(final HttpServletRequest request) {
     final String selection = Arrays.asList(request.getCookies())
         .stream()
-        .filter(c -> c.getName().equals(this.selectedUserCookieGenerator.getCookieName()))
+        .filter(c -> c.getName().equals(this.selectedUserCookieGenerator.getName()))
         .map(c -> c.getValue())
         .findFirst()
         .orElse(null);
@@ -331,7 +332,7 @@ public class SimulatedAuthenticationController
   private List<SimulatedUser> getSavedUsers(final HttpServletRequest request) {
     final String v = Arrays.asList(request.getCookies())
         .stream()
-        .filter(c -> c.getName().equals(this.savedUsersCookieGenerator.getCookieName()))
+        .filter(c -> c.getName().equals(this.savedUsersCookieGenerator.getName()))
         .map(c -> c.getValue())
         .findFirst()
         .orElse(null);
@@ -386,7 +387,7 @@ public class SimulatedAuthenticationController
         newSavedUsers.add(user);
 
         // Update the cookie ...
-        this.savedUsersCookieGenerator.addCookie(httpResponse, SimulatedUser.encodeList(newSavedUsers));
+        this.savedUsersCookieGenerator.addCookie(SimulatedUser.encodeList(newSavedUsers), httpResponse);
       }
     }
     if (user == null) {
@@ -395,8 +396,9 @@ public class SimulatedAuthenticationController
 
     // Save the selected user in a cookie (for pre-selection the next time).
     //
-    this.selectedUserCookieGenerator.addCookie(httpResponse,
-        String.format("%s#%s", user.getPersonalNumber(), result.getLoa()));
+    this.selectedUserCookieGenerator.addCookie(
+        String.format("%s#%s", user.getPersonalNumber(), result.getLoa()),
+        httpResponse);
 
     return user;
   }

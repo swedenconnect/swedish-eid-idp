@@ -25,7 +25,7 @@ import se.swedenconnect.opensaml.sweid.xmlsec.config.SwedishEidSecurityConfigura
 
 /**
  * Application main.
- * 
+ *
  * @author Martin Lindström
  */
 @SpringBootApplication
@@ -33,7 +33,7 @@ public class IdpApplication {
 
   /**
    * Program main.
-   * 
+   *
    * @param args program arguments
    */
   public static void main(String[] args) {
@@ -50,13 +50,5 @@ public class IdpApplication {
 
     SpringApplication.run(IdpApplication.class, args);
   }
-
-//  @Bean("openSAML")
-//  OpenSAMLInitializer openSAML() throws Exception {
-//    OpenSAMLInitializer.getInstance()
-//        .initialize(
-//            new OpenSAMLSecurityDefaultsConfig(new SwedishEidSecurityConfiguration()),
-//            new OpenSAMLSecurityExtensionConfig());
-//    return OpenSAMLInitializer.getInstance();
 
 }

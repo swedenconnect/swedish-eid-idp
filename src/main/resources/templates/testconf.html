@@ -1,15 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"> 
-<head th:include="fragments/base :: headerFragment">
-  <title id="pageTitle" th:inline="text">[[#{idp.msg.title}]]</title>
-</head>
+<head th:insert="~{fragments/base :: headerFragment}"></head>
 <body>
   
-  <div th:replace="fragments/header :: logotype"></div>
+  <div th:replace="~{fragments/header :: logotype}"></div>
   
   <div class="container main" id="main">  
     
-    <div th:replace="fragments/header :: language(languages = ${languages}, path='/extauth/autoauth')"></div>
+    <div th:replace="~{fragments/header :: language(languages = ${languages}, path='/extauth/autoauth')}"></div>
     
     <form method="POST" action="#" th:action="@{/extauth/autoauth/save}"> 
       
@@ -60,7 +58,7 @@
         
         </div> <!-- ./col-sm-12 content-container -->
               
-        <div th:replace="fragments/footer :: copyright"></div>
+        <div th:replace="~{fragments/footer :: copyright}"></div>
 
       </div> <!-- mainRow -->
                     
@@ -68,7 +66,7 @@
     
   </div> <!-- main -->  
   
-  <th:block th:include="fragments/base :: scriptFragment"></th:block>
+  <th:block th:insert="~{fragments/base :: scriptFragment}"></th:block>
   <script type="text/javascript" th:src="@{/scripts/testconf.js}" src="../../static/scripts/testconf.js"></script>
 
 </body>
