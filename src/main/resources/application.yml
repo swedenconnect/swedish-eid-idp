@@ -16,7 +16,6 @@ server:
   error:
     include-message: always
     include-exception: true
-    include-stacktrace: always
     
 spring:
   messages:
@@ -52,30 +51,47 @@ authn:
 saml:
   idp:
     entity-id: https://dev.swedenconnect.se/idp
-    base-url: https://local.dev.swedenconnect.se:8443/idp    
-    credentials:
-      sign:
-        resource: classpath:idp-credentials.jks
-        alias: sign
-        password: secret
-        type: JKS
-      encrypt:
-        resource: classpath:idp-credentials.jks
-        alias: encrypt
-        password: secret
-        type: JKS
-      metadata-sign:
-        resource: classpath:idp-credentials.jks
-        alias: metadata
-        password: secret
-        type: JKS
-    endpoints:
-      metadata: /saml2/metadata    
-    metadata-providers:
-    - location: https://eid.svelegtest.se/metadata/mdx/role/sp.xml
-      backup-location: target/metadata-backup.xml
-      validation-certificate: classpath:sandbox-metadata.crt
+    base-url: https://local.dev.swedenconnect.se:8443/idp        
     metadata:
+      digest-methods:
+      - http://www.w3.org/2001/04/xmlenc#sha256
+      - http://www.w3.org/2001/04/xmldsig-more#sha384
+      - http://www.w3.org/2001/04/xmlenc#sha512
+      include-digest-methods-under-role: true
+      signing-methods:
+      - algorithm: http://www.w3.org/2001/04/xmldsig-more#rsa-sha256
+        min-key-size: 2048
+      - algorithm: http://www.w3.org/2001/04/xmldsig-more#rsa-sha384
+        min-key-size: 2048
+      - algorithm: http://www.w3.org/2001/04/xmldsig-more#rsa-sha512
+        min-key-size: 2048      
+      - algorithm: http://www.w3.org/2007/05/xmldsig-more#sha256-rsa-MGF1
+        min-key-size: 2048
+      - algorithm: http://www.w3.org/2007/05/xmldsig-more#sha384-rsa-MGF1
+        min-key-size: 2048
+      - algorithm: http://www.w3.org/2007/05/xmldsig-more#sha512-rsa-MGF1
+        min-key-size: 2048
+      - algorithm: http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256
+        min-key-size: 256
+      - algorithm: http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384
+        min-key-size: 256
+      - algorithm: http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512
+        min-key-size: 256
+      include-signing-methods-under-role: true
+      encryption-methods:
+      - algorithm: http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p
+      - algorithm: http://www.w3.org/2001/04/xmlenc#rsa-oaep-mgf1p
+        digest-method: http://www.w3.org/2001/04/xmlenc#sha256
+      - algorithm: http://www.w3.org/2009/xmlenc11#aes256-gcm
+      - algorithm: http://www.w3.org/2009/xmlenc11#aes192-gcm
+      - algorithm: http://www.w3.org/2009/xmlenc11#aes128-gcm
+      - algorithm: http://www.w3.org/2001/04/xmlenc#aes256-cbc
+      - algorithm: http://www.w3.org/2001/04/xmlenc#aes192-cbc
+      - algorithm: http://www.w3.org/2001/04/xmlenc#aes128-cbc
+          
+      requested-principal-selection:
+      - "urn:oid:1.2.752.29.4.13"
+      
       ui-info:
         display-names:
           en: Sweden Connect Reference IdP
@@ -225,23 +241,72 @@ users:
   given-name: Sixten
   surname: von Samordnungsnummer        
 
-logging:
-  level:
-    se:
-      swedenconnect:
-        spring:
-          saml: TRACE
+---
 
+spring:
+  config:
+    activate:
+      on-profile: sandbox
+      
+server:
+  servlet:
+    context-path: /idp
+    
+tomcat:
+  ajp:
+    enabled: true
+    port: 8009
+    secret-required: true
+    # secret: 
+
+saml:
+  idp:
+    entity-id: http://dev.test.swedenconnect.se/idp
+    base-url: https://idp.sandbox.swedenconnect.se/${server.servlet.context-path}    
+    endpoints:
+      metadata: /metadata/idp.xml
+      redirect-authn: /profile/SAML2/Redirect/SSO
+      post-authn: /profile/SAML2/POST/SSO
+    metadata-providers:
+    - location: https://eid.svelegtest.se/metadata/mdx/role/sp.xml
+      backup-location: ${IDP_INSTALL_DIR}/cache/metadata-backup.xml
+      validation-certificate: classpath:env/sandbox/sandbox-metadata.crt
+
+    # Credentials supplied elsewhere
 ---
 
 spring:
   config:
     activate:
       on-profile: localhost
+      
+server:
+  port: 8453
   
 saml:
   idp:
-    entity-id: https://local.swedenconnect.se/idp
+    base-url: https://local.dev.swedenconnect.se:${server.port}/idp
+    entity-id: https://local.dev.swedenconnect.se/ref-idp
+    metadata-providers:
+    - location: https://eid.svelegtest.se/metadata/mdx/role/sp.xml
+      backup-location: target/metadata-backup.xml
+      validation-certificate: classpath:env/sandbox/sandbox-metadata.crt    
+    credentials:
+      sign:
+        resource: classpath:env/localhost/idp-credentials.jks
+        alias: sign
+        password: secret
+        type: JKS
+      encrypt:
+        resource: classpath:env/localhost/idp-credentials.jks
+        alias: encrypt
+        password: secret
+        type: JKS
+      metadata-sign:
+        resource: classpath:env/localhost/idp-credentials.jks
+        alias: metadata
+        password: secret
+        type: JKS    
     metadata:
       ui-info:
         display-names:
@@ -249,12 +314,12 @@ saml:
           sv: Local Sweden Connect Referens-IdP
         descriptions:
           en: Local Sweden Connect Reference Identity Provider
-          sv: Local Sweden Connect referens-legitimeringstjänst
-        logotypes:
-        - path: /images/logo-notext.svg
-          height: 256
-          width: 256
-        - path: /images/logo.svg
-          height: 56
-          width: 280
+          sv: Local Sweden Connect referenslegitimeringstjänst
+
+logging:
+  level:
+    se:
+      swedenconnect:
+        spring:
+          saml: TRACE
       

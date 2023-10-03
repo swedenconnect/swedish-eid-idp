@@ -15,6 +15,7 @@
  */
 package se.swedenconnect.eid.idp.config;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -33,7 +34,7 @@ import se.swedenconnect.eid.idp.config.UiConfigurationProperties.Language;
 
 /**
  * Web MVC configuration.
- * 
+ *
  * @author Martin Lindström
  */
 @Configuration
@@ -45,7 +46,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
   /**
    * Constructor.
-   * 
+   *
    * @param ui the UI configuration
    */
   public WebMvcConfiguration(final UiConfigurationProperties ui) {
@@ -54,7 +55,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
   /**
    * Creates a bean holding the UI languages.
-   * 
+   *
    * @return the UI languages
    */
   @Bean
@@ -64,7 +65,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
   /**
    * Creates a {@link LocaleResolver} for resolving which language to use in the UI.
-   * 
+   *
    * @param contextPath the servlet context path
    * @return a {@link LocaleResolver}
    */
@@ -73,13 +74,13 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
     CookieLocaleResolver resolver = new CookieLocaleResolver();
     resolver.setDefaultLocale(new Locale("en"));
     resolver.setCookiePath(contextPath);
-    resolver.setCookieMaxAge(31536000);
+    resolver.setCookieMaxAge(Duration.ofDays(365));
     return resolver;
   }
 
   /**
    * Creates a {@link LocaleChangeInterceptor} for changing the locale based on a request parameter name.
-   * 
+   *
    * @return a {@link LocaleChangeInterceptor}
    */
   @Bean
