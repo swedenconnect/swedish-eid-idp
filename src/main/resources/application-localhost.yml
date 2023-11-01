@@ -1,0 +1,48 @@
+#
+# Configuration for running the IdP on localhost
+#  Test my eID in local mode is needed
+#
+
+server:
+  port: 8453
+  
+saml:
+  idp:
+    base-url: https://local.dev.swedenconnect.se:${server.port}/idp
+    entity-id: https://local.dev.swedenconnect.se/ref-idp
+    metadata-providers:
+    - location: https://eid.svelegtest.se/metadata/mdx/role/sp.xml
+      backup-location: target/metadata-backup.xml
+      validation-certificate: classpath:env/sandbox/sandbox-metadata.crt    
+    credentials:
+      sign:
+        resource: classpath:env/localhost/idp-credentials.jks
+        alias: sign
+        password: secret
+        type: JKS
+      encrypt:
+        resource: classpath:env/localhost/idp-credentials.jks
+        alias: encrypt
+        password: secret
+        type: JKS
+      metadata-sign:
+        resource: classpath:env/localhost/idp-credentials.jks
+        alias: metadata
+        password: secret
+        type: JKS    
+    metadata:
+      ui-info:
+        display-names:
+          en: Local Sweden Connect Reference IdP
+          sv: Local Sweden Connect Referens-IdP
+        descriptions:
+          en: Local Sweden Connect Reference Identity Provider
+          sv: Local Sweden Connect referenslegitimeringstjänst
+
+logging:
+  level:
+    se:
+      swedenconnect:
+        spring:
+          saml: TRACE
+      
