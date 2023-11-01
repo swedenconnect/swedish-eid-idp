@@ -1,0 +1,46 @@
+#
+# Configuration for the Swedish eID Reference IdP in the Sandbox environment.
+#
+
+tomcat:
+  ajp:
+    enabled: true
+    port: 8009
+    secret-required: true
+    # secret: 
+
+saml:
+  idp:
+    entity-id: http://dev.test.swedenconnect.se/idp
+    base-url: https://idp.sandbox.swedenconnect.se/idp
+    endpoints:
+      metadata: /metadata/idp.xml
+      redirect-authn: /profile/SAML2/Redirect/SSO
+      post-authn: /profile/SAML2/POST/SSO
+    metadata-providers:
+    - location: https://eid.svelegtest.se/metadata/mdx/role/sp.xml
+      backup-location: ${IDP_DIR}/cache/metadata-backup.xml
+      validation-certificate: file:${IDP_CONFIG_DIR}/sandbox-metadata.crt
+    credentials:
+      sign:
+        resource: file:${IDP_CONFIG_DIR}/idp-credentials.jks
+        alias: sign
+        password: secret
+        key-password: secret
+        name: Signing
+      encrypt:
+        resource: file:${IDP_CONFIG_DIR}/idp-credentials.jks
+        alias: encrypt
+        password: secret
+        key-password: secret
+        name: Encryption
+      metadata-sign:
+        resource: file:${IDP_CONFIG_DIR}/idp-credentials.jks
+        alias: metadata-sign
+        password: secret
+        key-password: secret
+        name: "Metadata Signing"
+
+          
+          
+             

@@ -16,6 +16,10 @@ user choose which user he or she wants to authenticate as. But this part is not 
 The purpose is to supply actors within the Swedish eID federation with a reference implementation of
 how an SAML Identity Provider implements the Swedish eID Framework.
 
+## Configuration
+
+> TODO
+
 ---
 
 Copyright &copy; 2016-2023, [Sweden Connect](https://swedenconnect.se). Licensed under version 2.0 of the [Apache License](http://www.apache.org/licenses/LICENSE-2.0).

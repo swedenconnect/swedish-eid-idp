@@ -1,0 +1,7 @@
+{"properties": [
+  {
+    "name": "idp-users-location",
+    "type": "java.lang.String",
+    "description": "Directory/location for where the users.yml file is placed"
+  }
+]}
