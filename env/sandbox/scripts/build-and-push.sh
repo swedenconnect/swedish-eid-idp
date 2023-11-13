@@ -11,7 +11,7 @@ SANDBOX_SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 source ${SANDBOX_SCRIPT_DIR}/../../../scripts/build.sh -i ${SANDBOX_DOCKER_REPO}/${SANDBOX_IMAGE_NAME} -p linux/amd64
 
-docker login ${SANDBOX_DOCKER_REPO}/${SANDBOX_IMAGE_NAME}
+echo $SANDBOX_DOCKER_PW | docker login $SANDBOX_DOCKER_REPO -u $SANDBOX_DOCKER_USER --password-stdin
 
 docker push ${SANDBOX_DOCKER_REPO}/${SANDBOX_IMAGE_NAME}
 

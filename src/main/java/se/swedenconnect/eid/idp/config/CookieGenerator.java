@@ -66,7 +66,7 @@ public class CookieGenerator {
    * @param response the HTTP servlet response
    */
   public void addCookie(final String value, final HttpServletResponse response) {
-    response.setHeader(HttpHeaders.SET_COOKIE,
+    response.addHeader(HttpHeaders.SET_COOKIE,
         this.cookieBuilder.value(value).build().toString());
   }
 
