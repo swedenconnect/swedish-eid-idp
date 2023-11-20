@@ -123,7 +123,9 @@ public class SimulatedAuthenticationController
   @GetMapping(AUTHN_PATH)
   public ModelAndView authenticate(final HttpServletRequest request, final HttpServletResponse response) {
     final ModelAndView mav = new ModelAndView("simulated");
-    mav.addObject("users", this.getStaticAndSavedUsers(request));
+
+    final List<SimulatedUser> users = this.getStaticAndSavedUsers(request);
+    mav.addObject("users", users);
 
     final RedirectForAuthenticationToken token = this.getInputToken(request);
     final Saml2ServiceProviderUiInfo uiInfo = token.getAuthnInputToken().getUiInfo();
@@ -145,6 +147,7 @@ public class SimulatedAuthenticationController
         .filter(a -> !a.getValues().isEmpty())
         .map(a -> a.getValues().get(0))
         .map(String.class::cast)
+        .filter(u -> users.stream().anyMatch(s -> u.equals(s.getUsername())))
         .findFirst()
         .orElse(null);
     if (preSelected != null) {
