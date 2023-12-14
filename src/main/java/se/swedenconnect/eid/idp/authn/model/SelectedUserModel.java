@@ -22,7 +22,7 @@ import lombok.Setter;
 
 /**
  * Model class for a user that is selected in the UI, i.e., the user that we are simulating authentication for.
- * 
+ *
  * @author Martin Lindström
  */
 public class SelectedUserModel {
@@ -32,7 +32,7 @@ public class SelectedUserModel {
    */
   @Setter
   private String personalIdentityNumber;
-  
+
   @Setter
   private String customPersonalIdentityNumber;
 
@@ -56,20 +56,41 @@ public class SelectedUserModel {
   @Getter
   @Setter
   private String surname;
-  
+
   @Getter
   @Setter
   private boolean signMessageDisplayed;
+
+  /**
+   * Main error code to simulate.
+   */
+  @Getter
+  @Setter
+  private String mainError;
+
+  /**
+   * Subordinate error code to simulate.
+   */
+  @Getter
+  @Setter
+  private String subError;
+
+  /**
+   * Error message to simulate.
+   */
+  @Getter
+  @Setter
+  private String errorMessage;
 
   public String getPersonalIdentityNumber() {
     return StringUtils.hasText(this.personalIdentityNumber)
         ? this.personalIdentityNumber
         : this.customPersonalIdentityNumber;
   }
-  
+
   /**
    * Is this a "custom user"?, i.e., created from the Advanced-link.
-   * 
+   *
    * @return {@code true} if created in the view, and {@code false} if a user from the drop-down menu was selected
    */
   public boolean isCustom() {

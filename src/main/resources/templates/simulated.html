@@ -157,9 +157,126 @@
                   </span>
                 </button>
               </div>
+              <div class="noscripthide">
+                <button id="simulateErrorButton" class="btn btn-link float-right" type="button">
+                  <span th:text="#{idp.msg.button.simulate-error}">Simulate Error</span>
+                </button>
+              </div>
             </div>
           </div> <!-- /#submitDiv -->
           
+          <div id="simulateError" class="row section noscripthide">
+            <div class="col-sm-12">
+              <div class="advanced">
+                <div class="box">
+                  <div class="row section" id="selectMainErrorDiv">
+                    <div class="col-sm-12">
+                      <label for="selectMainError" th:text="#{idp.msg.simerror.main-error.label}">Select main error code:</label>
+                      <select class="form-control" name="mainError" id="selectMainError">
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:Responder">
+                          urn:oasis:names:tc:SAML:2.0:status:Responder
+                        </option>                        
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:Requester">
+                          urn:oasis:names:tc:SAML:2.0:status:Requester
+                        </option>
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:VersionMismatch">
+                          urn:oasis:names:tc:SAML:2.0:status:VersionMismatch
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row section" id="selectSubErrorDiv">
+                    <div class="col-sm-12">
+                      <label for="selectSubError" th:text="#{idp.msg.simerror.sub-error.label}">Select subordinate error code:</label>
+                      <select class="form-control" name="subError" id="selectSubError">
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:AuthnFailed">
+                          urn:oasis:names:tc:SAML:2.0:status:AuthnFailed
+                        </option>
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:UnknownPrincipal">
+                          urn:oasis:names:tc:SAML:2.0:status:UnknownPrincipal
+                        </option>
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext">
+                          urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext
+                        </option>
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:RequestDenied">
+                          urn:oasis:names:tc:SAML:2.0:status:RequestDenied
+                        </option>                        
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:UnsupportedBinding">
+                          urn:oasis:names:tc:SAML:2.0:status:UnsupportedBinding
+                        </option>                        
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:InvalidAttrNameOrValue">
+                          urn:oasis:names:tc:SAML:2.0:status:InvalidAttrNameOrValue
+                        </option>
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:InvalidNameIDPolicy">
+                          urn:oasis:names:tc:SAML:2.0:status:InvalidNameIDPolicy
+                        </option>
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:NoAvailableIDP">
+                          urn:oasis:names:tc:SAML:2.0:status:NoAvailableIDP
+                        </option>
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:NoPassive">
+                          urn:oasis:names:tc:SAML:2.0:status:NoPassive
+                        </option>
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:NoSupportedIDP">
+                          urn:oasis:names:tc:SAML:2.0:status:NoSupportedIDP
+                        </option>
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:ProxyCountExceeded">
+                          urn:oasis:names:tc:SAML:2.0:status:ProxyCountExceeded
+                        </option>
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:RequestUnsupported">
+                          urn:oasis:names:tc:SAML:2.0:status:RequestUnsupported
+                        </option>
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:RequestVersionDeprecated">
+                          urn:oasis:names:tc:SAML:2.0:status:RequestVersionDeprecated
+                        </option>
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:RequestVersionTooHigh">
+                          urn:oasis:names:tc:SAML:2.0:status:RequestVersionTooHigh
+                        </option>
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:RequestVersionTooLow">
+                          urn:oasis:names:tc:SAML:2.0:status:RequestVersionTooLow
+                        </option>
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:ResourceNotRecognized">
+                          urn:oasis:names:tc:SAML:2.0:status:ResourceNotRecognized
+                        </option>
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:TooManyResponses">
+                          urn:oasis:names:tc:SAML:2.0:status:TooManyResponses
+                        </option>
+                        <option value="urn:oasis:names:tc:SAML:2.0:status:UnknownAttrProfile">
+                          urn:oasis:names:tc:SAML:2.0:status:UnknownAttrProfile
+                        </option>
+                        <option value="http://id.elegnamnden.se/status/1.0/cancel">
+                          http://id.elegnamnden.se/status/1.0/cancel
+                        </option>
+                        <option value="http://id.elegnamnden.se/status/1.0/fraud">
+                          http://id.elegnamnden.se/status/1.0/fraud
+                        </option>
+                        <option value="http://id.elegnamnden.se/status/1.0/possibleFraud">
+                          http://id.elegnamnden.se/status/1.0/possibleFraud
+                        </option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="row section" id="enterErrorMessageDiv">
+                    <div class="col-sm-12">
+                      <label for="errorMessage" th:text="#{idp.msg.simerror.msg.label}">Enter error message:</label>
+                      <input type="text" class="form-control" id="errorMessage" name="errorMessage" />
+                    </div>                    
+                  </div>
+                  <div class="row section">
+                    <div class="col-sm-12">
+                      <button id="submitErrorButton" type="submit" class="btn btn-primary" name="action" value="error">
+                        <span th:text="#{idp.msg.button.error}">Send Error</span>
+                      </button>
+                      <button id="cancelErrorButton" class="btn btn-link float-right" type="button">
+                        <span th:text="#{idp.msg.button.cancel}">Cancel</span>
+                      </button>                        
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>          
+                    
           <div id="helpsection" class="drop-down-container noscripthide">
 
             <div class="col-sm-12 drop-down">
