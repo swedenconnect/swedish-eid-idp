@@ -334,7 +334,7 @@
             </execution>
           </executions>
         </plugin>
-
+        
       </plugins>
 
     </pluginManagement>    
@@ -450,6 +450,75 @@
           </execution>
         </executions>
       </plugin>
+      
+      <plugin>
+        <groupId>com.google.cloud.tools</groupId>
+        <artifactId>jib-maven-plugin</artifactId>
+        <version>3.4.0</version>
+        <configuration>
+          <from>
+            <image>openjdk:18.0.2.1-slim</image>
+          </from>
+          <to>
+            <image>${DOCKER_REPO}/swedenconnect/${project.artifactId}</image>
+          </to>
+          <container>
+            <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+            <jvmFlags>
+              <jvmFlag>-Djava.net.preferIPv4Stack=true</jvmFlag>
+              <jvmFlag>-Dorg.apache.xml.security.ignoreLineBreaks=true</jvmFlag>
+            </jvmFlags>
+            <ports>
+              <port>8443</port>
+              <port>8444</port>
+            </ports>
+            <labels>
+              <org.opencontainers.image.source>
+                https://github.com/swedenconnect/swedish-eid-idp
+              </org.opencontainers.image.source>
+              <org.opencontainers.image.description>
+                Sweden Connect Reference IdP
+              </org.opencontainers.image.description>
+              <org.opencontainers.image.licenses>Apache-2.0</org.opencontainers.image.licenses>
+            </labels>
+          </container>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>none</phase>
+            <id>local</id>
+            <goals>
+              <goal>dockerBuild</goal>
+            </goals>
+            <configuration>
+              <to>
+                <image>eidas-connector</image>
+              </to>
+            </configuration>
+          </execution>
+          <execution>
+            <id>default-cli</id>
+            <phase>none</phase>
+            <goals>
+              <goal>build</goal>
+            </goals>
+            <configuration>
+              <from>
+                <platforms>
+                  <platform>
+                    <os>linux</os>
+                    <architecture>amd64</architecture>
+                  </platform>
+                  <platform>
+                    <os>linux</os>
+                    <architecture>arm64</architecture>
+                  </platform>
+                </platforms>
+              </from>
+            </configuration>
+          </execution>
+        </executions>        
+      </plugin>      
 
     </plugins>
 
