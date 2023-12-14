@@ -19,8 +19,36 @@ $(document).ready(
         $('#givenName').val('');
         $('#surname').val('');
       }
-
+      
       // We only support "Advanced" if the agent support JS
+      $('#simulateErrorButton').parent().show();
+      
+      $('#simulateErrorButton').click(function() {
+        if ($('#simulateError').is(':hidden')) {
+          $('#simulateError').show();
+          $('#simulateErrorButton').hide();
+          
+          $('#advancedButton').hide();
+          $('#submitButton').attr('disabled', 'disabled');
+          $('#selectSimulatedUser').attr('disabled', 'disabled');
+        }
+      });
+      
+      $('#cancelErrorButton').click(function() {
+        $('#simulateError').hide();
+        $('#simulateErrorButton').show();
+        
+        $('#advancedButton').show();
+        if (selectedUser != 'NONE') {
+          $('#submitButton').removeAttr('disabled');
+        }
+        else {
+          $('#submitButton').attr('disabled', 'disabled');
+        }
+        $('#selectSimulatedUser').removeAttr('disabled');
+      });      
+      
+      
       $('#advancedButton').parent().show();
 
       $('#advancedButton').click(function() {

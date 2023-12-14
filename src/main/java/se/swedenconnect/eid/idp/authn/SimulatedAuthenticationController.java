@@ -213,6 +213,15 @@ public class SimulatedAuthenticationController
     if ("cancel".equals(action)) {
       return this.cancel(request);
     }
+    else if ("error".equals(action)) {
+      final Saml2ErrorStatusException error = new Saml2ErrorStatusException(
+          result.getMainError(), result.getSubError(), null,
+          Optional.ofNullable(result.getErrorMessage())
+              .filter(s -> !s.isBlank())
+              .orElseGet(() -> "Simulated error"),
+          "Simulated error");
+      return this.complete(request, error);
+    }
     else {
       final SimulatedUser user = this.processSelectedUser(request, response, result);
       if (user == null) {
