@@ -9,7 +9,6 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BUILD_DIR=${SCRIPT_DIR}/..
 
 GITHUB_DOCKER_REPO=ghcr.io
-IMAGE_NAME=${GITHUB_DOCKER_REPO}/swedenconnect/swedish-eid-idp
 
 if [ -z "$GITHUB_USER" ]; then
   echo "The GITHUB_USER variable must be set"
@@ -24,4 +23,4 @@ fi
 echo "Logging in to ${GITHUB_DOCKER_REPO} ..."
 echo $GITHUB_ACCESS_TOKEN | docker login $GITHUB_DOCKER_REPO -u $GITHUB_USER --password-stdin
 
-source ${SCRIPT_DIR}/build-image.sh -i ${IMAGE_NAME} -s -d ${BUILD_DIR} -p
+source ${SCRIPT_DIR}/build-image.sh -r $GITHUB_DOCKER_REPO -d ${BUILD_DIR}
