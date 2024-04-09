@@ -5,7 +5,7 @@
 
   <groupId>se.swedenconnect.eid.idp</groupId>
   <artifactId>swedish-eid-idp</artifactId>
-  <version>2.0.0-SNAPSHOT</version>
+  <version>2.0.0</version>
   <packaging>jar</packaging>
 
   <name>Sweden Connect :: Swedish eID :: Reference IdP</name>
@@ -460,13 +460,16 @@
       <plugin>
         <groupId>com.google.cloud.tools</groupId>
         <artifactId>jib-maven-plugin</artifactId>
-        <version>3.4.0</version>
+        <version>3.4.2</version>
         <configuration>
           <from>
             <image>openjdk:18.0.2.1-slim</image>
           </from>
           <to>
             <image>${DOCKER_REPO}/swedenconnect/${project.artifactId}</image>
+            <tags>
+              <tag>${project.version}</tag>
+            </tags>
           </to>
           <container>
             <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
