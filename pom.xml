@@ -498,7 +498,7 @@
             </goals>
             <configuration>
               <to>
-                <image>eidas-connector</image>
+                <image>swedish-eid-idp</image>
               </to>
             </configuration>
           </execution>
