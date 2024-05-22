@@ -92,7 +92,7 @@ public class SimulatedAuthenticationProvider extends AbstractUserRedirectAuthent
   public Saml2UserAuthentication resumeAuthentication(final ResumedAuthenticationToken token)
       throws Saml2ErrorStatusException {
 
-    final SimulatedAuthenticationToken simAuth = SimulatedAuthenticationToken.class.cast(token.getAuthnToken());
+    final SimulatedAuthenticationToken simAuth = (SimulatedAuthenticationToken) token.getAuthnToken();
     final SimulatedUser user = (SimulatedUser) simAuth.getDetails();
 
     final List<UserAttribute> attributes = List.of(
@@ -121,7 +121,7 @@ public class SimulatedAuthenticationProvider extends AbstractUserRedirectAuthent
   /** {@inheritDoc} */
   @Override
   public boolean supportsUserAuthenticationToken(final Authentication authentication) {
-    return SimulatedAuthenticationToken.class.isInstance(authentication);
+    return authentication instanceof SimulatedAuthenticationToken;
   }
 
 }
