@@ -28,6 +28,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.thymeleaf.spring6.SpringTemplateEngine;
@@ -39,6 +40,7 @@ import se.swedenconnect.eid.idp.users.SimulatedUserDetailsManager;
 import se.swedenconnect.eid.idp.users.UsersConfigurationProperties;
 import se.swedenconnect.spring.saml.idp.config.configurers.Saml2IdpConfigurerAdapter;
 import se.swedenconnect.spring.saml.idp.extensions.SignatureMessagePreprocessor;
+import se.swedenconnect.spring.saml.idp.extensions.UserMessagePreprocessor;
 import se.swedenconnect.spring.saml.idp.response.ThymeleafResponsePage;
 
 /**
@@ -91,7 +93,7 @@ public class IdpConfiguration {
   @Bean
   SimulatedUserDetailsManager userDetailsService() {
     final SimulatedUserDetailsManager mgr = new SimulatedUserDetailsManager();
-    this.users.getUsers().stream().forEach(u -> mgr.createUser(u));
+    this.users.getUsers().forEach(mgr::createUser);
     return mgr;
   }
 
@@ -114,16 +116,17 @@ public class IdpConfiguration {
    * Gets a {@link Saml2IdpConfigurerAdapter} that applies custom configuration for the IdP.
    *
    * @param signMessageProcessor a {@link SignatureMessagePreprocessor} for display of sign messages
+   * @param userMessageProcessor a {@link UserMessagePreprocessor} for display of user messages
    * @return a {@link Saml2IdpConfigurerAdapter}
    */
   @Bean
-  Saml2IdpConfigurerAdapter samlIdpSettingsAdapter(final SignatureMessagePreprocessor signMessageProcessor) {
-    return (http, configurer) -> {
-      configurer
-          .authnRequestProcessor(c -> c.authenticationProvider(
-              pc -> pc.signatureMessagePreprocessor(signMessageProcessor)));
-
-    };
+  Saml2IdpConfigurerAdapter samlIdpSettingsAdapter(final SignatureMessagePreprocessor signMessageProcessor,
+      final UserMessagePreprocessor userMessageProcessor) {
+    return (http, configurer) -> configurer.authnRequestProcessor(c -> c.authenticationProvider(
+        pc -> {
+          pc.signatureMessagePreprocessor(signMessageProcessor);
+          pc.userMessagePreprocessor(userMessageProcessor);
+        }));
   }
 
   /**
@@ -180,7 +183,7 @@ public class IdpConfiguration {
   SecurityFilterChain defaultSecurityFilterChain(final HttpSecurity http) throws Exception {
 
     http
-        .csrf((c) -> c.disable())
+        .csrf(AbstractHttpConfigurer::disable)
         .cors(Customizer.withDefaults())
         .authorizeHttpRequests((authorize) -> authorize
             .requestMatchers(this.properties.getAuthnPath() + "/**").permitAll()

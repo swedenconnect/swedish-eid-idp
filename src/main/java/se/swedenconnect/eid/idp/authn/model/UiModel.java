@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 import lombok.Data;
+import se.swedenconnect.opensaml.sweid.saml2.authn.umsg.UserMessage;
 
 /**
  * Model class for UI.
@@ -51,6 +52,9 @@ public class UiModel {
   
   /** The SignMessage (HTML). */
   private String signMessage;
+
+  /** The UserMessage (HTML). */
+  private String userMessage;
 
   /**
    * Predicate that tells if the supplied ID is "selected".

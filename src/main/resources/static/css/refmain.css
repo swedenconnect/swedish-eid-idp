@@ -334,6 +334,72 @@ a {
   font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
+.sign-message h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 24px;
+}
+
+.sign-message h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.sign-message h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 22px;
+}
+
+.sign-message h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.user-message {
+  margin-bottom: 30px;
+  background-color: #F7F7F7;
+  border-top: 1px solid #D0CACA;
+  border-bottom: 1px solid #D0CACA;
+  padding: 23px 28px;
+}
+
+.user-message h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 24px;
+  padding-bottom: 18px;
+}
+
+.user-message h2 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  padding-bottom: 18px;
+}
+
+.user-message h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 22px;
+}
+
+.user-message h4 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
 .header {
   background-color: #fff;
   -webkit-box-shadow: 0 -3px 10px 0 rgba(0, 0, 0, 0.5);

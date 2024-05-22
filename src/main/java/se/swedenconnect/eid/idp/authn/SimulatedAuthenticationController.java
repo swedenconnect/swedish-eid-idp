@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Sweden Connect
+ * Copyright 2023-2024 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import jakarta.servlet.http.Cookie;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -55,6 +57,7 @@ import se.swedenconnect.spring.saml.idp.authentication.provider.external.Abstrac
 import se.swedenconnect.spring.saml.idp.authentication.provider.external.RedirectForAuthenticationToken;
 import se.swedenconnect.spring.saml.idp.error.Saml2ErrorStatus;
 import se.swedenconnect.spring.saml.idp.error.Saml2ErrorStatusException;
+import se.swedenconnect.spring.saml.idp.extensions.UserMessageExtension;
 
 /**
  * The controller implementing the simulated user authentication.
@@ -169,15 +172,23 @@ public class SimulatedAuthenticationController
           token.getAuthnInputToken().getAuthnRequirements().getSignatureMessageExtension().getProcessedMessage());
     }
 
+    // User Message ...
+    //
+    if (token.getAuthnInputToken().getAuthnRequirements().getUserMessageExtension() != null) {
+      if (!StringUtils.hasText(ui.getSignMessage())) {
+        ui.setUserMessage(
+            this.getUserMessage(token.getAuthnInputToken().getAuthnRequirements().getUserMessageExtension()));
+      }
+    }
+
     mav.addObject("ui", ui);
     mav.addObject("result", new SelectedUserModel());
 
     // Automatic authentication?
     //
-    final String autoUser = Arrays.asList(request.getCookies())
-        .stream()
+    final String autoUser = Arrays.stream(request.getCookies())
         .filter(c -> c.getName().equals(AUTO_AUTHN_COOKIE_NAME))
-        .map(c -> c.getValue())
+        .map(Cookie::getValue)
         .findFirst()
         .orElse(null);
     if (autoUser != null) {
@@ -218,7 +229,7 @@ public class SimulatedAuthenticationController
           result.getMainError(), result.getSubError(), null,
           Optional.ofNullable(result.getErrorMessage())
               .filter(s -> !s.isBlank())
-              .orElseGet(() -> "Simulated error"),
+              .orElse("Simulated error"),
           "Simulated error");
       return this.complete(request, error);
     }
@@ -237,12 +248,11 @@ public class SimulatedAuthenticationController
    * Handles the automatic authentication setup view.
    *
    * @param request the HTTP servlet request
-   * @param response the HTTP servlet response
    * @param authnCookieValue the auto authn cookie value (optional)
    * @return a {@link ModelAndView}
    */
   @GetMapping(AUTO_AUTHN_PATH)
-  public ModelAndView autoAuthn(final HttpServletRequest request, final HttpServletResponse response,
+  public ModelAndView autoAuthn(final HttpServletRequest request,
       @CookieValue(value = AUTO_AUTHN_COOKIE_NAME, required = false) String authnCookieValue) {
 
     final ModelAndView mav = new ModelAndView("testconf");
@@ -263,14 +273,13 @@ public class SimulatedAuthenticationController
   /**
    * Saves the user for automatic testing.
    *
-   * @param request the HTTP servlet request
    * @param response the HTTP servlet response
    * @param action result
    * @param selectedUser the user
    * @return a {@link ModelAndView}
    */
   @PostMapping(AUTO_AUTHN_PATH + "/save")
-  public ModelAndView saveAutoAuthn(final HttpServletRequest request, final HttpServletResponse response,
+  public ModelAndView saveAutoAuthn(final HttpServletResponse response,
       @RequestParam("action") String action,
       @RequestParam(value = "selectedUser") String selectedUser) {
 
@@ -307,10 +316,9 @@ public class SimulatedAuthenticationController
   }
 
   private Pair<String, String> getSelectedUserAndLoa(final HttpServletRequest request) {
-    final String selection = Arrays.asList(request.getCookies())
-        .stream()
+    final String selection = Arrays.stream(request.getCookies())
         .filter(c -> c.getName().equals(this.selectedUserCookieGenerator.getName()))
-        .map(c -> c.getValue())
+        .map(Cookie::getValue)
         .findFirst()
         .orElse(null);
     if (selection != null) {
@@ -342,10 +350,9 @@ public class SimulatedAuthenticationController
    * @return a list of simulated users
    */
   private List<SimulatedUser> getSavedUsers(final HttpServletRequest request) {
-    final String v = Arrays.asList(request.getCookies())
-        .stream()
+    final String v = Arrays.stream(request.getCookies())
         .filter(c -> c.getName().equals(this.savedUsersCookieGenerator.getName()))
-        .map(c -> c.getValue())
+        .map(Cookie::getValue)
         .findFirst()
         .orElse(null);
 
@@ -415,12 +422,31 @@ public class SimulatedAuthenticationController
     return user;
   }
 
+  private String getUserMessage(final UserMessageExtension userMessage) {
+    final String lang = LocaleContextHolder.getLocale().getLanguage();
+    String bestChoice = null;
+    if (userMessage.getProcessedMessages() == null || userMessage.getProcessedMessages().isEmpty()) {
+      return null;
+    }
+    for (final Map.Entry<String, String> entry : userMessage.getProcessedMessages().entrySet()) {
+      if (entry.getKey().startsWith(lang)) {
+        return entry.getValue();
+      }
+      else if (UserMessageExtension.NO_LANG.equals(entry.getKey())) {
+        bestChoice = entry.getValue();
+      }
+      else if (bestChoice == null) {
+        bestChoice = entry.getValue();
+      }
+    }
+    return bestChoice;
+  }
+
   private void updateSpUiDisplayItems(final UiModel model, final Saml2ServiceProviderUiInfo uiInfo) {
     final String lang = LocaleContextHolder.getLocale().getLanguage();
 
     model.setSpDisplayName(Optional.ofNullable(uiInfo.getDisplayName(lang))
-        .orElseGet(() -> uiInfo.getDisplayNames().entrySet().stream()
-            .map(Map.Entry::getValue)
+        .orElseGet(() -> uiInfo.getDisplayNames().values().stream()
             .findFirst()
             .orElse(null)));
 

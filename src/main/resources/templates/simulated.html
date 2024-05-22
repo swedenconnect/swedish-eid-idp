@@ -59,6 +59,16 @@
             </div>
           </th:block>
           <input type="hidden" name="signMessageDisplayed" th:value="${ui.getSignMessage() != null ? true : false}" />
+
+          <th:block th:if="${ui.getUserMessage() != null}">
+            <div class="full-width user-message">
+              <div class="row no-gutters">
+                <div class="col">
+                  <span th:utext="${ui.getUserMessage()}">User message</span>
+                </div>
+              </div>
+            </div>
+          </th:block>
                   
           <div class="row section" id="selectSimulatedUserDiv">
             
