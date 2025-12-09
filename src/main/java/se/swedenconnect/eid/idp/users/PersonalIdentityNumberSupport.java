@@ -1,5 +1,5 @@
 /*
- * Copyright 2022-2023 Sweden Connect
+ * Copyright 2023-2025 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,16 +17,16 @@ package se.swedenconnect.eid.idp.users;
 
 /**
  * Support functions for handling personal identity numbers.
- * 
+ *
  * @author Martin Lindström
  */
 public class PersonalIdentityNumberSupport {
 
   /**
-   * Predicate that tells if the supplied personal identity number is a Swedish coordination number (samordningsnummer).
-   * 
-   * @param id
-   *          the personal identity number
+   * Predicate that tells if the supplied personal identity number is a Swedish coordination number
+   * (samordningsnummer).
+   *
+   * @param id the personal identity number
    * @return true if the number is a coordination number and false otherwise
    */
   public static boolean isCoordinationNumber(final String id) {
@@ -34,7 +34,7 @@ public class PersonalIdentityNumberSupport {
       return false;
     }
     try {
-      final Integer day = Integer.parseInt(id.substring(6, 8));
+      final int day = Integer.parseInt(id.substring(6, 8));
       return (day >= 61);
     }
     catch (final Exception e) {
@@ -45,14 +45,13 @@ public class PersonalIdentityNumberSupport {
   /**
    * Given a Swedish personal identity number or "samordningsnummer" a person's date of birth is returned.
    *
-   * @param personalIdentityNumber
-   *          the personal identity number
+   * @param personalIdentityNumber the personal identity number
    * @return the birth date on the format YYYY-MM-DD
    */
   public static String getBirthDate(final String personalIdentityNumber) {
     final Integer day = Integer.parseInt(personalIdentityNumber.substring(6, 8));
     return String.format("%s-%s-%02d", personalIdentityNumber.substring(0, 4), personalIdentityNumber.substring(4, 6),
-      day > 60 ? day - 60 : day);
+        day > 60 ? day - 60 : day);
   }
 
   private PersonalIdentityNumberSupport() {

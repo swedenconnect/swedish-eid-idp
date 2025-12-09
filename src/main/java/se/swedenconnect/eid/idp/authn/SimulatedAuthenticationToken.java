@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Sweden Connect
+ * Copyright 2023-2025 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package se.swedenconnect.eid.idp.authn;
 
+import java.io.Serial;
 import java.util.Collections;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
@@ -26,16 +27,17 @@ import se.swedenconnect.eid.idp.users.SimulatedUser;
 
 /**
  * An {@link Authentication} token for our simulated authentication process.
- * 
+ *
  * @author Martin Lindström
  */
 public class SimulatedAuthenticationToken extends AbstractAuthenticationToken {
 
+  @Serial
   private static final long serialVersionUID = -4646659410285834357L;
 
   /** The level of assurance URI. */
   private final String loa;
-  
+
   /**
    * Whether the SignMessage was displayed.
    */
@@ -45,7 +47,7 @@ public class SimulatedAuthenticationToken extends AbstractAuthenticationToken {
 
   /**
    * Constructor.
-   * 
+   *
    * @param user the simulated user (i.e., the user that was authenticated)
    */
   public SimulatedAuthenticationToken(final SimulatedUser user, final String loa) {
@@ -73,7 +75,7 @@ public class SimulatedAuthenticationToken extends AbstractAuthenticationToken {
 
   /**
    * Returns the selected level of assurance.
-   * 
+   *
    * @return the LoA URI
    */
   public String getLoa() {

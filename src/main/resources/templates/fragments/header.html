@@ -1,3 +1,18 @@
+<!--
+  ~ Copyright 2023-2025 Sweden Connect
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -13,7 +28,7 @@
       </div>
     </div>
   </div>
-  
+
   <div class="container-fluid header" th:fragment="splogotype(url)">
     <div class="container">
       <div class="row">
@@ -25,22 +40,22 @@
         </div>
       </div>
     </div>
-  </div>  
-  
+  </div>
+
   <div class="row" id="languageDiv" th:fragment="language(languages, path)">
     <div class="col-sm-12">
       <div th:if="${languages != null && !languages.isEmpty()}">
         <form action="#" th:action="@{${path}}" method="GET">
           <button th:each="uiLang: ${languages}" class="lang float-right btn btn-link" type="submit" value="en" th:value="${uiLang.tag}" name="lang">
-            <span th:text="${uiLang.text}">Lang</span>                
-          </button>          
+            <span th:text="${uiLang.text}">Lang</span>
+          </button>
         </form>
       </div>
       <div th:unless="${languages != null && !languages.isEmpty()}">
         <span class="lang float-right">&nbsp;</span>
       </div>
     </div>
-  </div>  
-  
+  </div>
+
 </body>
 </html>

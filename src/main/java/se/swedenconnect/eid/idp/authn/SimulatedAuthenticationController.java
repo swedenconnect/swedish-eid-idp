@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 Sweden Connect
+ * Copyright 2023-2025 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -253,7 +253,7 @@ public class SimulatedAuthenticationController
    */
   @GetMapping(AUTO_AUTHN_PATH)
   public ModelAndView autoAuthn(final HttpServletRequest request,
-      @CookieValue(value = AUTO_AUTHN_COOKIE_NAME, required = false) String authnCookieValue) {
+      @CookieValue(value = AUTO_AUTHN_COOKIE_NAME, required = false) final String authnCookieValue) {
 
     final ModelAndView mav = new ModelAndView("testconf");
     final List<SimulatedUser> users = this.getStaticAndSavedUsers(request);
@@ -280,8 +280,8 @@ public class SimulatedAuthenticationController
    */
   @PostMapping(AUTO_AUTHN_PATH + "/save")
   public ModelAndView saveAutoAuthn(final HttpServletResponse response,
-      @RequestParam("action") String action,
-      @RequestParam(value = "selectedUser") String selectedUser) {
+      @RequestParam("action") final String action,
+      @RequestParam(value = "selectedUser") final String selectedUser) {
 
     if ("save".equals(action) && selectedUser != null) {
       if (!"NONE".equals(selectedUser)) {

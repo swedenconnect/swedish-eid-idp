@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Sweden Connect
+ * Copyright 2023-2025 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,8 +70,8 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
    * @return a {@link LocaleResolver}
    */
   @Bean
-  LocaleResolver localeResolver(@Value("${server.servlet.context-path}") String contextPath) {
-    CookieLocaleResolver resolver = new CookieLocaleResolver();
+  LocaleResolver localeResolver(@Value("${server.servlet.context-path}") final String contextPath) {
+    final CookieLocaleResolver resolver = new CookieLocaleResolver();
     resolver.setDefaultLocale(new Locale("en"));
     resolver.setCookiePath(contextPath);
     resolver.setCookieMaxAge(Duration.ofDays(365));
@@ -85,7 +85,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
    */
   @Bean
   LocaleChangeInterceptor localeChangeInterceptor() {
-    LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
+    final LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
     interceptor.setParamName("lang");
     return interceptor;
   }

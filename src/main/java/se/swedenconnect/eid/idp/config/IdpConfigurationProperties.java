@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Sweden Connect
+ * Copyright 2023-2025 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,33 +23,33 @@ import lombok.Data;
 
 /**
  * Configuration properties for our simulated IdP.
- * 
+ *
  * @author Martin Lindström
  */
 @ConfigurationProperties("authn")
 @Data
 public class IdpConfigurationProperties {
-  
+
   /**
    * The name of the authentication provider.
    */
   private String providerName;
-  
-  /** 
-   * The authentication path. Where the Spring Security flow directs the user for authentication by our implementation. 
+
+  /**
+   * The authentication path. Where the Spring Security flow directs the user for authentication by our implementation.
    */
   private String authnPath;
-  
-  /** 
-   * The resume path. Where we redirect back the user after that we are done.  
+
+  /**
+   * The resume path. Where we redirect back the user after that we are done.
    */
   private String resumePath;
-  
+
   /**
    * The supported LoA:s.
    */
   private List<String> supportedLoas;
-  
+
   /**
    * The SAML entity categories this IdP declares.
    */

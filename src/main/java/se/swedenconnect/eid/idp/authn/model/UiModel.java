@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Sweden Connect
+ * Copyright 2023-2025 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,15 +15,14 @@
  */
 package se.swedenconnect.eid.idp.authn.model;
 
+import lombok.Data;
+
 import java.util.List;
 import java.util.Objects;
 
-import lombok.Data;
-import se.swedenconnect.opensaml.sweid.saml2.authn.umsg.UserMessage;
-
 /**
  * Model class for UI.
- * 
+ *
  * @author Martin Lindström
  */
 @Data
@@ -40,16 +39,16 @@ public class UiModel {
 
   /** Whether the selected user is "fixed" or not. */
   private boolean fixedSelectedUser = false;
-  
+
   /** Possible authentication context URI:s. */
   private List<String> possibleAuthnContextUris;
-  
+
   /** The authn context URI to pre-select. */
   private String selectedAuthnContextUri;
-  
+
   /** Whether this is "authentication for signature". */
   private boolean signature = false;
-  
+
   /** The SignMessage (HTML). */
   private String signMessage;
 
@@ -58,14 +57,14 @@ public class UiModel {
 
   /**
    * Predicate that tells if the supplied ID is "selected".
-   * 
+   *
    * @param id the ID to test
-   * @return {@code true} if the ID is selected and {@code false} otherwise
+   * @return {@code true} if the ID is selected and {@code false} otherwise
    */
   public boolean isSelectedUser(final String id) {
     return Objects.equals(id, this.selectedUser);
   }
-  
+
   public boolean isSelectedLoa(final String loa) {
     return Objects.equals(loa, this.selectedAuthnContextUri);
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Sweden Connect
+ * Copyright 2023-2025 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,33 +17,37 @@ package se.swedenconnect.eid.idp.config;
 
 import org.apache.catalina.connector.Connector;
 import org.apache.coyote.ajp.AbstractAjpProtocol;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.stereotype.Component;
 
-import lombok.Setter;
-
 /**
  * Configuration settings for Tomcat AJP.
- * 
+ *
  * @author Martin Lindström
  */
 @Component
 @ConditionalOnProperty(name = "tomcat.ajp.enabled", havingValue = "true")
 public class TomcatAjpCustomizer implements WebServerFactoryCustomizer<TomcatServletWebServerFactory> {
 
-  @Autowired
-  @Setter
-  private TomcatAjpConfigurationProperties ajp;
+  private final TomcatAjpConfigurationProperties ajp;
+
+  /**
+   * Constructor.
+   *
+   * @param ajp the AJP configuration
+   */
+  public TomcatAjpCustomizer(final TomcatAjpConfigurationProperties ajp) {
+    this.ajp = ajp;
+  }
 
   /** {@inheritDoc} */
   @Override
   public void customize(final TomcatServletWebServerFactory factory) {
 
     if (this.ajp.isEnabled()) {
-      Connector ajpConnector = new Connector("AJP/1.3");
+      final Connector ajpConnector = new Connector("AJP/1.3");
       ajpConnector.setPort(this.ajp.getPort());
       ajpConnector.setAllowTrace(false);
       ajpConnector.setScheme("http");

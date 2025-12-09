@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Sweden Connect
+ * Copyright 2023-2025 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,21 +15,20 @@
  */
 package se.swedenconnect.eid.idp.config;
 
-import java.util.List;
-
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import lombok.Data;
+import java.util.List;
 
 /**
  * Configuration properties for UI settings.
- * 
+ *
  * @author Martin Lindström
  */
 @ConfigurationProperties("ui")
 @Data
 public class UiConfigurationProperties {
-  
+
   /**
    * The UI language settings.
    */
@@ -45,11 +44,11 @@ public class UiConfigurationProperties {
      * The language tag.
      */
     private String tag;
-    
+
     /**
      * The text associated with the language tag, e.g. English.
      */
     private String text;
   }
-  
+
 }

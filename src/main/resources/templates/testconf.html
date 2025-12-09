@@ -1,48 +1,63 @@
+<!--
+  ~ Copyright 2023-2025 Sweden Connect
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"> 
+<html xmlns:th="http://www.thymeleaf.org">
 <head th:insert="~{fragments/base :: headerFragment}"></head>
 <body>
-  
+
   <div th:replace="~{fragments/header :: logotype}"></div>
-  
-  <div class="container main" id="main">  
-    
+
+  <div class="container main" id="main">
+
     <div th:replace="~{fragments/header :: language(languages = ${languages}, path='/extauth/autoauth')}"></div>
-    
-    <form method="POST" action="#" th:action="@{/extauth/autoauth/save}"> 
-      
+
+    <form method="POST" action="#" th:action="@{/extauth/autoauth/save}">
+
       <div class="row" id="mainRow">
-      
+
         <div class="col-sm-12 content-container">
-        
+
           <div class="row" id="spInfoText">
             <div class="col-sm-12 content-heading">
               <h2 th:text="#{idp.msg.heading}">Sweden Connect Reference IdP</h2>
               <h3 th:text="#{idp.msg.auto-authn.subtitle}">Automatic Authentication Configuration</h3>
             </div>
-            <div class="col-sm-12">                
+            <div class="col-sm-12">
               <p class="info" th:text="#{idp.msg.auto-authn.select-user}">
-                Select a user from the list below as auto authenticated user         
+                Select a user from the list below as auto authenticated user
                 </p>
             </div>
           </div> <!-- spInfoText -->
-            
+
           <hr class="full-width">
-        
+
           <div class="row section" id="selectAutoUserDiv">
             <div class="col-sm-12">
               <select class="form-control" id="selectSimulatedUser" name="selectedUser">
                 <option value="NONE" th:text="#{idp.msg.auto-authn.select-label}">
                   ----- Select user for automatic authentication -----
                 </option>
-                <option th:each="u : ${users}" th:value="${u.getPersonalNumber()}" 
+                <option th:each="u : ${users}" th:value="${u.getPersonalNumber()}"
                         th:text="${u.toViewString()}" th:selected="${u.getPersonalNumber() == selectedUserId}">
                   User info
                 </option>
               </select>
-            </div>            
+            </div>
           </div> <!-- /#selectAutoUserDiv -->
-                  
+
           <div class="row section" id="submitDiv">
             <div class="col-12">
               <div class="box">
@@ -51,21 +66,21 @@
                 </button>
                 <button type="submit" id="eraseButton" class="btn btn-primary" name="action" value="clear">
                   <span th:text="#{idp.msg.auto-authn.button.clear}">Clear Auto Auth</span>
-                </button>                  
+                </button>
               </div>
             </div>
           </div> <!-- /#submitDiv -->
-        
+
         </div> <!-- ./col-sm-12 content-container -->
-              
+
         <div th:replace="~{fragments/footer :: copyright}"></div>
 
       </div> <!-- mainRow -->
-                    
+
     </form>
-    
-  </div> <!-- main -->  
-  
+
+  </div> <!-- main -->
+
   <th:block th:insert="~{fragments/base :: scriptFragment}"></th:block>
   <script type="text/javascript" th:src="@{/scripts/testconf.js}" src="../../static/scripts/testconf.js"></script>
 
