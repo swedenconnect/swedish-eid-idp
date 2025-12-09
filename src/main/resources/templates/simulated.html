@@ -18,329 +18,339 @@
 <head th:insert="~{fragments/base :: headerFragment}"></head>
 <body>
 
-  <div th:replace="~{fragments/header :: splogotype(url = ${ui.spLogoUrl})}"></div>
+<div th:replace="~{fragments/header :: splogotype(url = ${ui.spLogoUrl})}"></div>
 
-  <div class="container main" id="main">
+<div class="container main" id="main">
 
-    <div th:replace="~{fragments/header :: language(languages = ${languages}, path='/extauth')}"></div>
+  <div th:replace="~{fragments/header :: language(languages = ${languages}, path='/extauth')}"></div>
 
-    <form method="POST" action="#" th:action="@{/extauth/complete}" th:object="${result}">
+  <form method="POST" action="#" th:action="@{/extauth/complete}" th:object="${result}">
 
-      <div class="row" id="mainRow">
+    <div class="row" id="mainRow">
 
-        <div class="col-sm-12 content-container">
+      <div class="col-sm-12 content-container">
 
-          <div class="row" id="spInfoText" th:with="isSign = ${ui.isSignature()}">
-            <div class="col-sm-12 content-heading">
-              <h2 th:text="#{idp.msg.heading}">Sweden Connect Reference IdP</h2>
-            </div>
+        <div class="row" id="spInfoText" th:with="isSign = ${ui.isSignature()}">
+          <div class="col-sm-12 content-heading">
+            <h2 th:text="#{idp.msg.heading}">Sweden Connect Reference IdP</h2>
+          </div>
 
-            <div class="col-sm-12" th:with="isFixed = ${ui.isFixedSelectedUser()}">
-              <p class="info">
-                <span th:if="${ui.getSpDisplayName() != null}" th:utext="${ui.getSpDisplayName()}">Example organization</span>
-                <span th:unless="${ui.getSpDisplayName() != null}" th:text="#{idp.msg.sp-generic}">A service provider</span>
-                <span th:text="${isSign} ? #{idp.msg.request-sign} : #{idp.msg.request-authn}">
+          <div class="col-sm-12" th:with="isFixed = ${ui.isFixedSelectedUser()}">
+            <p class="info">
+              <span th:if="${ui.getSpDisplayName() != null}"
+                    th:utext="${ui.getSpDisplayName()}">Example organization</span>
+              <span th:unless="${ui.getSpDisplayName() != null}"
+                    th:text="#{idp.msg.sp-generic}">A service provider</span>
+              <span th:text="${isSign} ? #{idp.msg.request-sign} : #{idp.msg.request-authn}">
                   requests your authentication OR requests your signature of the text below.
                 </span>
-                <span th:if="${isFixed == false}" th:text="${isSign} ? #{idp.msg.request-sign.select} : #{idp.msg.request-authn.select}">
+              <span th:if="${isFixed == false}"
+                    th:text="${isSign} ? #{idp.msg.request-sign.select} : #{idp.msg.request-authn.select}">
                   Select the person to authenticate/sign as from the list below.
                 </span>
-              </p>
-            </div>
-            <th:block th:if="${ui.getPossibleAuthnContextUris().size() == 1}">
-              <div class="col-sm-12">
-                <p class="info">
-                  <span th:if="${isSign}" th:text="#{idp.msg.sign.authn-context-class.info(${ui.getPossibleAuthnContextUris().get(0)})}">
+            </p>
+          </div>
+          <th:block th:if="${ui.getPossibleAuthnContextUris().size() == 1}">
+            <div class="col-sm-12">
+              <p class="info">
+                  <span th:if="${isSign}"
+                        th:text="#{idp.msg.sign.authn-context-class.info(${ui.getPossibleAuthnContextUris().get(0)})}">
                     The signature will be performed according to the X assurance level.
                   </span>
-                  <span th:if="${!isSign}" th:text="#{idp.msg.auth.authn-context-class.info(${ui.getPossibleAuthnContextUris().get(0)})}">
+                <span th:if="${!isSign}"
+                      th:text="#{idp.msg.auth.authn-context-class.info(${ui.getPossibleAuthnContextUris().get(0)})}">
                     The authentication will be performed according to the X assurance level.
                   </span>
-                </p>
-              </div>
-              <input type="hidden" name="loa" th:value="${ui.getPossibleAuthnContextUris().get(0)}" />
-            </th:block>
-          </div> <!-- spInfoText -->
-
-          <hr class="full-width">
-
-          <th:block th:if="${ui.getSignMessage() != null}">
-            <div class="full-width sign-message">
-              <div class="row no-gutters">
-                <div class="col">
-                  <span th:utext="${ui.getSignMessage()}">Sign message</span>
-                </div>
-              </div>
+              </p>
             </div>
+            <input type="hidden" name="loa" th:value="${ui.getPossibleAuthnContextUris().get(0)}"/>
           </th:block>
-          <input type="hidden" name="signMessageDisplayed" th:value="${ui.getSignMessage() != null ? true : false}" />
+        </div> <!-- spInfoText -->
 
-          <th:block th:if="${ui.getUserMessage() != null}">
-            <div class="full-width user-message">
-              <div class="row no-gutters">
-                <div class="col">
-                  <span th:utext="${ui.getUserMessage()}">User message</span>
-                </div>
-              </div>
-            </div>
-          </th:block>
+        <hr class="full-width">
 
-          <div class="row section" id="selectSimulatedUserDiv">
-
-            <div class="col-sm-12 section">
-
-              <select id="selectSimulatedUser" class="form-control" name="personalIdentityNumber" th:disabled="${ui.fixedSelectedUser}">
-                <option value="NONE" th:text="#{idp.msg.auth.select-user-option-text}">Select user to authenticate as</option>
-                <option th:each="u : ${users}" th:value="${u.getPersonalNumber()}"
-                        th:text="${u.toViewString()}" th:selected="${ui.isSelectedUser(u.getPersonalNumber())}">
-                  User info
-                </option>
-              </select>
-              <th:block th:if="${ui.fixedSelectedUser}">
-                <input type="hidden" name="personalIdentityNumber" th:value="${ui.getSelectedUser()}" />
-              </th:block>
-
-              <th:block th:if="${ui.fixedSelectedUser == false}">
-                <div class="noscripthide">
-                  <button id="advancedButton" class="btn btn-link float-right" type="button">
-                    <span th:text="#{idp.msg.button.advanced}">Advanced</span>
-                  </button>
-                </div>
-              </th:block>
-
-            </div>
-          </div> <!-- selectSimulatedUserDiv -->
-
-          <div id="advancedSettings" class="row section noscripthide">
-            <div class="col-sm-12">
-              <div class="advanced">
-                <div class="box">
-                  <div class="form-group row">
-                    <label for="personalIdNumber" class="col-sm-3 col-form-label" th:text="#{idp.msg.advanced.personal-id.label}">
-                      Personal ID
-                    </label>
-                    <div class="col-sm-9">
-                      <input type="text" class="form-control" id="personalIdNumber" name="customPersonalIdentityNumber"
-                             th:placeholder="#{idp.msg.advanced.personal-id.placeholder}" />
-                      <div id="badPersonalIdNumber" class="invalid-feedback">
-                        <span th:text="#{idp.msg.advanced.personal-id.bad}">Invalid personal ID number</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="form-group row">
-                    <label for="givenName" class="col-sm-3 col-form-label" th:text="#{idp.msg.advanced.given-name.label}">
-                      Given name
-                    </label>
-                    <div class="col-sm-9">
-                      <input type="text" class="form-control" id="givenName" name="givenName"
-                             th:placeholder="#{idp.msg.advanced.given-name.placeholder}" />
-                    </div>
-                  </div>
-                  <div class="form-group row">
-                    <label for="surname" class="col-sm-3 col-form-label" th:text="#{idp.msg.advanced.surname.label}">
-                      Surname
-                    </label>
-                    <div class="col-sm-9">
-                      <input type="text" class="form-control" id="surname" name="surname"
-                             th:placeholder="#{idp.msg.advanced.surname.placeholder}" />
-                    </div>
-                  </div>
-                  <fieldset class="form-group">
-                      <div class="row">
-                        <div class="col-sm-12">
-                          <button id="cancelAdvancedButton" class="btn btn-link float-right" type="button">
-                            <span th:text="#{idp.msg.button.cancel}">Cancel</span>
-                          </button>
-                        </div>
-                      </div>
-                  </fieldset>
-                </div>
+        <th:block th:if="${ui.getSignMessage() != null}">
+          <div class="full-width sign-message">
+            <div class="row no-gutters">
+              <div class="col">
+                <span th:utext="${ui.getSignMessage()}">Sign message</span>
               </div>
             </div>
           </div>
+        </th:block>
+        <input type="hidden" name="signMessageDisplayed" th:value="${ui.getSignMessage() != null ? true : false}"/>
 
-          <th:block th:if="${ui.getPossibleAuthnContextUris().size() > 1}">
-            <div class="row section" id="selectLoaDiv">
-              <div class="col-sm-12">
-                <label for="selectLoa" th:text="#{idp.msg.authn-context-class.label}">Select assurance level:</label>
-                <select class="form-control" name="loa" id="selectLoa">
-                  <option th:each="loa : ${ui.getPossibleAuthnContextUris()}" th:value="${loa}" th:text="${loa}"
-                          th:selected="${ui.isSelectedLoa(loa)}">
-                    LoA URI
-                  </option>
-                </select>
+        <th:block th:if="${ui.getUserMessage() != null}">
+          <div class="full-width user-message">
+            <div class="row no-gutters">
+              <div class="col">
+                <span th:utext="${ui.getUserMessage()}">User message</span>
               </div>
             </div>
-          </th:block>
+          </div>
+        </th:block>
 
-          <div class="row section" id="submitDiv">
-            <div class="col-12">
-              <div class="box">
-                <button id="submitButton" type="submit" class="btn btn-primary" name="action" value="ok">
-                  <span th:text="${ui.signature} ? #{idp.msg.button.sign} : #{idp.msg.button.authenticate}">
-                    Authenticate/Sign
-                  </span>
-                </button>
-              </div>
+        <div class="row section" id="selectSimulatedUserDiv">
+
+          <div class="col-sm-12 section">
+
+            <select id="selectSimulatedUser" class="form-control" name="personalIdentityNumber"
+                    th:disabled="${ui.fixedSelectedUser}">
+              <option value="NONE" th:text="#{idp.msg.auth.select-user-option-text}">Select user to authenticate as
+              </option>
+              <option th:each="u : ${users}" th:value="${u.getPersonalNumber()}"
+                      th:text="${u.toViewString()}" th:selected="${ui.isSelectedUser(u.getPersonalNumber())}">
+                User info
+              </option>
+            </select>
+            <th:block th:if="${ui.fixedSelectedUser}">
+              <input type="hidden" name="personalIdentityNumber" th:value="${ui.getSelectedUser()}"/>
+            </th:block>
+
+            <th:block th:if="${ui.fixedSelectedUser == false}">
               <div class="noscripthide">
-                <button id="simulateErrorButton" class="btn btn-link float-right" type="button">
-                  <span th:text="#{idp.msg.button.simulate-error}">Simulate Error</span>
+                <button id="advancedButton" class="btn btn-link float-end" type="button">
+                  <span th:text="#{idp.msg.button.advanced}">Advanced</span>
                 </button>
               </div>
-            </div>
-          </div> <!-- /#submitDiv -->
+            </th:block>
 
-          <div id="simulateError" class="row section noscripthide">
-            <div class="col-sm-12">
-              <div class="advanced">
-                <div class="box">
-                  <div class="row section" id="selectMainErrorDiv">
-                    <div class="col-sm-12">
-                      <label for="selectMainError" th:text="#{idp.msg.simerror.main-error.label}">Select main error code:</label>
-                      <select class="form-control" name="mainError" id="selectMainError">
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:Responder">
-                          urn:oasis:names:tc:SAML:2.0:status:Responder
-                        </option>
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:Requester">
-                          urn:oasis:names:tc:SAML:2.0:status:Requester
-                        </option>
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:VersionMismatch">
-                          urn:oasis:names:tc:SAML:2.0:status:VersionMismatch
-                        </option>
-                      </select>
+          </div>
+        </div> <!-- selectSimulatedUserDiv -->
+
+        <div id="advancedSettings" class="row section noscripthide">
+          <div class="col-sm-12">
+            <div class="advanced">
+              <div class="box">
+                <div class="form-group row">
+                  <label for="personalIdNumber" class="col-sm-3 col-form-label"
+                         th:text="#{idp.msg.advanced.personal-id.label}">
+                    Personal ID
+                  </label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" id="personalIdNumber" name="customPersonalIdentityNumber"
+                           th:placeholder="#{idp.msg.advanced.personal-id.placeholder}"/>
+                    <div id="badPersonalIdNumber" class="invalid-feedback">
+                      <span th:text="#{idp.msg.advanced.personal-id.bad}">Invalid personal ID number</span>
                     </div>
                   </div>
-                  <div class="row section" id="selectSubErrorDiv">
-                    <div class="col-sm-12">
-                      <label for="selectSubError" th:text="#{idp.msg.simerror.sub-error.label}">Select subordinate error code:</label>
-                      <select class="form-control" name="subError" id="selectSubError">
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:AuthnFailed">
-                          urn:oasis:names:tc:SAML:2.0:status:AuthnFailed
-                        </option>
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:UnknownPrincipal">
-                          urn:oasis:names:tc:SAML:2.0:status:UnknownPrincipal
-                        </option>
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext">
-                          urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext
-                        </option>
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:RequestDenied">
-                          urn:oasis:names:tc:SAML:2.0:status:RequestDenied
-                        </option>
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:UnsupportedBinding">
-                          urn:oasis:names:tc:SAML:2.0:status:UnsupportedBinding
-                        </option>
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:InvalidAttrNameOrValue">
-                          urn:oasis:names:tc:SAML:2.0:status:InvalidAttrNameOrValue
-                        </option>
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:InvalidNameIDPolicy">
-                          urn:oasis:names:tc:SAML:2.0:status:InvalidNameIDPolicy
-                        </option>
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:NoAvailableIDP">
-                          urn:oasis:names:tc:SAML:2.0:status:NoAvailableIDP
-                        </option>
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:NoPassive">
-                          urn:oasis:names:tc:SAML:2.0:status:NoPassive
-                        </option>
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:NoSupportedIDP">
-                          urn:oasis:names:tc:SAML:2.0:status:NoSupportedIDP
-                        </option>
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:ProxyCountExceeded">
-                          urn:oasis:names:tc:SAML:2.0:status:ProxyCountExceeded
-                        </option>
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:RequestUnsupported">
-                          urn:oasis:names:tc:SAML:2.0:status:RequestUnsupported
-                        </option>
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:RequestVersionDeprecated">
-                          urn:oasis:names:tc:SAML:2.0:status:RequestVersionDeprecated
-                        </option>
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:RequestVersionTooHigh">
-                          urn:oasis:names:tc:SAML:2.0:status:RequestVersionTooHigh
-                        </option>
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:RequestVersionTooLow">
-                          urn:oasis:names:tc:SAML:2.0:status:RequestVersionTooLow
-                        </option>
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:ResourceNotRecognized">
-                          urn:oasis:names:tc:SAML:2.0:status:ResourceNotRecognized
-                        </option>
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:TooManyResponses">
-                          urn:oasis:names:tc:SAML:2.0:status:TooManyResponses
-                        </option>
-                        <option value="urn:oasis:names:tc:SAML:2.0:status:UnknownAttrProfile">
-                          urn:oasis:names:tc:SAML:2.0:status:UnknownAttrProfile
-                        </option>
-                        <option value="http://id.elegnamnden.se/status/1.0/cancel">
-                          http://id.elegnamnden.se/status/1.0/cancel
-                        </option>
-                        <option value="http://id.elegnamnden.se/status/1.0/fraud">
-                          http://id.elegnamnden.se/status/1.0/fraud
-                        </option>
-                        <option value="http://id.elegnamnden.se/status/1.0/possibleFraud">
-                          http://id.elegnamnden.se/status/1.0/possibleFraud
-                        </option>
-                      </select>
-                    </div>
+                </div>
+                <div class="form-group row">
+                  <label for="givenName" class="col-sm-3 col-form-label" th:text="#{idp.msg.advanced.given-name.label}">
+                    Given name
+                  </label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" id="givenName" name="givenName"
+                           th:placeholder="#{idp.msg.advanced.given-name.placeholder}"/>
                   </div>
-                  <div class="row section" id="enterErrorMessageDiv">
-                    <div class="col-sm-12">
-                      <label for="errorMessage" th:text="#{idp.msg.simerror.msg.label}">Enter error message:</label>
-                      <input type="text" class="form-control" id="errorMessage" name="errorMessage" />
-                    </div>
+                </div>
+                <div class="form-group row">
+                  <label for="surname" class="col-sm-3 col-form-label" th:text="#{idp.msg.advanced.surname.label}">
+                    Surname
+                  </label>
+                  <div class="col-sm-9">
+                    <input type="text" class="form-control" id="surname" name="surname"
+                           th:placeholder="#{idp.msg.advanced.surname.placeholder}"/>
                   </div>
-                  <div class="row section">
+                </div>
+                <fieldset class="form-group">
+                  <div class="row">
                     <div class="col-sm-12">
-                      <button id="submitErrorButton" type="submit" class="btn btn-primary" name="action" value="error">
-                        <span th:text="#{idp.msg.button.error}">Send Error</span>
-                      </button>
-                      <button id="cancelErrorButton" class="btn btn-link float-right" type="button">
+                      <button id="cancelAdvancedButton" class="btn btn-link float-end" type="button">
                         <span th:text="#{idp.msg.button.cancel}">Cancel</span>
                       </button>
                     </div>
                   </div>
-
-                </div>
+                </fieldset>
               </div>
             </div>
           </div>
-
-          <div id="helpsection" class="drop-down-container noscripthide">
-
-            <div class="col-sm-12 drop-down">
-              <p>
-                <span th:utext="#{idp.msg.help.1.title}">Help 1</span>
-              </p>
-              <div class="drop-down-info">
-                <span th:utext="#{idp.msg.help.1.text}">Help 1</span>
-              </div>
-            </div>
-            <div class="col-sm-12 drop-down">
-              <p>
-                <span th:utext="#{idp.msg.help.3.title}">Help 3</span>
-              </p>
-              <div class="drop-down-info">
-                <span th:utext="#{idp.msg.help.3.text}">Help 3</span>
-              </div>
-            </div>
-
-          </div> <!-- /.drop-down-container -->
-
-        </div> <!-- ./col-sm-12 content-container -->
-
-        <div class="col-sm-12 return">
-          <button class="btn btn-link" type="submit" name="action" value="cancel">
-            <span th:text="#{idp.msg.cancel-link}">Cancel</span>
-          </button>
         </div>
 
-        <div th:replace="~{fragments/footer :: copyright}"></div>
+        <th:block th:if="${ui.getPossibleAuthnContextUris().size() > 1}">
+          <div class="row section" id="selectLoaDiv">
+            <div class="col-sm-12">
+              <label for="selectLoa" th:text="#{idp.msg.authn-context-class.label}">Select assurance level:</label>
+              <select class="form-control" name="loa" id="selectLoa">
+                <option th:each="loa : ${ui.getPossibleAuthnContextUris()}" th:value="${loa}" th:text="${loa}"
+                        th:selected="${ui.isSelectedLoa(loa)}">
+                  LoA URI
+                </option>
+              </select>
+            </div>
+          </div>
+        </th:block>
 
-      </div> <!-- mainRow -->
+        <div class="row section" id="submitDiv">
+          <div class="col-12">
+            <div class="box">
+              <button id="submitButton" type="submit" class="btn btn-primary" name="action" value="ok">
+                  <span th:text="${ui.signature} ? #{idp.msg.button.sign} : #{idp.msg.button.authenticate}">
+                    Authenticate/Sign
+                  </span>
+              </button>
+            </div>
+            <div class="noscripthide">
+              <button id="simulateErrorButton" class="btn btn-link float-end" type="button">
+                <span th:text="#{idp.msg.button.simulate-error}">Simulate Error</span>
+              </button>
+            </div>
+          </div>
+        </div> <!-- /#submitDiv -->
 
-    </form>
+        <div id="simulateError" class="row section noscripthide">
+          <div class="col-sm-12">
+            <div class="advanced">
+              <div class="box">
+                <div class="row section" id="selectMainErrorDiv">
+                  <div class="col-sm-12">
+                    <label for="selectMainError" th:text="#{idp.msg.simerror.main-error.label}">Select main error
+                      code:</label>
+                    <select class="form-control" name="mainError" id="selectMainError">
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:Responder">
+                        urn:oasis:names:tc:SAML:2.0:status:Responder
+                      </option>
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:Requester">
+                        urn:oasis:names:tc:SAML:2.0:status:Requester
+                      </option>
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:VersionMismatch">
+                        urn:oasis:names:tc:SAML:2.0:status:VersionMismatch
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row section" id="selectSubErrorDiv">
+                  <div class="col-sm-12">
+                    <label for="selectSubError" th:text="#{idp.msg.simerror.sub-error.label}">Select subordinate error
+                      code:</label>
+                    <select class="form-control" name="subError" id="selectSubError">
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:AuthnFailed">
+                        urn:oasis:names:tc:SAML:2.0:status:AuthnFailed
+                      </option>
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:UnknownPrincipal">
+                        urn:oasis:names:tc:SAML:2.0:status:UnknownPrincipal
+                      </option>
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext">
+                        urn:oasis:names:tc:SAML:2.0:status:NoAuthnContext
+                      </option>
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:RequestDenied">
+                        urn:oasis:names:tc:SAML:2.0:status:RequestDenied
+                      </option>
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:UnsupportedBinding">
+                        urn:oasis:names:tc:SAML:2.0:status:UnsupportedBinding
+                      </option>
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:InvalidAttrNameOrValue">
+                        urn:oasis:names:tc:SAML:2.0:status:InvalidAttrNameOrValue
+                      </option>
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:InvalidNameIDPolicy">
+                        urn:oasis:names:tc:SAML:2.0:status:InvalidNameIDPolicy
+                      </option>
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:NoAvailableIDP">
+                        urn:oasis:names:tc:SAML:2.0:status:NoAvailableIDP
+                      </option>
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:NoPassive">
+                        urn:oasis:names:tc:SAML:2.0:status:NoPassive
+                      </option>
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:NoSupportedIDP">
+                        urn:oasis:names:tc:SAML:2.0:status:NoSupportedIDP
+                      </option>
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:ProxyCountExceeded">
+                        urn:oasis:names:tc:SAML:2.0:status:ProxyCountExceeded
+                      </option>
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:RequestUnsupported">
+                        urn:oasis:names:tc:SAML:2.0:status:RequestUnsupported
+                      </option>
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:RequestVersionDeprecated">
+                        urn:oasis:names:tc:SAML:2.0:status:RequestVersionDeprecated
+                      </option>
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:RequestVersionTooHigh">
+                        urn:oasis:names:tc:SAML:2.0:status:RequestVersionTooHigh
+                      </option>
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:RequestVersionTooLow">
+                        urn:oasis:names:tc:SAML:2.0:status:RequestVersionTooLow
+                      </option>
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:ResourceNotRecognized">
+                        urn:oasis:names:tc:SAML:2.0:status:ResourceNotRecognized
+                      </option>
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:TooManyResponses">
+                        urn:oasis:names:tc:SAML:2.0:status:TooManyResponses
+                      </option>
+                      <option value="urn:oasis:names:tc:SAML:2.0:status:UnknownAttrProfile">
+                        urn:oasis:names:tc:SAML:2.0:status:UnknownAttrProfile
+                      </option>
+                      <option value="http://id.elegnamnden.se/status/1.0/cancel">
+                        http://id.elegnamnden.se/status/1.0/cancel
+                      </option>
+                      <option value="http://id.elegnamnden.se/status/1.0/fraud">
+                        http://id.elegnamnden.se/status/1.0/fraud
+                      </option>
+                      <option value="http://id.elegnamnden.se/status/1.0/possibleFraud">
+                        http://id.elegnamnden.se/status/1.0/possibleFraud
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row section" id="enterErrorMessageDiv">
+                  <div class="col-sm-12">
+                    <label for="errorMessage" th:text="#{idp.msg.simerror.msg.label}">Enter error message:</label>
+                    <input type="text" class="form-control" id="errorMessage" name="errorMessage"/>
+                  </div>
+                </div>
+                <div class="row section">
+                  <div class="col-sm-12">
+                    <button id="submitErrorButton" type="submit" class="btn btn-primary" name="action" value="error">
+                      <span th:text="#{idp.msg.button.error}">Send Error</span>
+                    </button>
+                    <button id="cancelErrorButton" class="btn btn-link float-end" type="button">
+                      <span th:text="#{idp.msg.button.cancel}">Cancel</span>
+                    </button>
+                  </div>
+                </div>
 
-  </div> <!-- main -->
+              </div>
+            </div>
+          </div>
+        </div>
 
-  <th:block th:insert="~{fragments/base :: scriptFragment}"></th:block>
-  <th:block th:insert="~{fragments/base :: scriptFragment2}"></th:block>
+        <div id="helpsection" class="drop-down-container noscripthide">
+
+          <div class="col-sm-12 drop-down">
+            <p>
+              <span th:utext="#{idp.msg.help.1.title}">Help 1</span>
+            </p>
+            <div class="drop-down-info">
+              <span th:utext="#{idp.msg.help.1.text}">Help 1</span>
+            </div>
+          </div>
+          <div class="col-sm-12 drop-down">
+            <p>
+              <span th:utext="#{idp.msg.help.3.title}">Help 3</span>
+            </p>
+            <div class="drop-down-info">
+              <span th:utext="#{idp.msg.help.3.text}">Help 3</span>
+            </div>
+          </div>
+
+        </div> <!-- /.drop-down-container -->
+
+      </div> <!-- ./col-sm-12 content-container -->
+
+      <div class="col-sm-12 return">
+        <button class="btn btn-link" type="submit" name="action" value="cancel">
+          <span th:text="#{idp.msg.cancel-link}">Cancel</span>
+        </button>
+      </div>
+
+      <div th:replace="~{fragments/footer :: copyright}"></div>
+
+    </div> <!-- mainRow -->
+
+  </form>
+
+</div> <!-- main -->
+
+<th:block th:insert="~{fragments/base :: scriptFragment}"></th:block>
+<th:block th:insert="~{fragments/base :: scriptFragment2}"></th:block>
 
 </body>
 </html>
