@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Sweden Connect
+ * Copyright 2023-2025 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class SimulatedUserDetailsManager implements UserDetailsManager {
 
   /**
    * Returns all users as a list.
-   * 
+   *
    * @return all users
    */
   public List<SimulatedUser> getUsers() {
@@ -53,10 +53,10 @@ public class SimulatedUserDetailsManager implements UserDetailsManager {
   /** {@inheritDoc} */
   @Override
   public void createUser(final UserDetails user) {
-    if (!SimulatedUser.class.isInstance(user)) {
+    if (!(user instanceof SimulatedUser)) {
       throw new IllegalArgumentException("Expected " + SimulatedUser.class.getSimpleName());
     }
-    this.users.put(user.getUsername(), SimulatedUser.class.cast(user));
+    this.users.put(user.getUsername(), (SimulatedUser) user);
   }
 
   /** {@inheritDoc} */

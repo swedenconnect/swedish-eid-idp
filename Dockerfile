@@ -1,4 +1,4 @@
-FROM openjdk:18.0.2.1-slim
+FROM eclipse-temurin:21
 
 LABEL org.opencontainers.image.source=https://github.com/swedenconnect/swedish-eid-idp
 LABEL org.opencontainers.image.description="Sweden Connect Reference IdP"

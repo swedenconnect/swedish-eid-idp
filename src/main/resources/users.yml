@@ -3,129 +3,128 @@
 #
 
 users:
-- personal-number: 188803099368
-  display-name: Agda Andersson 
-  given-name: Agda
-  surname: Andersson    
-- personal-number: 197609265819
-  display-name: Alrik Lidén
-  given-name: Alrik
-  surname: Lidén
-- personal-number: 195509132386
-  display-name: Beatrice Invandro
-  given-name: Beatrice
-  surname: Invandro
-- personal-number: 193911137077
-  display-name: Bernt Olof Larsson
-  given-name: Bernt Olof
-  surname: Larsson
-- personal-number: 196212282583
-  display-name: Cecilia Nyberg
-  given-name: Cecilia
-  surname: Nyberg
-- personal-number: 198907028412
-  display-name: Clarence Hammarström
-  given-name: Clarence
-  surname: Hammarström
-- personal-number: 193504049135
-  display-name: Filip Walldén
-  given-name: Filip
-  surname: Walldén
-- personal-number: 197705232382
-  display-name: Frida Kranstege
-  given-name: Frida
-  surname: Kranstege
-- personal-number: 199610065436
-  display-name: Friedrich Werner
-  given-name: Friedrich
-  surname: Werner
-- personal-number: 192011189228
-  display-name: Gunbritt Bodén
-  given-name: Gunbritt
-  surname: Bodén
-- personal-number: 194804032094
-  display-name: Laban Meijer
-  given-name: Laban
-  surname: Meijer
-- personal-number: 195611117820
-  display-name: Lilly Öhlund
-  given-name: Lilly
-  surname: Öhlund
-- personal-number: 196012243926
-  display-name: Lola Kempe
-  given-name: Lola
-  surname: Kempe
-- personal-number: 194606109108
-  display-name: Magdalena Karlgren
-  given-name: Magdalena
-  surname: Karlgren
-- personal-number: 195207306886
-  display-name: Majlis Medin
-  given-name: Majlis
-  surname: Medin
-- personal-number: 196302052383
-  display-name: Mariana Kjällström
-  given-name: Mariana
-  surname: Kjällström
-- personal-number: 199008199391
-  display-name: Mohamed Al Samed
-  given-name: Mohamed
-  surname: Al Samed
-- personal-number: 197309069289
-  display-name: Nina Greger
-  given-name: Nina
-  surname: Greger
-- personal-number: 199008252398
-  display-name: Oskar Johansson
-  given-name: Oskar
-  surname: Johansson
-- personal-number: 197006063080
-  display-name: Paula Rylander
-  given-name: Paula
-  surname: Rylander
-- personal-number: 192705178354
-  display-name: Per-Uno Karlsson
-  given-name: Per-Uno
-  surname: Karlsson
-- personal-number: 195903133279
-  display-name: Ronald Borg
-  given-name: Ronald
-  surname: Borg
-- personal-number: 194911172296
-  display-name: Sven Sturesson
-  given-name: Sven
-  surname: Sturesson
-- personal-number: 197802031877
-  display-name: Tryggve Bäckström
-  given-name: Tryggve
-  surname: Bäckström
-- personal-number: 198611062384
-  display-name: Ulla Alm
-  given-name: Ulla
-  surname: Alm
-- personal-number: 193512208194
-  display-name: Uno Kovalev
-  given-name: Uno
-  surname: Kovalev
-- personal-number: 191704109279
-  display-name: Åke Jansson
-  given-name: Åke
-  surname: Jansson
-- personal-number: 197010632391
-  date-of-birth: 1970-10-03
-  display-name: Sixten von Samordnungsnummer
-  given-name: Sixten
-  surname: von Samordnungsnummer
-- personal-number: 199903011154
-  display-name: Jonas Smith
-  given-name: Jonas
-  surname: Smith
-- personal-number: 199903012178
-  display-name: Jack Smith
-  given-name: Jack
-  surname: Smith
-- personal-number: 199903019397
-  display-name: Jane Smith
-  given-name: Jane
-  surname: Smith
-  
+  - personal-number: 188803099368
+    display-name: Agda Andersson
+    given-name: Agda
+    surname: Andersson
+  - personal-number: 197609265819
+    display-name: Alrik Lidén
+    given-name: Alrik
+    surname: Lidén
+  - personal-number: 195509132386
+    display-name: Beatrice Invandro
+    given-name: Beatrice
+    surname: Invandro
+  - personal-number: 193911137077
+    display-name: Bernt Olof Larsson
+    given-name: Bernt Olof
+    surname: Larsson
+  - personal-number: 196212282583
+    display-name: Cecilia Nyberg
+    given-name: Cecilia
+    surname: Nyberg
+  - personal-number: 198907028412
+    display-name: Clarence Hammarström
+    given-name: Clarence
+    surname: Hammarström
+  - personal-number: 193504049135
+    display-name: Filip Walldén
+    given-name: Filip
+    surname: Walldén
+  - personal-number: 197705232382
+    display-name: Frida Kranstege
+    given-name: Frida
+    surname: Kranstege
+  - personal-number: 199610065436
+    display-name: Friedrich Werner
+    given-name: Friedrich
+    surname: Werner
+  - personal-number: 192011189228
+    display-name: Gunbritt Bodén
+    given-name: Gunbritt
+    surname: Bodén
+  - personal-number: 194804032094
+    display-name: Laban Meijer
+    given-name: Laban
+    surname: Meijer
+  - personal-number: 195611117820
+    display-name: Lilly Öhlund
+    given-name: Lilly
+    surname: Öhlund
+  - personal-number: 196012243926
+    display-name: Lola Kempe
+    given-name: Lola
+    surname: Kempe
+  - personal-number: 194606109108
+    display-name: Magdalena Karlgren
+    given-name: Magdalena
+    surname: Karlgren
+  - personal-number: 195207306886
+    display-name: Majlis Medin
+    given-name: Majlis
+    surname: Medin
+  - personal-number: 196302052383
+    display-name: Mariana Kjällström
+    given-name: Mariana
+    surname: Kjällström
+  - personal-number: 199008199391
+    display-name: Mohamed Al Samed
+    given-name: Mohamed
+    surname: Al Samed
+  - personal-number: 197309069289
+    display-name: Nina Greger
+    given-name: Nina
+    surname: Greger
+  - personal-number: 199008252398
+    display-name: Oskar Johansson
+    given-name: Oskar
+    surname: Johansson
+  - personal-number: 197006063080
+    display-name: Paula Rylander
+    given-name: Paula
+    surname: Rylander
+  - personal-number: 192705178354
+    display-name: Per-Uno Karlsson
+    given-name: Per-Uno
+    surname: Karlsson
+  - personal-number: 195903133279
+    display-name: Ronald Borg
+    given-name: Ronald
+    surname: Borg
+  - personal-number: 194911172296
+    display-name: Sven Sturesson
+    given-name: Sven
+    surname: Sturesson
+  - personal-number: 197802031877
+    display-name: Tryggve Bäckström
+    given-name: Tryggve
+    surname: Bäckström
+  - personal-number: 198611062384
+    display-name: Ulla Alm
+    given-name: Ulla
+    surname: Alm
+  - personal-number: 193512208194
+    display-name: Uno Kovalev
+    given-name: Uno
+    surname: Kovalev
+  - personal-number: 191704109279
+    display-name: Åke Jansson
+    given-name: Åke
+    surname: Jansson
+  - personal-number: 197010632391
+    date-of-birth: 1970-10-03
+    display-name: Sixten von Samordnungsnummer
+    given-name: Sixten
+    surname: von Samordnungsnummer
+  - personal-number: 199903011154
+    display-name: Jonas Smith
+    given-name: Jonas
+    surname: Smith
+  - personal-number: 199903012178
+    display-name: Jack Smith
+    given-name: Jack
+    surname: Smith
+  - personal-number: 199903019397
+    display-name: Jane Smith
+    given-name: Jane
+    surname: Smith

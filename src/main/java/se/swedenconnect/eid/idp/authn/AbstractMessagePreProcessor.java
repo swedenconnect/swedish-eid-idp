@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 Sweden Connect
+ * Copyright 2023-2025 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.parser.ParserEmulationProfile;
 import com.vladsch.flexmark.util.ast.Document;
 import com.vladsch.flexmark.util.data.MutableDataSet;
+import jakarta.annotation.Nonnull;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
@@ -168,7 +169,8 @@ public abstract class AbstractMessagePreProcessor {
     }
 
     @Override
-    public boolean isSafeAttribute(final String tagName, final Element el, final Attribute attr) {
+    public boolean isSafeAttribute(@Nonnull final String tagName, @Nonnull final Element el,
+        @Nonnull final Attribute attr) {
       return true;
     }
   }

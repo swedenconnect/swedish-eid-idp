@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Sweden Connect
+ * Copyright 2023-2025 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,7 @@
  */
 package se.swedenconnect.eid.idp.config;
 
-import java.time.Duration;
-import java.util.Objects;
-
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -32,8 +30,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.thymeleaf.spring6.SpringTemplateEngine;
-
-import lombok.Setter;
 import se.swedenconnect.eid.idp.authn.SimulatedAuthenticationController;
 import se.swedenconnect.eid.idp.authn.SimulatedAuthenticationProvider;
 import se.swedenconnect.eid.idp.users.SimulatedUserDetailsManager;
@@ -42,6 +38,9 @@ import se.swedenconnect.spring.saml.idp.config.configurers.Saml2IdpConfigurerAda
 import se.swedenconnect.spring.saml.idp.extensions.SignatureMessagePreprocessor;
 import se.swedenconnect.spring.saml.idp.extensions.UserMessagePreprocessor;
 import se.swedenconnect.spring.saml.idp.response.ThymeleafResponsePage;
+
+import java.time.Duration;
+import java.util.Objects;
 
 /**
  * IdP configuration.
@@ -99,7 +98,7 @@ public class IdpConfiguration {
 
   /**
    * Creates the {@link SimulatedAuthenticationProvider} which is the {@link AuthenticationProvider} that is responsible
-   * of the user authentication.
+   * for the user authentication.
    *
    * @return a {@link SimulatedAuthenticationProvider}
    */

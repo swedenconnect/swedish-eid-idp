@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Sweden Connect
+ * Copyright 2023-2025 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,24 +15,25 @@
  */
 package se.swedenconnect.eid.idp.users;
 
-import java.util.List;
-
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import lombok.Data;
+import java.io.Serial;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * User configuration properties.
- * 
+ *
  * @author Martin Lindström
  */
-@Data
-@ConfigurationProperties
-public class UsersConfigurationProperties {
-  
-  /**
-   * The simulated users.
-   */
-  private List<SimulatedUser> users;
+@ConfigurationProperties(prefix = "users")
+public class UsersConfigurationProperties extends ArrayList<SimulatedUser> {
+
+  @Serial
+  private static final long serialVersionUID = 6621423400335019153L;
+
+  public List<SimulatedUser> getUsers() {
+    return this;
+  }
 
 }

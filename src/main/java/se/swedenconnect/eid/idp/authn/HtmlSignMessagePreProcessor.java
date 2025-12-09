@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2024 Sweden Connect
+ * Copyright 2023-2025 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,26 +15,11 @@
  */
 package se.swedenconnect.eid.idp.authn;
 
-import com.vladsch.flexmark.ext.tables.TablesExtension;
-import com.vladsch.flexmark.html.HtmlRenderer;
-import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.parser.ParserEmulationProfile;
-import com.vladsch.flexmark.util.ast.Document;
-import com.vladsch.flexmark.util.data.MutableDataSet;
-import org.apache.commons.text.StringEscapeUtils;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Attribute;
-import org.jsoup.nodes.Element;
-import org.jsoup.safety.Safelist;
 import org.springframework.stereotype.Component;
 import se.swedenconnect.opensaml.sweid.saml2.signservice.dss.SignMessageMimeTypeEnum;
 import se.swedenconnect.spring.saml.idp.error.Saml2ErrorStatus;
 import se.swedenconnect.spring.saml.idp.error.Saml2ErrorStatusException;
 import se.swedenconnect.spring.saml.idp.extensions.SignatureMessagePreprocessor;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.List;
 
 /**
  * Transforms all sign messages to safe HTML for later inclusion in the IdP UI.
@@ -79,5 +64,5 @@ public class HtmlSignMessagePreProcessor extends AbstractMessagePreProcessor imp
       throw new Saml2ErrorStatusException(Saml2ErrorStatus.SIGN_MESSAGE, e.getMessage(), e);
     }
   }
-  
+
 }

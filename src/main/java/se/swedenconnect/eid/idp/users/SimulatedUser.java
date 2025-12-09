@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Sweden Connect
+ * Copyright 2023-2025 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,13 @@
  */
 package se.swedenconnect.eid.idp.users;
 
+import jakarta.annotation.Nonnull;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.io.Serial;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -24,12 +31,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
-import lombok.Getter;
-import lombok.Setter;
-
 /**
  * Representation of a user.
  *
@@ -37,6 +38,7 @@ import lombok.Setter;
  */
 public class SimulatedUser implements UserDetails, Comparable<SimulatedUser> {
 
+  @Serial
   private static final long serialVersionUID = 6822029385234222613L;
 
   /**
@@ -104,7 +106,7 @@ public class SimulatedUser implements UserDetails, Comparable<SimulatedUser> {
 
   /**
    * Gets the display name.
-   * 
+   *
    * @return the display name
    */
   public String getDisplayName() {
@@ -140,7 +142,7 @@ public class SimulatedUser implements UserDetails, Comparable<SimulatedUser> {
   }
 
   @Override
-  public int compareTo(final SimulatedUser o) {
+  public int compareTo(@Nonnull final SimulatedUser o) {
     if (this.surname != null && o.surname != null) {
       return this.surname.compareTo(o.surname);
     }
@@ -154,9 +156,9 @@ public class SimulatedUser implements UserDetails, Comparable<SimulatedUser> {
   }
 
   public static String encodeList(final List<SimulatedUser> list) {
-    final StringBuffer sb = new StringBuffer();
+    final StringBuilder sb = new StringBuilder();
     for (final SimulatedUser s : list) {
-      if (sb.length() > 0) {
+      if (!sb.isEmpty()) {
         sb.append(":::");
       }
       sb.append(s.encode());
@@ -184,7 +186,7 @@ public class SimulatedUser implements UserDetails, Comparable<SimulatedUser> {
     if (list.trim().isEmpty()) {
       return Collections.emptyList();
     }
-    final String parts[] = list.split(":::");
+    final String[] parts = list.split(":::");
     final List<SimulatedUser> users = new ArrayList<>();
     for (final String p : parts) {
       final SimulatedUser su = parse(p);

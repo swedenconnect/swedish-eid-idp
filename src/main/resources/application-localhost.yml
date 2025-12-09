@@ -5,31 +5,45 @@
 
 server:
   port: 8453
-  
+
+credential:
+  bundles:
+    keystore:
+      idp:
+        location: classpath:env/localhost/idp-credentials.jks
+        type: JKS
+        password: secret
+
 saml:
   idp:
     base-url: https://local.dev.swedenconnect.se:${server.port}/idp
     entity-id: https://local.dev.swedenconnect.se/ref-idp
     metadata-providers:
-    - location: https://eid.svelegtest.se/metadata/mdx/role/sp.xml
-      backup-location: target/metadata-backup.xml
-      validation-certificate: classpath:env/sandbox/sandbox-metadata.crt    
+      - location: https://eid.svelegtest.se/metadata/mdx/role/sp.xml
+        backup-location: target/metadata-backup.xml
+        validation-certificate: classpath:env/sandbox/sandbox-metadata.crt
     credentials:
       sign:
-        resource: classpath:env/localhost/idp-credentials.jks
-        alias: sign
-        password: secret
-        type: JKS
+        jks:
+          name: "IdP Signing Key"
+          store-reference: idp
+          key:
+            alias: sign
+            key-password: secret
       encrypt:
-        resource: classpath:env/localhost/idp-credentials.jks
-        alias: encrypt
-        password: secret
-        type: JKS
+        jks:
+          name: "IdP Encryption Key"
+          store-reference: idp
+          key:
+            alias: encrypt
+            key-password: secret
       metadata-sign:
-        resource: classpath:env/localhost/idp-credentials.jks
-        alias: metadata
-        password: secret
-        type: JKS    
+        jks:
+          name: "IdP Metadata Signing Key"
+          store-reference: idp
+          key:
+            alias: metadata
+            key-password: secret
     metadata:
       ui-info:
         display-names:
@@ -45,4 +59,3 @@ logging:
       swedenconnect:
         spring:
           saml: TRACE
-      

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Sweden Connect
+ * Copyright 2023-2025 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import jakarta.annotation.Nonnull;
 import org.springframework.security.core.Authentication;
 
 import lombok.NonNull;
@@ -35,7 +36,7 @@ import se.swedenconnect.spring.saml.idp.error.Saml2ErrorStatusException;
 
 /**
  * Simulated authentication provider.
- * 
+ *
  * @author Martin Lindström
  */
 public class SimulatedAuthenticationProvider extends AbstractUserRedirectAuthenticationProvider {
@@ -50,10 +51,10 @@ public class SimulatedAuthenticationProvider extends AbstractUserRedirectAuthent
   @Setter
   @NonNull
   private String name = "Simulated Authentication Provider";
-  
+
   /**
    * Constructor.
-   * 
+   *
    * @param authnPath the path to where we redirect the user for authentication
    * @param resumeAuthnPath the path that the authentication process uses to redirect the user back after a completed
    *          authentication
@@ -71,6 +72,7 @@ public class SimulatedAuthenticationProvider extends AbstractUserRedirectAuthent
 
   /** {@inheritDoc} */
   @Override
+  @Nonnull
   public String getName() {
     return this.name;
   }

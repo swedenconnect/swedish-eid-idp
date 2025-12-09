@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Sweden Connect
+ * Copyright 2023-2025 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,9 @@
  */
 package se.swedenconnect.eid.idp.authn.model;
 
-import org.springframework.util.StringUtils;
-
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.util.StringUtils;
 
 /**
  * Model class for a user that is selected in the UI, i.e., the user that we are simulating authentication for.
@@ -94,7 +93,8 @@ public class SelectedUserModel {
    * @return {@code true} if created in the view, and {@code false} if a user from the drop-down menu was selected
    */
   public boolean isCustom() {
-    return StringUtils.hasText(this.getPersonalIdentityNumber()) && StringUtils.hasText(this.givenName) && StringUtils.hasText(this.surname);
+    return StringUtils.hasText(this.getPersonalIdentityNumber()) && StringUtils.hasText(this.givenName)
+        && StringUtils.hasText(this.surname);
   }
 
 }

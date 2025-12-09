@@ -1,3 +1,18 @@
+<!--
+  ~ Copyright 2023-2025 Sweden Connect
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
@@ -6,15 +21,27 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="Test SP">
-  <meta http-equiv='pragma' content='no-cache' />
-  <meta http-equiv='cache-control' content='no-cache, no-store, must-revalidate' />
-  <meta http-equiv="Expires" content="-1" />
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta http-equiv='pragma' content='no-cache'/>
+  <meta http-equiv='cache-control' content='no-cache, no-store, must-revalidate'/>
+  <meta http-equiv="Expires" content="-1"/>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 
-  <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.6.2/css/bootstrap.min.css}" href="webjars/bootstrap/4.6.2/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/5.3.8/css/bootstrap.min.css}"
+        href="webjars/bootstrap/5.3.8/css/bootstrap.min.css"/>
   <link rel="stylesheet" th:href="@{/css/open-sans-fonts.css}" href="../../css/open-sans-fonts.css" />
   <link rel="stylesheet" th:href="@{/css/refmain.css}" href="../../css/refmain.css" />
-  
+
+  <link rel="apple-touch-icon" sizes="180x180" th:href="@{/images/favicons/apple-touch-icon.png}"
+        href="images/favicons/apple-touch-icon.png"/>
+  <link rel="icon" type="image/png" sizes="32x32" th:href="@{/images/favicons/favicon-32x32.png}"
+        href="images/favicons/favicon-32x32.png"/>
+  <link rel="icon" type="image/png" sizes="16x16" th:href="@{/images/favicons/favicon-16x16.png}"
+        href="images/favicons/favicon-16x16.png"/>
+  <link rel="manifest" th:href="@{/images/favicons/site.webmanifest}" href="images/favicons/site.webmanifest"/>
+  <link rel="shortcut icon" th:href="@{/images/favicons/favicon.ico}" href="images/favicons/favicon.ico"
+        type="image/x-icon">
+  <meta name="theme-color" content="#ffffff">
+
   <title th:text="#{idp.msg.title}">Page Title</title>
 
 </head>
@@ -22,13 +49,16 @@
 <body>
 
 <th:block th:fragment="scriptFragment">
-  <script type="text/javascript" th:src="@{/webjars/jquery/3.6.1/jquery.min.js}" src="webjars/jquery/3.6.1/jquery.min.js"></script>
-  <script type="text/javascript" th:src="@{/webjars/popper.js/1.16.1-lts/umd/popper.min.js}" src="/webjars/popper.js/1.16.1-lts/umd/popper.min.js"></script>
-  <script type="text/javascript" th:src="@{/webjars/bootstrap/4.6.2/js/bootstrap.min.js}" src="/webjars/bootstrap/4.6.2/js/bootstrap.min.js"></script>
-</th:block>
+  <script type="text/javascript" th:src="@{/webjars/jquery/3.7.1/jquery.min.js}"
+          src="webjars/jquery/3.7.1/jquery.min.js"></script>
+  <script type="text/javascript" th:src="@{/webjars/popper.js/2.11.7/umd/popper.min.js}"
+          src="/webjars/popper.js/2.11.7/umd/popper.min.js"></script>
+  <script type="text/javascript" th:src="@{/webjars/bootstrap/5.3.8/js/bootstrap.min.js}"
+          src="/webjars/bootstrap/5.3.8/js/bootstrap.min.js"></script>
+  th:block>
 
 <th:block th:fragment="scriptFragment2">
-  <script type="text/javascript" th:src="@{/scripts/valfor.js}" src="../../static/scripts/valfor.js"></script> 
+  <script type="text/javascript" th:src="@{/scripts/valfor.js}" src="../../static/scripts/valfor.js"></script>
   <script type="text/javascript" th:src="@{/scripts/main.js}" src="../../static/scripts/main.js"></script>
 </th:block>
 
