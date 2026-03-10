@@ -17,9 +17,6 @@ server:
     key-alias: local
     key-store-password: secret
     key-password: secret
-  error:
-    include-message: always
-    include-exception: true
 
 idp-users-location: ${IDP_CONFIG_DIR:classpath:}
 
@@ -30,6 +27,10 @@ spring:
   config:
     import:
       - optional:${idp-users-location}/users.yml
+  web:
+    error:
+      include-message: always
+      include-exception: true
 
 ui:
   languages:

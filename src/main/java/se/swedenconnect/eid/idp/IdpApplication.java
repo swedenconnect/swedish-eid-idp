@@ -1,5 +1,5 @@
 /*
- * Copyright 2023-2025 Sweden Connect
+ * Copyright 2016-2026 Sweden Connect
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ public class IdpApplication {
    *
    * @param args program arguments
    */
-  public static void main(String[] args) {
+  public static void main(final String[] args) {
 
     try {
       OpenSAMLInitializer.getInstance()
@@ -44,7 +44,7 @@ public class IdpApplication {
               new OpenSAMLSecurityDefaultsConfig(new SwedishEidSecurityConfiguration()),
               new OpenSAMLSecurityExtensionConfig());
     }
-    catch (Exception e) {
+    catch (final Exception e) {
       throw new RuntimeException(e);
     }
 
