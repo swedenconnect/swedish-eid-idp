@@ -15,8 +15,8 @@
  */
 package se.swedenconnect.eid.idp.authn.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 import org.springframework.util.StringUtils;
 
 /**
@@ -26,60 +26,176 @@ import org.springframework.util.StringUtils;
  */
 public class SelectedUserModel {
 
-  /**
-   * The personal identity number.
-   */
-  @Setter
+  /** The personal identity number.*/
   private String personalIdentityNumber;
 
-  @Setter
+  /** A custom personal identity number entered manually in the advanced view. */
   private String customPersonalIdentityNumber;
 
-  /**
-   * The level of assurance.
-   */
-  @Getter
-  @Setter
+  /** The level of assurance. */
   private String loa;
 
-  /**
-   * The given name.
-   */
-  @Getter
-  @Setter
+  /** The given name. */
   private String givenName;
 
-  /**
-   * The surname.
-   */
-  @Getter
-  @Setter
+  /** The surname. */
   private String surname;
 
-  @Getter
-  @Setter
+  /** Whether the SignMessage was displayed. */
   private boolean signMessageDisplayed;
 
-  /**
-   * Main error code to simulate.
-   */
-  @Getter
-  @Setter
+  /** Main error code to simulate. */
   private String mainError;
 
-  /**
-   * Subordinate error code to simulate.
-   */
-  @Getter
-  @Setter
+  /** Subordinate error code to simulate. */
   private String subError;
 
-  /**
-   * Error message to simulate.
-   */
-  @Getter
-  @Setter
+  /** Error message to simulate. */
   private String errorMessage;
+
+  /**
+   * Sets the personal identity number selected from the drop-down.
+   *
+   * @param personalIdentityNumber the personal identity number
+   */
+  public void setPersonalIdentityNumber(final @NonNull String personalIdentityNumber) {
+    this.personalIdentityNumber = personalIdentityNumber;
+  }
+
+  /**
+   * Sets the personal identity number entered manually in the advanced view.
+   *
+   * @param customPersonalIdentityNumber the personal identity number
+   */
+  public void setCustomPersonalIdentityNumber(final @Nullable String customPersonalIdentityNumber) {
+    this.customPersonalIdentityNumber = customPersonalIdentityNumber;
+  }
+
+  /**
+   * Returns the level of assurance URI.
+   *
+   * @return the LoA URI
+   */
+  public String getLoa() {
+    return this.loa;
+  }
+
+  /**
+   * Sets the level of assurance URI.
+   *
+   * @param loa the LoA URI
+   */
+  public void setLoa(final String loa) {
+    this.loa = loa;
+  }
+
+  /**
+   * Returns the given name.
+   *
+   * @return the given name
+   */
+  public String getGivenName() {
+    return this.givenName;
+  }
+
+  /**
+   * Sets the given name.
+   *
+   * @param givenName the given name
+   */
+  public void setGivenName(final String givenName) {
+    this.givenName = givenName;
+  }
+
+  /**
+   * Returns the surname.
+   *
+   * @return the surname
+   */
+  public String getSurname() {
+    return this.surname;
+  }
+
+  /**
+   * Sets the surname.
+   *
+   * @param surname the surname
+   */
+  public void setSurname(final String surname) {
+    this.surname = surname;
+  }
+
+  /**
+   * Returns whether the SignMessage was displayed.
+   *
+   * @return {@code true} if the SignMessage was displayed
+   */
+  public boolean isSignMessageDisplayed() {
+    return this.signMessageDisplayed;
+  }
+
+  /**
+   * Sets whether the SignMessage was displayed.
+   *
+   * @param signMessageDisplayed {@code true} if the SignMessage was displayed
+   */
+  public void setSignMessageDisplayed(final boolean signMessageDisplayed) {
+    this.signMessageDisplayed = signMessageDisplayed;
+  }
+
+  /**
+   * Returns the main error code to simulate.
+   *
+   * @return the main error code
+   */
+  public String getMainError() {
+    return this.mainError;
+  }
+
+  /**
+   * Sets the main error code to simulate.
+   *
+   * @param mainError the main error code
+   */
+  public void setMainError(final String mainError) {
+    this.mainError = mainError;
+  }
+
+  /**
+   * Returns the subordinate error code to simulate.
+   *
+   * @return the subordinate error code
+   */
+  public String getSubError() {
+    return this.subError;
+  }
+
+  /**
+   * Sets the subordinate error code to simulate.
+   *
+   * @param subError the subordinate error code
+   */
+  public void setSubError(final String subError) {
+    this.subError = subError;
+  }
+
+  /**
+   * Returns the error message to simulate.
+   *
+   * @return the error message
+   */
+  public String getErrorMessage() {
+    return this.errorMessage;
+  }
+
+  /**
+   * Sets the error message to simulate.
+   *
+   * @param errorMessage the error message
+   */
+  public void setErrorMessage(final String errorMessage) {
+    this.errorMessage = errorMessage;
+  }
 
   public String getPersonalIdentityNumber() {
     return StringUtils.hasText(this.personalIdentityNumber)

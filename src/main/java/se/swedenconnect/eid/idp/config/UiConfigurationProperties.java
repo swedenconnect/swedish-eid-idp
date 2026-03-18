@@ -15,7 +15,6 @@
  */
 package se.swedenconnect.eid.idp.config;
 
-import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
@@ -26,7 +25,6 @@ import java.util.List;
  * @author Martin Lindström
  */
 @ConfigurationProperties("ui")
-@Data
 public class UiConfigurationProperties {
 
   /**
@@ -35,9 +33,26 @@ public class UiConfigurationProperties {
   private List<Language> languages;
 
   /**
+   * Returns the UI language settings.
+   *
+   * @return the list of configured languages
+   */
+  public List<Language> getLanguages() {
+    return this.languages;
+  }
+
+  /**
+   * Sets the UI language settings.
+   *
+   * @param languages the list of configured languages
+   */
+  public void setLanguages(final List<Language> languages) {
+    this.languages = languages;
+  }
+
+  /**
    * UI language settings.
    */
-  @Data
   public static class Language {
 
     /**
@@ -49,6 +64,42 @@ public class UiConfigurationProperties {
      * The text associated with the language tag, e.g. English.
      */
     private String text;
+
+    /**
+     * Returns the language tag (e.g. {@code "en"}, {@code "sv"}).
+     *
+     * @return the language tag
+     */
+    public String getTag() {
+      return this.tag;
+    }
+
+    /**
+     * Sets the language tag (e.g. {@code "en"}, {@code "sv"}).
+     *
+     * @param tag the language tag
+     */
+    public void setTag(final String tag) {
+      this.tag = tag;
+    }
+
+    /**
+     * Returns the display text for the language, e.g. {@code "English"}.
+     *
+     * @return the display text
+     */
+    public String getText() {
+      return this.text;
+    }
+
+    /**
+     * Sets the display text for the language, e.g. {@code "English"}.
+     *
+     * @param text the display text
+     */
+    public void setText(final String text) {
+      this.text = text;
+    }
   }
 
 }

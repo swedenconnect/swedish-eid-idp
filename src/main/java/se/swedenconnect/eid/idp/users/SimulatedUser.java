@@ -16,8 +16,6 @@
 package se.swedenconnect.eid.idp.users;
 
 import jakarta.annotation.Nonnull;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -44,35 +42,99 @@ public class SimulatedUser implements UserDetails, Comparable<SimulatedUser> {
   /**
    * The personal identity number.
    */
-  @Getter
-  @Setter
   private String personalNumber;
 
   /**
    * The given name.
    */
-  @Getter
-  @Setter
   private String givenName;
 
   /**
    * The surname.
    */
-  @Getter
-  @Setter
   private String surname;
 
   /**
    * The display name.
    */
-  @Setter
   private String displayName;
 
   /**
    * The date of birth (YYYY-MM-DD).
    */
-  @Setter
   private String dateOfBirth;
+
+  /**
+   * Returns the personal identity number.
+   *
+   * @return the personal identity number
+   */
+  public String getPersonalNumber() {
+    return this.personalNumber;
+  }
+
+  /**
+   * Sets the personal identity number.
+   *
+   * @param personalNumber the personal identity number
+   */
+  public void setPersonalNumber(final String personalNumber) {
+    this.personalNumber = personalNumber;
+  }
+
+  /**
+   * Returns the given name.
+   *
+   * @return the given name
+   */
+  public String getGivenName() {
+    return this.givenName;
+  }
+
+  /**
+   * Sets the given name.
+   *
+   * @param givenName the given name
+   */
+  public void setGivenName(final String givenName) {
+    this.givenName = givenName;
+  }
+
+  /**
+   * Returns the surname.
+   *
+   * @return the surname
+   */
+  public String getSurname() {
+    return this.surname;
+  }
+
+  /**
+   * Sets the surname.
+   *
+   * @param surname the surname
+   */
+  public void setSurname(final String surname) {
+    this.surname = surname;
+  }
+
+  /**
+   * Sets the display name. If not set, it is derived from given name and surname.
+   *
+   * @param displayName the display name
+   */
+  public void setDisplayName(final String displayName) {
+    this.displayName = displayName;
+  }
+
+  /**
+   * Sets the date of birth (YYYY-MM-DD). If not set, it is derived from the personal identity number.
+   *
+   * @param dateOfBirth the date of birth
+   */
+  public void setDateOfBirth(final String dateOfBirth) {
+    this.dateOfBirth = dateOfBirth;
+  }
 
   /** {@inheritDoc} */
   @Override
