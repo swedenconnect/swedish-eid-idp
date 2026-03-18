@@ -15,8 +15,6 @@
  */
 package se.swedenconnect.eid.idp.config;
 
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Configuration properties for Tomcat AJP.
@@ -26,23 +24,87 @@ import lombok.Setter;
 public class TomcatAjpConfigurationProperties {
 
   /** Is AJP enabled? */
-  @Getter
-  @Setter
   private boolean enabled = false;
 
   /** The Tomcat AJP port. */
-  @Getter
-  @Setter
   private int port = 8009;
 
   /** AJP secret. */
-  @Getter
-  @Setter
   private String secret;
 
   /** Is AJP secret required? */
-  @Getter
-  @Setter
   private boolean secretRequired = false;
+
+  /**
+   * Returns whether AJP is enabled.
+   *
+   * @return {@code true} if AJP is enabled
+   */
+  public boolean isEnabled() {
+    return this.enabled;
+  }
+
+  /**
+   * Sets whether AJP is enabled.
+   *
+   * @param enabled {@code true} to enable AJP
+   */
+  public void setEnabled(final boolean enabled) {
+    this.enabled = enabled;
+  }
+
+  /**
+   * Returns the Tomcat AJP port.
+   *
+   * @return the AJP port
+   */
+  public int getPort() {
+    return this.port;
+  }
+
+  /**
+   * Sets the Tomcat AJP port.
+   *
+   * @param port the AJP port
+   */
+  public void setPort(final int port) {
+    this.port = port;
+  }
+
+  /**
+   * Returns the AJP secret.
+   *
+   * @return the AJP secret, or {@code null} if not set
+   */
+  public String getSecret() {
+    return this.secret;
+  }
+
+  /**
+   * Sets the AJP secret.
+   *
+   * @param secret the AJP secret
+   */
+  public void setSecret(final String secret) {
+    this.secret = secret;
+  }
+
+  /**
+   * Returns whether the AJP secret is required.
+   *
+   * @return {@code true} if the AJP secret is required
+   */
+  public boolean isSecretRequired() {
+    return this.secretRequired;
+  }
+
+  /**
+   * Sets whether the AJP secret is required.
+   *
+   * @param secretRequired {@code true} if the AJP secret is required
+   */
+  public void setSecretRequired(final boolean secretRequired) {
+    this.secretRequired = secretRequired;
+  }
 
 }

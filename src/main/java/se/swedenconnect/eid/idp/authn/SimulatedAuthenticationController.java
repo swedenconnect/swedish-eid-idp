@@ -43,7 +43,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Setter;
 import se.swedenconnect.eid.idp.authn.model.SelectedUserModel;
 import se.swedenconnect.eid.idp.authn.model.UiModel;
 import se.swedenconnect.eid.idp.config.CookieGenerator;
@@ -76,39 +75,32 @@ public class SimulatedAuthenticationController
   public static final String AUTO_AUTHN_COOKIE_NAME = "autoAuthUser";
 
   /** The context path. */
-  @Setter
   @Value("${server.servlet.context-path:}")
   private String contextPath;
 
   /** The authentication provider that is the "manager" for this authentication. */
-  @Setter
   @Autowired
   private SimulatedAuthenticationProvider provider;
 
   /** The users. */
-  @Setter
   @Autowired
   private SimulatedUserDetailsManager userDetailsService;
 
   /** Possible languages for the UI. */
-  @Setter
   @Autowired
   private List<Language> languages;
 
   /** For saving/getting selected user (and last selected LoA). */
-  @Setter
   @Autowired
   @Qualifier("selectedUserCookieGenerator")
   private CookieGenerator selectedUserCookieGenerator;
 
   /** The cookie generator for saved users. */
-  @Setter
   @Autowired
   @Qualifier("savedUsersCookieGenerator")
   private CookieGenerator savedUsersCookieGenerator;
 
   /** For saving/getting auto authentication user. */
-  @Setter
   @Autowired
   @Qualifier(AUTO_AUTHN_COOKIE_NAME)
   private CookieGenerator autoAuthnCookieGenerator;
@@ -148,7 +140,7 @@ public class SimulatedAuthenticationController
         .stream()
         .filter(a -> AttributeConstants.ATTRIBUTE_NAME_PERSONAL_IDENTITY_NUMBER.equals(a.getId()))
         .filter(a -> !a.getValues().isEmpty())
-        .map(a -> a.getValues().get(0))
+        .map(a -> a.getValues().getFirst())
         .map(String.class::cast)
         .filter(u -> users.stream().anyMatch(s -> u.equals(s.getUsername())))
         .findFirst()
@@ -197,7 +189,7 @@ public class SimulatedAuthenticationController
       }
       final SelectedUserModel result = new SelectedUserModel();
       result.setPersonalIdentityNumber(autoUser);
-      result.setLoa(ui.getPossibleAuthnContextUris().get(0));
+      result.setLoa(ui.getPossibleAuthnContextUris().getFirst());
       if (ui.getSignMessage() != null) {
         result.setSignMessageDisplayed(true);
       }
@@ -420,6 +412,69 @@ public class SimulatedAuthenticationController
         httpResponse);
 
     return user;
+  }
+
+  /**
+   * Sets the context path.
+   *
+   * @param contextPath the servlet context path
+   */
+  public void setContextPath(final String contextPath) {
+    this.contextPath = contextPath;
+  }
+
+  /**
+   * Sets the authentication provider.
+   *
+   * @param provider the {@link SimulatedAuthenticationProvider}
+   */
+  public void setProvider(final SimulatedAuthenticationProvider provider) {
+    this.provider = provider;
+  }
+
+  /**
+   * Sets the user details service.
+   *
+   * @param userDetailsService the {@link SimulatedUserDetailsManager}
+   */
+  public void setUserDetailsService(final SimulatedUserDetailsManager userDetailsService) {
+    this.userDetailsService = userDetailsService;
+  }
+
+  /**
+   * Sets the available UI languages.
+   *
+   * @param languages the list of {@link Language} entries
+   */
+  public void setLanguages(final List<Language> languages) {
+    this.languages = languages;
+  }
+
+  /**
+   * Sets the cookie generator used to save the selected user and LoA.
+   *
+   * @param selectedUserCookieGenerator the {@link CookieGenerator}
+   */
+  public void setSelectedUserCookieGenerator(final CookieGenerator selectedUserCookieGenerator) {
+    this.selectedUserCookieGenerator = selectedUserCookieGenerator;
+  }
+
+  /**
+   * Sets the cookie generator used to save custom users.
+   *
+   * @param savedUsersCookieGenerator the {@link CookieGenerator}
+   */
+  public void setSavedUsersCookieGenerator(final CookieGenerator savedUsersCookieGenerator) {
+    this.savedUsersCookieGenerator = savedUsersCookieGenerator;
+  }
+
+  /**
+   * Sets the cookie generator used to save the auto-authentication user.
+   *
+   * @param autoAuthnCookieGenerator the {@link CookieGenerator}
+   */
+  public void setAutoAuthnCookieGenerator(final CookieGenerator autoAuthnCookieGenerator) {
+    this.autoAuthnCookieGenerator = autoAuthnCookieGenerator;
   }
 
   private String getUserMessage(final UserMessageExtension userMessage) {

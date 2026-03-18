@@ -23,8 +23,6 @@ import java.util.Optional;
 import jakarta.annotation.Nonnull;
 import org.springframework.security.core.Authentication;
 
-import lombok.NonNull;
-import lombok.Setter;
 import se.swedenconnect.eid.idp.users.SimulatedUser;
 import se.swedenconnect.opensaml.sweid.saml2.attribute.AttributeConstants;
 import se.swedenconnect.spring.saml.idp.attributes.UserAttribute;
@@ -48,8 +46,6 @@ public class SimulatedAuthenticationProvider extends AbstractUserRedirectAuthent
   private final List<String> entityCategories;
 
   /** The provider name. */
-  @Setter
-  @NonNull
   private String name = "Simulated Authentication Provider";
 
   /**
@@ -68,6 +64,18 @@ public class SimulatedAuthenticationProvider extends AbstractUserRedirectAuthent
         .filter(s -> !s.isEmpty())
         .orElseThrow(() -> new IllegalArgumentException("supportedAuthnContextUris must be set and be non-empty"));
     this.entityCategories = Objects.requireNonNull(entityCategories, "entityCategories must not be null");
+  }
+
+  /**
+   * Sets the provider name.
+   *
+   * @param name the provider name (must not be {@code null})
+   */
+  public void setName(final String name) {
+    if (name == null) {
+      throw new NullPointerException("name is marked non-null but is null");
+    }
+    this.name = name;
   }
 
   /** {@inheritDoc} */

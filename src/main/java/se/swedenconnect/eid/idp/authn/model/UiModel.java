@@ -15,8 +15,6 @@
  */
 package se.swedenconnect.eid.idp.authn.model;
 
-import lombok.Data;
-
 import java.util.List;
 import java.util.Objects;
 
@@ -25,7 +23,6 @@ import java.util.Objects;
  *
  * @author Martin Lindström
  */
-@Data
 public class UiModel {
 
   /** The SP display name (for the language of the current locale). */
@@ -54,6 +51,168 @@ public class UiModel {
 
   /** The UserMessage (HTML). */
   private String userMessage;
+
+  /**
+   * Returns the SP display name for the current locale.
+   *
+   * @return the SP display name
+   */
+  public String getSpDisplayName() {
+    return this.spDisplayName;
+  }
+
+  /**
+   * Sets the SP display name for the current locale.
+   *
+   * @param spDisplayName the SP display name
+   */
+  public void setSpDisplayName(final String spDisplayName) {
+    this.spDisplayName = spDisplayName;
+  }
+
+  /**
+   * Returns the SP logo URL.
+   *
+   * @return the SP logo URL
+   */
+  public String getSpLogoUrl() {
+    return this.spLogoUrl;
+  }
+
+  /**
+   * Sets the SP logo URL.
+   *
+   * @param spLogoUrl the SP logo URL
+   */
+  public void setSpLogoUrl(final String spLogoUrl) {
+    this.spLogoUrl = spLogoUrl;
+  }
+
+  /**
+   * Returns the user id to pre-select.
+   *
+   * @return the user id
+   */
+  public String getSelectedUser() {
+    return this.selectedUser;
+  }
+
+  /**
+   * Sets the user id to pre-select.
+   *
+   * @param selectedUser the user id
+   */
+  public void setSelectedUser(final String selectedUser) {
+    this.selectedUser = selectedUser;
+  }
+
+  /**
+   * Returns whether the selected user is fixed (cannot be changed).
+   *
+   * @return {@code true} if the selected user is fixed
+   */
+  public boolean isFixedSelectedUser() {
+    return this.fixedSelectedUser;
+  }
+
+  /**
+   * Sets whether the selected user is fixed (cannot be changed).
+   *
+   * @param fixedSelectedUser {@code true} if the selected user is fixed
+   */
+  public void setFixedSelectedUser(final boolean fixedSelectedUser) {
+    this.fixedSelectedUser = fixedSelectedUser;
+  }
+
+  /**
+   * Returns the possible authentication context URIs.
+   *
+   * @return the list of authentication context URIs
+   */
+  public List<String> getPossibleAuthnContextUris() {
+    return this.possibleAuthnContextUris;
+  }
+
+  /**
+   * Sets the possible authentication context URIs.
+   *
+   * @param possibleAuthnContextUris the list of authentication context URIs
+   */
+  public void setPossibleAuthnContextUris(final List<String> possibleAuthnContextUris) {
+    this.possibleAuthnContextUris = possibleAuthnContextUris;
+  }
+
+  /**
+   * Returns the authentication context URI to pre-select.
+   *
+   * @return the authentication context URI
+   */
+  public String getSelectedAuthnContextUri() {
+    return this.selectedAuthnContextUri;
+  }
+
+  /**
+   * Sets the authentication context URI to pre-select.
+   *
+   * @param selectedAuthnContextUri the authentication context URI
+   */
+  public void setSelectedAuthnContextUri(final String selectedAuthnContextUri) {
+    this.selectedAuthnContextUri = selectedAuthnContextUri;
+  }
+
+  /**
+   * Returns whether this is authentication for signature.
+   *
+   * @return {@code true} if this is a signature authentication request
+   */
+  public boolean isSignature() {
+    return this.signature;
+  }
+
+  /**
+   * Sets whether this is authentication for signature.
+   *
+   * @param signature {@code true} if this is a signature authentication request
+   */
+  public void setSignature(final boolean signature) {
+    this.signature = signature;
+  }
+
+  /**
+   * Returns the SignMessage HTML to display.
+   *
+   * @return the SignMessage HTML, or {@code null} if none
+   */
+  public String getSignMessage() {
+    return this.signMessage;
+  }
+
+  /**
+   * Sets the SignMessage HTML to display.
+   *
+   * @param signMessage the SignMessage HTML
+   */
+  public void setSignMessage(final String signMessage) {
+    this.signMessage = signMessage;
+  }
+
+  /**
+   * Returns the UserMessage HTML to display.
+   *
+   * @return the UserMessage HTML, or {@code null} if none
+   */
+  public String getUserMessage() {
+    return this.userMessage;
+  }
+
+  /**
+   * Sets the UserMessage HTML to display.
+   *
+   * @param userMessage the UserMessage HTML
+   */
+  public void setUserMessage(final String userMessage) {
+    this.userMessage = userMessage;
+  }
 
   /**
    * Predicate that tells if the supplied ID is "selected".

@@ -19,7 +19,7 @@ import java.util.List;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import lombok.Data;
+
 
 /**
  * Configuration properties for our simulated IdP.
@@ -27,7 +27,6 @@ import lombok.Data;
  * @author Martin Lindström
  */
 @ConfigurationProperties("authn")
-@Data
 public class IdpConfigurationProperties {
 
   /**
@@ -54,5 +53,95 @@ public class IdpConfigurationProperties {
    * The SAML entity categories this IdP declares.
    */
   private List<String> entityCategories;
+
+  /**
+   * Returns the name of the authentication provider.
+   *
+   * @return the provider name
+   */
+  public String getProviderName() {
+    return this.providerName;
+  }
+
+  /**
+   * Sets the name of the authentication provider.
+   *
+   * @param providerName the provider name
+   */
+  public void setProviderName(final String providerName) {
+    this.providerName = providerName;
+  }
+
+  /**
+   * Returns the authentication path.
+   *
+   * @return the authentication path
+   */
+  public String getAuthnPath() {
+    return this.authnPath;
+  }
+
+  /**
+   * Sets the authentication path.
+   *
+   * @param authnPath the authentication path
+   */
+  public void setAuthnPath(final String authnPath) {
+    this.authnPath = authnPath;
+  }
+
+  /**
+   * Returns the resume path.
+   *
+   * @return the resume path
+   */
+  public String getResumePath() {
+    return this.resumePath;
+  }
+
+  /**
+   * Sets the resume path.
+   *
+   * @param resumePath the resume path
+   */
+  public void setResumePath(final String resumePath) {
+    this.resumePath = resumePath;
+  }
+
+  /**
+   * Returns the supported LoA URIs.
+   *
+   * @return the list of supported LoA URIs
+   */
+  public List<String> getSupportedLoas() {
+    return this.supportedLoas;
+  }
+
+  /**
+   * Sets the supported LoA URIs.
+   *
+   * @param supportedLoas the list of supported LoA URIs
+   */
+  public void setSupportedLoas(final List<String> supportedLoas) {
+    this.supportedLoas = supportedLoas;
+  }
+
+  /**
+   * Returns the SAML entity categories declared by this IdP.
+   *
+   * @return the list of entity category URIs
+   */
+  public List<String> getEntityCategories() {
+    return this.entityCategories;
+  }
+
+  /**
+   * Sets the SAML entity categories declared by this IdP.
+   *
+   * @param entityCategories the list of entity category URIs
+   */
+  public void setEntityCategories(final List<String> entityCategories) {
+    this.entityCategories = entityCategories;
+  }
 
 }

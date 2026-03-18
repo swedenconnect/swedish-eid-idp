@@ -15,7 +15,6 @@
  */
 package se.swedenconnect.eid.idp.config;
 
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.security.autoconfigure.actuate.web.servlet.EndpointRequest;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -58,7 +57,6 @@ public class IdpConfiguration {
   private final UsersConfigurationProperties users;
 
   /** The context path. */
-  @Setter
   @Value("${server.servlet.context-path:/}")
   private String contextPath;
 
@@ -71,6 +69,15 @@ public class IdpConfiguration {
   public IdpConfiguration(final IdpConfigurationProperties properties, final UsersConfigurationProperties users) {
     this.properties = Objects.requireNonNull(properties, "properties must not be null");
     this.users = Objects.requireNonNull(users, "users must not be null");
+  }
+
+  /**
+   * Sets the servlet context path.
+   *
+   * @param contextPath the context path
+   */
+  public void setContextPath(final String contextPath) {
+    this.contextPath = contextPath;
   }
 
   /**

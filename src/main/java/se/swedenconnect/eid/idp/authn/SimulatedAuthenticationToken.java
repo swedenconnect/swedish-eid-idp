@@ -21,8 +21,6 @@ import java.util.Collections;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
-import lombok.Getter;
-import lombok.Setter;
 import se.swedenconnect.eid.idp.users.SimulatedUser;
 
 /**
@@ -41,8 +39,6 @@ public class SimulatedAuthenticationToken extends AbstractAuthenticationToken {
   /**
    * Whether the SignMessage was displayed.
    */
-  @Getter
-  @Setter
   private boolean signMessageDisplayed = false;
 
   /**
@@ -80,6 +76,24 @@ public class SimulatedAuthenticationToken extends AbstractAuthenticationToken {
    */
   public String getLoa() {
     return this.loa;
+  }
+
+  /**
+   * Returns whether the SignMessage was displayed.
+   *
+   * @return {@code true} if the SignMessage was displayed
+   */
+  public boolean isSignMessageDisplayed() {
+    return this.signMessageDisplayed;
+  }
+
+  /**
+   * Sets whether the SignMessage was displayed.
+   *
+   * @param signMessageDisplayed {@code true} if the SignMessage was displayed
+   */
+  public void setSignMessageDisplayed(final boolean signMessageDisplayed) {
+    this.signMessageDisplayed = signMessageDisplayed;
   }
 
 }
