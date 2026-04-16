@@ -61,7 +61,7 @@
 
     <spring.boot.version>4.0.3</spring.boot.version>
     <spring.version>7.05</spring.version>
-    <bc.version>1.83</bc.version>
+    <bc.version>1.84</bc.version>
     <flexmark.version>0.64.8</flexmark.version>
     <jsoup.version>1.22.1</jsoup.version>
   </properties>
